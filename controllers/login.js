@@ -18,7 +18,7 @@ async function handlelogin(req, res) {
     if (result.type === "admin") {
         return res.render("owner/admin.ejs");
     } else {
-        return res.render("salesman.ejs"); // Render a different page for regular users
+        return res.render("company/addproduct.ejs"); // Render a different page for regular users
     }
 }
 
