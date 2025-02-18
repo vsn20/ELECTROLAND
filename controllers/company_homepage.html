@@ -162,14 +162,92 @@
       font-weight: 500;
       font-size: 1rem;
     }
-    button{
-        border: none;
-        background-color: white;
-        font-size: 32px;
-        cursor: pointer;
+
+    button {
+      border: none;
+      background-color: white;
+      font-size: 32px;
+      cursor: pointer;
     }
-    button:hover{
-        transform: scale(1.1);
+
+    button:hover {
+      transform: scale(1.1);
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 1024px) {
+      .navbar {
+        padding: 0 20px;
+      }
+
+      .container {
+        grid-template-columns: 1fr;
+        padding: 0 20px;
+      }
+
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        top: 0;
+        padding: 15px;
+      }
+
+      .nav-left,
+      .nav-right {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .feature-item {
+        font-size: 0.9rem;
+        padding: 12px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px 15px;
+      }
+
+      .container {
+        grid-template-columns: 1fr;
+        padding: 0 10px;
+      }
+
+      .feature-item {
+        font-size: 0.85rem;
+        padding: 10px;
+      }
+
+      .profile-section {
+        display: none;
+      }
+
+      .notification-bell {
+        font-size: 25px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .navbar {
+        padding: 15px 10px;
+      }
+
+      .welcome-text {
+        font-size: 1.2rem;
+      }
+
+      .datetime-container {
+        font-size: 0.8rem;
+      }
+
+      .feature-icon {
+        font-size: 1.2rem;
+      }
     }
   </style>
 </head>
@@ -185,7 +263,7 @@
       </div>
     </div>
     <div class="nav-right">
-        <button target="blank" title="Check for new blog messages">📩</button>
+      <button target="blank" title="Check for new blog messages">📩</button>
       <div class="notification-bell">🔔</div>
       <div class="profile-section">
         <img src="https://via.placeholder.com/40" alt="Profile" class="profile-pic">
