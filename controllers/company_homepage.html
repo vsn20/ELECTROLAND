@@ -27,7 +27,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 40px;
+      padding: 0 5vw; /* Dynamic padding based on screen size */
       box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
       z-index: 1000;
     }
@@ -35,7 +35,7 @@
     .nav-left {
       display: flex;
       align-items: center;
-      gap: 25px;
+      gap: 1vw;
     }
 
     .welcome-text {
@@ -47,7 +47,7 @@
     .datetime-container {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 0.2vw;
       color: #636e72;
       font-size: 0.9rem;
     }
@@ -64,27 +64,27 @@
     .nav-right {
       display: flex;
       align-items: center;
-      gap: 25px;
+      gap: 1vw;
     }
 
     .profile-section {
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 1vw;
       cursor: pointer;
       transition: all 0.3s ease;
     }
 
     .profile-pic {
-      width: 40px;
-      height: 40px;
+      width: 4vw;
+      height: 4vw;
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid #6c5ce7;
     }
 
     .notification-bell {
-      font-size: 30px;
+      font-size: 2rem;
       color: #636e72;
       position: relative;
       cursor:pointer;
@@ -98,43 +98,43 @@
 
     /* Main Container */
     .container {
-      margin-top: 80px;
+      margin-top: 10vh; /* Dynamic margin-top */
       display: grid;
-      grid-template-columns: 250px 1fr;
-      gap: 25px;
-      padding: 0 40px;
+      grid-template-columns: 25% 1fr; /* Default layout for larger screens */
+      gap: 2vw;
+      padding: 0 5vw;
     }
 
     /* Sidebar Styles */
     .sidebar {
       background: #ffffff;
       border-radius: 15px;
-      padding: 25px;
+      padding: 2vw;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      height: calc(100vh - 100px);
+      height: calc(100vh - 10vh);
       position: sticky;
-      top: 80px;
+      top: 10vh;
     }
 
     .sidebar h2 {
       font-size: 1.3rem;
       color: #2d3436;
-      margin-bottom: 30px;
-      padding-bottom: 15px;
+      margin-bottom: 2vw;
+      padding-bottom: 1vw;
       border-bottom: 2px solid #f1f2f6;
     }
 
     .features {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 2vw;
     }
 
     .feature-item {
       display: flex;
       align-items: center;
-      gap: 15px;
-      padding: 14px;
+      gap: 2vw;
+      padding: 2vw;
       border-radius: 10px;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -149,24 +149,24 @@
 
     .feature-item.active {
       background: #6c5ce715;
-      border-left: 4px solid #6c5ce7;
+      border-left: 0.4vw solid #6c5ce7;
     }
 
     .feature-icon {
-      font-size: 1.4rem;
-      width: 30px;
+      font-size: 1.6rem;
+      width: 3vw;
       text-align: center;
     }
 
     .feature-title {
       font-weight: 500;
-      font-size: 1rem;
+      font-size: 1.2rem;
     }
 
     button {
       border: none;
       background-color: white;
-      font-size: 32px;
+      font-size: 2rem;
       cursor: pointer;
     }
 
@@ -177,12 +177,12 @@
     /* Responsive Styles */
     @media (max-width: 1024px) {
       .navbar {
-        padding: 0 20px;
+        padding: 0 4vw;
       }
 
       .container {
         grid-template-columns: 1fr;
-        padding: 0 20px;
+        padding: 0 4vw;
       }
 
       .sidebar {
@@ -190,19 +190,19 @@
         height: auto;
         position: relative;
         top: 0;
-        padding: 15px;
+        padding: 2vw;
       }
 
       .nav-left,
       .nav-right {
         flex-direction: column;
         align-items: flex-start;
-        gap: 10px;
+        gap: 1vw;
       }
 
       .feature-item {
-        font-size: 0.9rem;
-        padding: 12px;
+        font-size: 1.1rem;
+        padding: 1.5vw;
       }
     }
 
@@ -210,17 +210,17 @@
       .navbar {
         flex-direction: column;
         align-items: flex-start;
-        padding: 20px 15px;
+        padding: 3vw 2vw;
       }
 
       .container {
         grid-template-columns: 1fr;
-        padding: 0 10px;
+        padding: 0 2vw;
       }
 
       .feature-item {
-        font-size: 0.85rem;
-        padding: 10px;
+        font-size: 1rem;
+        padding: 1vw;
       }
 
       .profile-section {
@@ -228,13 +228,13 @@
       }
 
       .notification-bell {
-        font-size: 25px;
+        font-size: 1.8rem;
       }
     }
 
     @media (max-width: 480px) {
       .navbar {
-        padding: 15px 10px;
+        padding: 3vw 1.5vw;
       }
 
       .welcome-text {
@@ -246,7 +246,12 @@
       }
 
       .feature-icon {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
+      }
+
+      .feature-item {
+        padding: 0.8vw;
+        font-size: 0.9rem;
       }
     }
   </style>
@@ -310,19 +315,13 @@
       
       const dateElement = document.querySelector('.current-date');
       const timeElement = document.querySelector('.current-time');
-      const now = new Date();
+      const currentDate = new Date();
       
-      dateElement.textContent = now.toLocaleDateString('en-US', options);
-      timeElement.textContent = now.toLocaleTimeString('en-US', { 
-        hour: '2-digit', 
-        minute: '2-digit', 
-        second: '2-digit' 
-      });
+      dateElement.textContent = currentDate.toLocaleDateString('en-US', options);
+      timeElement.textContent = currentDate.toLocaleTimeString();
     }
 
-    // Initial call and set interval
-    updateDateTime();
-    setInterval(updateDateTime, 1000);
+    setInterval(updateDateTime, 1000); // Update every second
   </script>
 </body>
 </html>
