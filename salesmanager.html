@@ -20,6 +20,22 @@
     .current-date { font-size: 1rem; color: #6c5ce7; font-weight: bold; }
     .current-time { font-size: 1rem; color: #6c5ce7; font-weight: bold; }
 
+    .fun1{
+      font-size: 25px;
+    }
+    .fun2{
+      font-size: 35px;
+    }
+    .fun1:hover{
+      transform: scale(1.1);
+    }
+    .fun2:hover{
+      transform: scale(1.1);
+    }
+    .profile-pic:hover{
+      transform: scale(1.1);
+    }
+
     .profile-section { position: relative; cursor: pointer; }
     .profile-popup { display: none; position: absolute; top: 50px; right: 0; background-color: #ffffff; padding: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); font-size: 0.9rem; }
     .profile-section:hover .profile-popup { display: block; }
@@ -43,8 +59,8 @@
       </div>
     </div>
     <div class="nav-links">
-      <a href="#" class="fun">👤➕</a>
-      <a href="#" class="fun">📧</a>
+      <a href="#" class="fun1" class="fun">👤<sup>➕</sup></a>
+      <a href="#" class="fun2" class="fun">📧</a>
       <div class="profile-section">
         <img src="logo.jpg" alt="Profile" class="profile-pic" style="width:40px;height:40px;border-radius:50%;">
         <div class="profile-popup">sales.manager@example.com</div>
