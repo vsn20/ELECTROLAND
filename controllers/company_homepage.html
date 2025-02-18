@@ -27,7 +27,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 5vw; /* Dynamic padding based on screen size */
+      padding: 0 40px;
       box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
       z-index: 1000;
     }
@@ -35,7 +35,7 @@
     .nav-left {
       display: flex;
       align-items: center;
-      gap: 1vw;
+      gap: 25px;
     }
 
     .welcome-text {
@@ -47,7 +47,7 @@
     .datetime-container {
       display: flex;
       flex-direction: column;
-      gap: 0.2vw;
+      gap: 2px;
       color: #636e72;
       font-size: 0.9rem;
     }
@@ -64,27 +64,27 @@
     .nav-right {
       display: flex;
       align-items: center;
-      gap: 1vw;
+      gap: 25px;
     }
 
     .profile-section {
       display: flex;
       align-items: center;
-      gap: 1vw;
+      gap: 15px;
       cursor: pointer;
       transition: all 0.3s ease;
     }
 
     .profile-pic {
-      width: 4vw;
-      height: 4vw;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid #6c5ce7;
     }
 
     .notification-bell {
-      font-size: 2rem;
+      font-size: 30px;
       color: #636e72;
       position: relative;
       cursor:pointer;
@@ -98,43 +98,43 @@
 
     /* Main Container */
     .container {
-      margin-top: 10vh; /* Dynamic margin-top */
+      margin-top: 80px;
       display: grid;
-      grid-template-columns: 25% 1fr; /* Default layout for larger screens */
-      gap: 2vw;
-      padding: 0 5vw;
+      grid-template-columns: 250px 1fr;
+      gap: 25px;
+      padding: 0 40px;
     }
 
     /* Sidebar Styles */
     .sidebar {
       background: #ffffff;
       border-radius: 15px;
-      padding: 2vw;
+      padding: 25px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      height: calc(100vh - 10vh);
+      height: calc(100vh - 100px);
       position: sticky;
-      top: 10vh;
+      top: 80px;
     }
 
     .sidebar h2 {
       font-size: 1.3rem;
       color: #2d3436;
-      margin-bottom: 2vw;
-      padding-bottom: 1vw;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
       border-bottom: 2px solid #f1f2f6;
     }
 
     .features {
       display: flex;
       flex-direction: column;
-      gap: 2vw;
+      gap: 12px;
     }
 
     .feature-item {
       display: flex;
       align-items: center;
-      gap: 2vw;
-      padding: 2vw;
+      gap: 15px;
+      padding: 14px;
       border-radius: 10px;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -149,110 +149,27 @@
 
     .feature-item.active {
       background: #6c5ce715;
-      border-left: 0.4vw solid #6c5ce7;
+      border-left: 4px solid #6c5ce7;
     }
 
     .feature-icon {
-      font-size: 1.6rem;
-      width: 3vw;
+      font-size: 1.4rem;
+      width: 30px;
       text-align: center;
     }
 
     .feature-title {
       font-weight: 500;
-      font-size: 1.2rem;
+      font-size: 1rem;
     }
-
-    button {
-      border: none;
-      background-color: white;
-      font-size: 2rem;
-      cursor: pointer;
+    button{
+        border: none;
+        background-color: white;
+        font-size: 32px;
+        cursor: pointer;
     }
-
-    button:hover {
-      transform: scale(1.1);
-    }
-
-    /* Responsive Styles */
-    @media (max-width: 1024px) {
-      .navbar {
-        padding: 0 4vw;
-      }
-
-      .container {
-        grid-template-columns: 1fr;
-        padding: 0 4vw;
-      }
-
-      .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-        top: 0;
-        padding: 2vw;
-      }
-
-      .nav-left,
-      .nav-right {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1vw;
-      }
-
-      .feature-item {
-        font-size: 1.1rem;
-        padding: 1.5vw;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .navbar {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 3vw 2vw;
-      }
-
-      .container {
-        grid-template-columns: 1fr;
-        padding: 0 2vw;
-      }
-
-      .feature-item {
-        font-size: 1rem;
-        padding: 1vw;
-      }
-
-      .profile-section {
-        display: none;
-      }
-
-      .notification-bell {
-        font-size: 1.8rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .navbar {
-        padding: 3vw 1.5vw;
-      }
-
-      .welcome-text {
-        font-size: 1.2rem;
-      }
-
-      .datetime-container {
-        font-size: 0.8rem;
-      }
-
-      .feature-icon {
-        font-size: 1.3rem;
-      }
-
-      .feature-item {
-        padding: 0.8vw;
-        font-size: 0.9rem;
-      }
+    button:hover{
+        transform: scale(1.1);
     }
   </style>
 </head>
@@ -268,7 +185,7 @@
       </div>
     </div>
     <div class="nav-right">
-      <button target="blank" title="Check for new blog messages">📩</button>
+        <button target="blank" title="Check for new blog messages">📩</button>
       <div class="notification-bell">🔔</div>
       <div class="profile-section">
         <img src="https://via.placeholder.com/40" alt="Profile" class="profile-pic">
@@ -315,13 +232,19 @@
       
       const dateElement = document.querySelector('.current-date');
       const timeElement = document.querySelector('.current-time');
-      const currentDate = new Date();
+      const now = new Date();
       
-      dateElement.textContent = currentDate.toLocaleDateString('en-US', options);
-      timeElement.textContent = currentDate.toLocaleTimeString();
+      dateElement.textContent = now.toLocaleDateString('en-US', options);
+      timeElement.textContent = now.toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit' 
+      });
     }
 
-    setInterval(updateDateTime, 1000); // Update every second
+    // Initial call and set interval
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
   </script>
 </body>
 </html>
