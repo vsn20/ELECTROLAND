@@ -48,7 +48,7 @@
 
         .nav-links {
             display: flex;
-            gap: 90px;
+            gap: 40px;
             margin: auto;
         }
 
@@ -57,6 +57,7 @@
             text-decoration: none;
             font-weight: bold;
             transition: color 0.3s, transform 0.3s, text-shadow 0.3s;
+            white-space: nowrap;
         }
 
         .nav-links a:hover,
@@ -64,6 +65,59 @@
             color: #FFD700;
             transform: scale(1.1);
             text-shadow: 0 0 10px #FFD700;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .hamburger span {
+            width: 30px;
+            height: 3px;
+            background: white;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 200px;
+            background: linear-gradient(135deg, #34495E, #2C3E50);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+        }
+
+        .hamburger:hover .hamburger-menu {
+            display: block;
+        }
+
+        .hamburger-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 1em;
+            font-weight: bold;
+            padding: 8px;
+            background: linear-gradient(135deg, #5D6D7E, #4A5A6A);
+            text-align: center;
+            border-radius: 5px;
+            display: block;
+            margin: 5px 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hamburger-menu a:hover {
+            transform: translateX(5px);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            color: #FFD700;
         }
 
         .container {
@@ -328,38 +382,57 @@
             color: #ccc;
         }
 
+        @media (max-width: 1000px) and (min-width: 769px) {
+            .nav-links {
+                gap: 20px;
+            }
+        }
+
         @media (max-width: 768px) {
             nav {
-                flex-direction: row;
-                justify-content: space-between;
-                padding: 15px 30px;
+                padding: 15px 20px;
             }
 
             .nav-links {
-                gap: 15px;
+                display: none;
             }
 
-            .hero-image,
-            .slider,
-            .container {
-                width: 90%;
-            }
-
-            .container {
-                margin-left: 0;
+            .hamburger {
+                display: flex;
             }
 
             .left-sidebar-container {
                 display: none;
             }
 
+            .container {
+                margin-left: 0;
+                width: 90%;
+            }
+
+            .hero-image,
+            .slider {
+                width: 90%;
+            }
+
             .footer-content {
                 flex-direction: column;
+                align-items: center;
                 text-align: center;
+                padding: 15px;
             }
 
             .footer-section {
                 margin-bottom: 20px;
+                min-width: 100%;
+            }
+
+            .footer-logo img {
+                width: 150px;
+            }
+
+            .footer-social {
+                justify-content: center;
             }
         }
     </style>
@@ -369,6 +442,21 @@
     <nav>
         <div class="logo">
             <a href="#Home"><img src="logo.jpg" alt="Logo"></a>
+        </div>
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+            <div class="hamburger-menu">
+                <a href="#Home">Home</a>
+                <a href="#about-us">About Us</a>
+                <a href="#">Our Branches</a>
+                <a href="#">Login</a>
+                <a href="#">Contact Us</a>
+                <a href="#" id="new-products-link">New Products</a>
+                <a href="#" id="our-products-link">Our Products</a>
+                <a href="#" id="top-products-link">Top Products</a>
+            </div>
         </div>
         <div class="nav-links">
             <a href="#Home" class="active">Home</a>
@@ -520,46 +608,28 @@
                 allSections[sectionId].classList.add("active");
             }
 
-            // Nav link functionality
-            const navLinks = document.querySelectorAll(".nav-links a");
-            navLinks.forEach(link => {
+            const navLinksAll = document.querySelectorAll(".nav-links a, .hamburger-menu a");
+            navLinksAll.forEach(link => {
                 link.addEventListener("click", function (e) {
                     e.preventDefault();
-                    const sectionId = this.getAttribute("href") === "#Home" ? "home-container" : "about-us";
+                    const href = this.getAttribute("href");
+                    const sectionId = href === "#Home" ? "home-container" : 
+                                     href === "#about-us" ? "about-us" :
+                                     allSections[href.replace("#", "")] ? href.replace("#", "") : "home-container";
                     showSection(sectionId);
-                    navLinks.forEach(l => l.classList.remove("active"));
-                    this.classList.add("active");
+                    navLinksAll.forEach(l => l.classList.remove("active"));
+                    document.querySelector(`[href="${href}"]`)?.classList.add("active");
                 });
             });
 
-            // Logo link functionality
             const logoLink = document.querySelector(".logo a");
             logoLink.addEventListener("click", function (e) {
                 e.preventDefault();
                 showSection("home-container");
-                navLinks.forEach(l => l.classList.remove("active"));
-                document.querySelector('.nav-links a[href="#Home"]').classList.add("active");
+                navLinksAll.forEach(l => l.classList.remove("active"));
+                document.querySelector('[href="#Home"]').classList.add("active");
             });
 
-            // Sidebar link functionality
-            const sidebarLinks = {
-                "new-products-link": "new-products",
-                "our-products-link": "our-products",
-                "top-products-link": "top-products"
-            };
-
-            Object.keys(sidebarLinks).forEach(linkId => {
-                const link = document.getElementById(linkId);
-                link.addEventListener("click", function (e) {
-                    e.preventDefault();
-                    const sectionId = sidebarLinks[linkId];
-                    showSection(sectionId);
-                    navLinks.forEach(l => l.classList.remove("active"));
-                    document.querySelector('.nav-links a[href="#Home"]').classList.add("active");
-                });
-            });
-
-            // Initial state: Show Home
             showSection("home-container");
         });
     </script>
