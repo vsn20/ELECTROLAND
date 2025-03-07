@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Manager Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f5f6fa;
+    }
+
+    .logo:hover{
+      transform: scale(1.1);
+    }
+
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      background: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 50px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      font-size: 1.2rem;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .nav-left img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 50px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #2d3436;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: #0da8c792;
+    }
+
+    .nav-links a:active {
+      color: #6c5ce7;
+    }
+
+    .welcome-text {
+      font-size: 1.4rem;
+      color: #2d3436;
+      font-weight: 600;
+    }
+
+    .datetime {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .current-date,
+    .current-time {
+      font-size: 1rem;
+      color: #6c5ce7;
+      font-weight: bold;
+    }
+
+    .fun1, .fun2 {
+      font-size: 25px;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .fun2 {
+      font-size: 35px;
+    }
+
+    .fun1:hover, .fun2:hover, .profile-pic:hover {
+      transform: scale(1.1);
+    }
+
+    .profile-section {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .profile-popup {
+      display: none;
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background-color: #ffffff;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+      font-size: 0.9rem;
+    }
+
+    .profile-section:hover .profile-popup {
+      display: block;
+    }
+
+    .container {
+      margin-top: 100px;
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 25px;
+      padding: 0 50px;
+    }
+
+    .sidebar {
+      background: #ffffff;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      height: calc(100vh - 120px);
+      position: sticky;
+      top: 100px;
+    }
+
+    .sidebar h2 {
+      font-size: 1.5rem;
+      color: #2d3436;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #f1f2f6;
+    }
+
+    .features {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .feature-item {
+      padding: 14px;
+      border-radius: 10px;
+      text-decoration: none;
+      color: #2d3436;
+      transition: 0.3s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+      position: relative;
+      font-size: 1.2rem;
+    }
+
+    .feature-item:hover {
+      background: #6c5ce730;
+      box-shadow: -5px 0 0 #6c5ce7;
+      font-weight: bold;
+    }
+
+    .feature-item.active {
+      background: #6a5fbeb6;
+      color: #ffffff;
+      box-shadow: -5px 0 0 peachpuff;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-left">
+      <a href="startPage.html">
+        <img src="logo.jpg" alt="Logo" class="logo">
+      </a>
+      <span class="welcome-text">Welcome Sales Manager 👋</span>
+      <div class="datetime">
+        <div class="current-date" id="current-date"></div>
+        <div class="current-time" id="current-time"></div>
+      </div>
+    </div>
+    
+    <div class="nav-links">
+      <a href="#" class="fun1">👤<sup>➕</sup></a>
+      <a href="#" class="fun2">📧</a>
+      
+      <div class="profile-section">
+        <img src="logo.jpg" alt="Profile" class="profile-pic" style="width:40px;height:40px;border-radius:50%;">
+        <div class="profile-popup">sales.manager@example.com</div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="sidebar">
+      <h2>Dashboard Menu</h2>
+      <div class="features">
+        <a href="#" class="feature-item" onclick="setActive(this)">🛒 New Sale</a>
+        <a href="#" class="feature-item" onclick="setActive(this)">📦 Stocks</a>
+        <a href="#" class="feature-item" onclick="setActive(this)">📊 Sales Chart</a>
+        <a href="#" class="feature-item" onclick="setActive(this)">👥 Add Salesman</a>
+        <a href="#" class="feature-item" onclick="setActive(this)">📝 Order</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updateTime() {
+      const timeElement = document.getElementById('current-time');
+      const dateElement = document.getElementById('current-date');
+      const now = new Date();
+
+      timeElement.textContent = now.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+
+      dateElement.textContent = now.toLocaleDateString('en-US', {
+        weekday: 'long',
+        day: 'numeric'
+      });
+    }
+
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    function setActive(element) {
+      document.querySelectorAll('.feature-item').forEach(item => item.classList.remove('active'));
+      element.classList.add('active');
+    }
+  </script>
+
+</body>
+</html>
