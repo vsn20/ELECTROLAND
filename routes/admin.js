@@ -1,7 +1,6 @@
 const express = require("express");
 
 const router = express.Router();
-const { comapny_display, render_edit_company_form, update_company } = require("../controllers/company_display");
 
 router.get("/salesmanagers",(req,res)=>res.render("owner/sales_managers/salesmanagershome.ejs"));
 
@@ -13,6 +12,8 @@ router.get("/employees", (req, res) => {
     });
 });
 
+//admin-company
+const { comapny_display, render_edit_company_form, update_company } = require("../controllers/company_display");
 router.get("/company", comapny_display);
 router.get("/addcompanie", (req, res) => res.render("owner/company_feature/addcompanie", {
     activePage: 'employee',
@@ -20,5 +21,13 @@ router.get("/addcompanie", (req, res) => res.render("owner/company_feature/addco
 }));
 router.get("/company/edit/:cid", render_edit_company_form);
 router.post("/company/edit/:cid", update_company); // Changed to POST
+
+//admin-branches
+const { branches_display, render_add_branch_form, /*add_branch,*/ render_edit_branch_form, update_branch } = require("../controllers/admin_branches_display");
+
+router.get("/branches", branches_display);
+router.get("/branches/add", render_add_branch_form);
+router.get("/branches/edit/:bid", render_edit_branch_form);
+router.post("/branches/edit/:bid", update_branch);
 
 module.exports=router;
