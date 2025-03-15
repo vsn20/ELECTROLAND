@@ -30,4 +30,7 @@ router.get("/branches/add", render_add_branch_form);
 router.get("/branches/edit/:bid", render_edit_branch_form);
 router.post("/branches/edit/:bid", update_branch);
 
+//admin-customers
+const { customers_display} = require("../controllers/admin_customers_display");
+router.get("/customers", customers_display);
 module.exports=router;
