@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Branch - ElectroLand</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f5f6fa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      margin-top: 90px;
+      display: flex;
+      flex: 1;
+      gap: 25px;
+      padding: 0 40px;
+    }
+
+    .content-area {
+      background: #ffffff;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      flex: 1;
+    }
+
+    .content-area h1 {
+      color: #2d3436;
+      margin-bottom: 20px;
+    }
+
+    .form-section {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #e6e9f0;
+      border-radius: 5px;
+    }
+
+    .section-title {
+      color: #2d3436;
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .field-group > div {
+      flex: 1 1 30%; /* Three fields per row */
+      min-width: 250px;
+    }
+
+    .field-label {
+      display: block;
+      margin-bottom: 5px;
+      color: #2d3436;
+      font-weight: 500;
+    }
+
+    .field-input, .field-textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #e6e9f0;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    .field-textarea {
+      height: 100px;
+      resize: vertical;
+    }
+
+    .disabled-field {
+      background: #f0f0f0;
+      cursor: not-allowed;
+    }
+
+    .form-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: #2d3436;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .form-btn:hover {
+      background: #636e72;
+    }
+
+    /* Radio button styling */
+    .radio-group {
+      display: flex;
+      gap: 0;
+      align-items: center;
+    }
+
+    .radio-group label {
+      margin-bottom: 0;
+      font-weight: 500;
+      margin-right: 5px;
+    }
+
+    /* Error styling */
+    .error {
+      border-color: #e74c3c !important;
+      background-color: #ffe6e6 !important;
+    }
+
+    #error-message {
+      color: #e74c3c;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 1024px) {
+      .field-group > div {
+        flex: 1 1 45%; /* Two fields per row on medium screens */
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        padding: 0 20px;
+      }
+
+      .content-area {
+        min-height: auto;
+        padding: 15px;
+      }
+
+      .field-group > div {
+        flex: 1 1 100% !important; /* One field per row on small screens */
+      }
+
+      .form-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('../../partials/navbar') %>
+
+  <div class="container">
+    <%- include('../../partials/admin_sidebar') %>
+
+    <!-- Content Area -->
+    <div class="content-area" id="content">
+      <h1>Edit Company</h1>
+      <% if (company) { %>
+        <form action="/admin/company/edit/<%= company.cid %>" method="POST" onsubmit="return validateForm()">
+          <fieldset class="form-section">
+            <legend class="section-title">Company Information</legend>
+            <div class="field-group">
+              <div>
+                <label for="branch-id" class="field-label">Company ID</label>
+                <input type="text" id="branch-id" name="cid" value="<%= company.cid %>" class="field-input disabled-field" readonly>
+              </div>
+              <div>
+                <label for="branch-name" class="field-label">Company Name</label>
+                <input type="text" id="branch-name" name="cname" value="<%= company.cname %>" class="field-input" required>
+              </div>
+              <div>
+                <label for="manager-email" class="field-label">Company Email</label>
+                <input type="email" id="manager-email" name="email" value="<%= company.email %>" class="field-input" required>
+              </div>
+              <div>
+                <label for="manager-phone" class="field-label">Company Phone</label>
+                <input type="tel" id="manager-phone" name="phone" value="<%= company.phone %>" class="field-input" pattern="[0-9]{10}" required>
+              </div>
+              <div>
+                <label for="address" class="field-label">Address</label>
+                <textarea id="address" name="address" class="field-textarea" required><%= company.address %></textarea>
+              </div>
+              <div>
+                <label class="field-label">Active</label>
+                <div class="radio-group">
+                  <input type="radio" id="active" name="active" value="active" <%= company.active === 'active' ? 'checked' : '' %> required>
+                  <label for="active">Active</label>
+                  <input type="radio" id="inactive" name="active" value="inactive" <%= company.active === 'inactive' ? 'checked' : '' %>>
+                  <label for="inactive">Inactive</label>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <div id="error-message"></div>
+          <button type="submit" class="form-btn">Update Company</button>
+        </form>
+      <% } else { %>
+        <p>Company not found.</p>
+      <% } %>
+    </div>
+  </div>
+
+  <%- include('../../partials/footer') %>
+
+  <script>
+    function validateForm() {
+      const phoneInput = document.getElementById('manager-phone');
+      const errorMessage = document.getElementById('error-message');
+      const phonePattern = /^[0-9]{10}$/;
+
+      phoneInput.classList.remove('error');
+      errorMessage.textContent = '';
+
+      if (!phonePattern.test(phoneInput.value)) {
+        phoneInput.classList.add('error');
+        errorMessage.textContent = 'Please enter a valid 10-digit phone number.';
+        return false;
+      }
+      return true;
+    }
+
+    // Real-time validation
+    const phoneInput = document.getElementById('manager-phone');
+    phoneInput.addEventListener('input', function () {
+      const errorMessage = document.getElementById('error-message');
+      const phonePattern = /^[0-9]{10}$/;
+      if (this.value.length > 10) {
+        this.value = this.value.slice(0, 10); // Limit to 10 digits
+      }
+      if (this.value && !phonePattern.test(this.value)) {
+        this.classList.add('error');
+        errorMessage.textContent = 'Please enter exactly 10 digits.';
+      } else {
+        this.classList.remove('error');
+        errorMessage.textContent = '';
+      }
+    });
+  </script>
+</body>
+</html>
