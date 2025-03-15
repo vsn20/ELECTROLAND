@@ -1,151 +1,109 @@
-/* Common Base Styles */
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: linear-gradient(120deg, #f6f9fc, #e9ecef);
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-}
-
-/* Common Container */
-.form-wrapper {
-    background: #ffffff;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1),
-                0 0 0 1px rgba(0, 0, 0, 0.05);
-    width: 100%;
-    max-width: 900px;
-}
-
-/* Common Heading */
-.form-title {
+/* Form Container */
+.form-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    height: calc(100vh - 140px);
+    overflow-y: auto;
+  }
+  
+  /* Form Title */
+  .form-container h2 {
+    font-size: 24px;
+    color: #2d3436;
+    margin-bottom: 20px;
     text-align: center;
-    margin-bottom: 2rem;
-    color: #2d3748;
-    font-size: 1.8rem;
-    font-weight: 700;
-}
-
-/* Common Section */
-.form-section {
-    border: 1px solid #e2e8f0;
+  }
+  
+  /* Form Element */
+  .form-container form {
+    display: block;
+  }
+  
+  /* Fieldset (Sections) */
+  .form-container fieldset {
+    margin-bottom: 25px;
+    border: 1px solid #ddd;
     border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-
-.section-title {
-    color: #2d3748;
-    font-weight: 600;
-    font-size: 1.2rem;
-    padding: 0 0.5rem;
-}
-
-/* Common Flex Layout */
-.flex-container {
+    padding: 15px;
+  }
+  
+  /* Legend (Section Title) */
+  .form-container legend {
+    font-size: 18px;
+    color: #2d3436;
+    padding: 0 10px;
+  }
+  
+  /* Flex Container for Fields */
+  .form-container .field-group {
     display: flex;
     flex-wrap: wrap;
-    gap: 1.5rem;
-    justify-content: space-between;
-}
-
-.col-3 {
-    flex: 0 0 calc(33.33% - 1rem);
-    margin-bottom: 1.25rem;
-}
-
-/* Common Form Elements */
-.field-label {
+    gap: 20px;
+  }
+  
+  /* Individual Field Containers */
+  .form-container .field-group > div {
+    flex: 1 1 30%;
+    min-width: 220px;
+  }
+  
+  /* Labels */
+  .form-container label {
     display: block;
-    margin-bottom: 0.5rem;
-    color: #4a5568;
-    font-weight: 600;
-    font-size: 1rem;
-}
-
-.field-input,
-.field-select,
-.field-textarea {
+    font-size: 14px;
+    color: #2d3436;
+    margin-bottom: 5px;
+  }
+  
+  /* Inputs, Selects, and Textarea */
+  .form-container input,
+  .form-container select,
+  .form-container textarea {
     width: 100%;
-    padding: 0.85rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    font-size: 1rem;
-    box-sizing: border-box;
-    background: #f7fafc;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.field-input:focus,
-.field-select:focus,
-.field-textarea:focus {
-    outline: none;
-    border-color: #3182ce;
-    box-shadow: 0 0 6px rgba(49, 130, 206, 0.3);
-}
-
-.field-input.error,
-.field-select.error,
-.field-textarea.error {
-    border-color: #f56565;
-}
-
-.field-textarea {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+  
+  /* Textarea Specific */
+  .form-container textarea {
+    min-height: 80px;
     resize: vertical;
-    min-height: 90px;
-}
-
-/* Common Message */
-.form-message {
-    width: 100%;
-    margin: 1rem 0;
-    font-size: 0.9rem;
+  }
+  
+  /* Error Message */
+  .form-container #error-message {
+    color: #e74c3c;
+    font-size: 14px;
+    margin-top: 10px;
     text-align: center;
-    color: #f56565;
-    font-weight: 500;
-}
-
-/* Common Button */
-.form-btn {
-    width: 100%;
-    padding: 1rem;
-    background: linear-gradient(135deg, #34495E, #2C3E50);
-    color: white;
+  }
+  
+  /* Submit Button */
+  .form-container button {
+    display: block;
+    width: 150px;
+    margin: 20px auto 0;
+    padding: 12px;
+    background-color: #2d3436;
+    color: #fff;
     border: none;
-    border-radius: 6px;
-    font-size: 1.1rem;
-    font-weight: 600;
+    border-radius: 5px;
+    font-size: 16px;
     cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.form-btn:hover {
-    background: linear-gradient(to right, rgb(66, 32, 70), rgb(30, 26, 71), rgb(77, 38, 44), #155217, #2E8B57);
-}
-
-.form-btn:active {
-    background: linear-gradient(to left, rgb(66, 32, 70), rgb(30, 26, 71), rgb(77, 38, 44), #155217, #2E8B57);
-}
-
-/* Common Link */
-.form-link {
+  }
+  
+  /* Forgot Password Link Container */
+  .form-container .forgot-password {
     text-align: center;
-    margin-top: 1.5rem;
-    font-size: 0.9rem;
-    width: 100%;
-}
-
-.form-link a {
-    color: #3182ce;
+    margin-top: 15px;
+  }
+  
+  /* Forgot Password Link */
+  .form-container .forgot-password a {
+    color: #2d3436;
     text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
-
-.form-link a:hover {
-    color: #2b6cb0;
-    text-decoration: underline;
-}
+    font-size: 14px;
+  }
