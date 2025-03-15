@@ -4,11 +4,52 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Add Branch - ElectroLand</title>
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/styles.css"> <!-- Link to your common CSS -->
   <style>
-    /* Page-specific styles */
+    /* Minimal additional CSS for specific adjustments */
+    .form-container {
+      height: auto; /* Override height to fit content */
+      padding: 25px; /* Match content-area padding */
+      border-radius: 15px; /* Match content-area border-radius */
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* Match content-area shadow */
+    }
+
+    /* Ensure h1 matches your design */
     .form-container h1 {
+      font-size: 24px; /* Match h2 in styles.css */
+      color: #2d3436;
+      margin-bottom: 20px;
       text-align: center;
+    }
+
+    /* Structural CSS for layout */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f5f6fa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      margin-top: 90px;
+      display: flex;
+      flex: 1;
+      gap: 25px;
+      padding: 0 40px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        padding: 0 20px;
+      }
     }
   </style>
 </head>
@@ -22,21 +63,21 @@
     <div class="content-area form-container" id="content">
       <h1>Add Branch</h1>
       <form id="branch-details-form" action="/admin/branches/add" method="POST">
-        <fieldset class="form-section">
-          <legend class="section-title">Branch Information</legend>
+        <fieldset>
+          <legend>Branch Information</legend>
           <div class="field-group">
             <div>
-              <label for="branch-name" class="field-label">Branch Name</label>
-              <input type="text" id="branch-name" name="b_name" class="field-input" required placeholder="Enter branch name">
+              <label for="branch-name">Branch Name</label>
+              <input type="text" id="branch-name" name="b_name" required placeholder="Enter branch name">
             </div>
             <div>
-              <label for="address" class="field-label">Address</label>
-              <textarea id="address" name="address" class="field-textarea" required placeholder="Enter branch address"></textarea>
+              <label for="address">Address</label>
+              <textarea id="address" name="address" required placeholder="Enter branch address"></textarea>
             </div>
           </div>
         </fieldset>
         <div id="error-message"></div>
-        <button type="submit" class="form-btn">Submit Branch</button>
+        <button type="submit">Submit Branch</button>
       </form>
     </div>
   </div>
@@ -48,7 +89,8 @@
     const errorMessage = document.getElementById('error-message');
 
     form.addEventListener('submit', function(event) {
-      errorMessage.textContent = '';
+      errorMessage.textContent = ''; // Clear previous errors
+      // Add any client-side validation if needed
     });
   </script>
 </body>
