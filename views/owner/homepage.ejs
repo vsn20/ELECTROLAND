@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - ElectroLand</title>
+  <style>
+    /* Structural CSS only for homepage */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f5f6fa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      margin-top: 90px; /* Matches navbar height assumption */
+      display: flex; /* Flex for side-by-side layout */
+      flex: 1; /* Ensures container grows to push footer down */
+      gap: 25px;
+      padding: 0 40px;
+    }
+
+    .content-area {
+      background: #ffffff;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      flex: 1; /* Takes remaining space */
+    }
+
+    .content-area h1 {
+      color: #2d3436;
+      margin-bottom: 20px;
+    }
+
+    .content-area p {
+      color: #636e72;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        padding: 0 20px;
+      }
+
+      .content-area {
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+
+  <div class="container">
+    <%- include('../partials/admin_sidebar') %>
+
+    <!-- Content Area -->
+    <div class="content-area" id="content">
+      <h1>Admin Dashboard</h1>
+      <p>Welcome to the ElectroLand Admin Dashboard. Use the sidebar to navigate to different management sections.</p>
+    </div>
+  </div><!-- Close the .container div -->
+
+  <%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Selling Products - Electroland</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            position: relative;
+            scroll-behavior: smooth;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            text-align: center;
+            padding: 100px 40px 40px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 100px auto 0;
+            display: none;
+        }
+        .container.active {
+            display: block;
+        }
+        .hero-image {
+            position: relative;
+            width: 80%;
+            height: 500px;
+            margin: auto;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            background-color: white;
+        }
+        .hero-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+            border-radius: 15px;
+        }
+        .hero-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 2.5em;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+            text-align: center;
+        }
+        .content-section {
+            display: none;
+            margin: 100px auto 0;
+            max-width: 800px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .slider {
+            position: relative;
+            width: 80%;
+            height: 500px;
+            margin: auto;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+        .slider:hover {
+            transform: scale(1.02);
+        }
+        .slider img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 15px;
+            transition: opacity 1s ease-in-out;
+            display: block;
+        }
+        .product-info {
+            padding: 15px;
+            font-size: 1.2em;
+            color: white;
+            font-weight: bold;
+            background: linear-gradient(135deg, #2E8B57, #155217);
+            border-radius: 10px;
+            width: 90%;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .left-sidebar-container {
+            width: 250px;
+            background: linear-gradient(135deg, #34495E, #2C3E50);
+            height: auto;
+            padding: 20px;
+            position: fixed;
+            top: 50%;
+            left: -220px;
+            transform: translateY(-50%);
+            box-sizing: border-box;
+            border-radius: 0 15px 15px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: left 0.5s ease;
+            z-index: 999;
+        }
+        .left-sidebar-container:hover {
+            left: 0;
+            transition-delay: 0s !important;
+        }
+        .left-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+        }
+        .left-sidebar a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            padding: 10px;
+            background: linear-gradient(135deg, #5D6D7E, #4A5A6A);
+            text-align: center;
+            border-radius: 5px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: block;
+            margin: 0 10px;
+        }
+        .left-sidebar a:hover {
+            transform: translateX(10px);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        #Home {
+            display: block; /* Always visible since it’s the only section */
+        }
+        .slideshow-container {
+            position: relative;
+            width: 100%;
+            max-width: 1450px;
+            height: 700px;
+            margin: 100px auto 0;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        .slideshow {
+            display: flex;
+            width: 500%;
+            height: 100%;
+            animation: slideRight 25s infinite;
+        }
+        .slide {
+            position: relative;
+            width: 20%;
+            height: 100%;
+        }
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+        .slide-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #FFD700;
+            font-size: 2em;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+            text-align: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            animation: slideInFromLeft 1s ease-out forwards;
+            animation-delay: 0.5s;
+        }
+        @keyframes slideRight {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(0); }
+            20.01% { transform: translateX(-20%); }
+            40% { transform: translateX(-20%); }
+            40.01% { transform: translateX(-40%); }
+            60% { transform: translateX(-40%); }
+            60.01% { transform: translateX(-60%); }
+            80% { transform: translateX(-60%); }
+            80.01% { transform: translateX(-80%); }
+            100% { transform: translateX(-80%); }
+            100.01% { transform: translateX(0); }
+        }
+        @keyframes slideInFromLeft {
+            0% {
+                left: -100%;
+                opacity: 0;
+            }
+            100% {
+                left: 50%;
+                opacity: 1;
+            }
+        }
+        .image-description-container {
+            max-width: 1450px;
+            margin: 40px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .image-description-container img {
+            width: 600px;
+            height: auto;
+            border-radius: 10px;
+            float: left;
+            margin-right: 20px;
+        }
+        .description {
+            flex: 1;
+            font-size: 1.2em;
+            color: #555;
+            line-height: 1.6;
+        }
+        .description h3 {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .hero-image-container {
+            position: relative;
+            width: 100%;
+            max-width: 1450px;
+            height: 500px;
+            margin: 40px auto 0;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        .hero-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+            border-radius: 15px;
+        }
+        .hero-overlay-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+            animation: slideInFromLeft 1s ease-out forwards;
+        }
+        .hero-overlay-text h2 {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #FFD700;
+        }
+        .hero-overlay-text p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: white;
+        }
+        .hero-description {
+            max-width: 1450px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            text-align: left;
+            overflow: hidden;
+        }
+        .hero-description h3 {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .hero-description p {
+            font-size: 1.2em;
+            color: #555;
+            line-height: 1.6;
+        }
+        .hero-description img {
+            width: 350px;
+            height: auto;
+            border-radius: 10px;
+            float: right;
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 768px) {
+            .left-sidebar-container {
+                display: none;
+            }
+            .container {
+                margin-left: 0;
+                width: 90%;
+            }
+            .hero-image,
+            .slider,
+            .slideshow-container,
+            .hero-image-container,
+            .hero-description {
+                width: 90%;
+            }
+            .image-description-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            .image-description-container img {
+                float: none;
+                margin: 0 auto 20px;
+                width: 100%;
+                max-width: 300px;
+            }
+            .description {
+                text-align: center;
+            }
+            .hero-overlay-text h2 {
+                font-size: 2em;
+            }
+            .hero-overlay-text p {
+                font-size: 1em;
+            }
+            .hero-description {
+                text-align: center;
+            }
+            .hero-description img {
+                float: none;
+                margin: 20px auto 0;
+                width: 100%;
+                max-width: 300px;
+            }
+            .slide-text {
+                font-size: 1.5em;
+            }
+        }
+        @media (max-width: 450px) {
+            .slideshow-container {
+                height: 400px;
+                margin: 80px auto 0;
+            }
+            .slide-text {
+                font-size: 1.2em;
+                padding: 8px;
+            }
+            .image-description-container {
+                padding: 15px;
+                margin: 20px auto;
+            }
+            .image-description-container img {
+                max-width: 200px;
+            }
+            .description h3 {
+                font-size: 1.3em;
+            }
+            .description p {
+                font-size: 1em;
+            }
+            .hero-image-container {
+                height: 300px;
+                margin: 20px auto 0;
+            }
+            .hero-overlay-text h2 {
+                font-size: 1.8em;
+            }
+            .hero-overlay-text p {
+                font-size: 0.9em;
+            }
+            .hero-description {
+                padding: 15px;
+                margin: 15px auto;
+            }
+            .hero-description h3 {
+                font-size: 1.3em;
+            }
+            .hero-description p {
+                font-size: 1em;
+            }
+            .hero-description img {
+                max-width: 200px;
+                margin: 15px auto 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('partials/navbar') %>
+    <section id="Home">
+        <div class="left-sidebar-container">
+            <div class="left-sidebar">
+                <a href="/newproducts" id="new-products-link">New Products</a>
+                <a href="/ourproducts" id="our-products-link">Our Products</a>
+                <a href="/topproducts" id="top-products-link">Top Products</a>
+            </div>
+        </div>
+        <div class="slideshow-container">
+            <div class="slideshow">
+                <div class="slide">
+                    <img src="" alt="Slide 1">
+                    <div class="slide-text">Welcome to Electroland</div>
+                </div>
+                <div class="slide">
+                    <img src="slide2img.webp" alt="Slide 2">
+                    <div class="slide-text">Discover Top Appliances</div>
+                </div>
+                <div class="slide">
+                    <img src="hands.jpg" alt="Slide 3">
+                    <div class="slide-text">Your Stocks In Our Hands</div>
+                </div>
+                <div class="slide">
+                    <img src="slide4img.jpg" alt="Slide 4">
+                    <div class="slide-text">Explore Our Latest Offers</div>
+                </div>
+                <div class="slide">
+                    <img src="/shopsmart.jpg" alt="Slide 5">
+                    <div class="slide-text">Shop Smart with Electroland</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="image-description-container">
+            <img src="/shopsmart.jpg" alt="Featured Product">
+            <div class="description">
+                <h3>Discover Our Top Appliances</h3>
+                <p>At Electroland, we bring you the best in home appliances, designed to make your life easier and more efficient. From state-of-the-art kitchen gadgets to innovative home solutions, our products are built with quality and durability in mind. Explore our wide range of offerings and find the perfect appliance to suit your needs. Shop now and experience the Electroland difference!. Our products are crafted with innovation, quality, and durability in mind, ensuring that every purchase delivers exceptional performance and long-lasting value.</p>
+            </div>
+        </div>
+
+        <div class="hero-image-container">
+            <img src="https://cdn.pixabay.com/photo/2016/11/18/17/46/house-1836070_1280.jpg" alt="Hero Image">
+            <div class="hero-overlay-text">
+                <h2>Transform Your Home</h2>
+                <p>Upgrade your living space with our premium appliances and enjoy unmatched quality and style. Visit us today!</p>
+            </div>
+        </div>
+
+        <div class="hero-description">
+            <img src="OurShop.jpeg" alt="Floating Image">
+            <h3>Elevate Your Lifestyle</h3>
+            <p>Transforming your home starts with choosing the right appliances. At Electroland, we offer a curated selection of products that blend functionality with modern design. Whether you're upgrading your kitchen, laundry, or living spaces, our appliances are engineered to deliver top performance and lasting value. Discover how Electroland can help you create a home that's both beautiful and efficient.</p>
+        </div>
+    </section>
+    <%- include('partials/footer') %>
+
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Slideshow text animation reset
+            const slides = document.querySelectorAll(".slide");
+            let currentSlide = 0;
+
+            function resetTextAnimation() {
+                const currentText = slides[currentSlide].querySelector(".slide-text");
+                currentText.style.animation = "none"; // Reset animation
+                void currentText.offsetWidth; // Trigger reflow
+                currentText.style.animation = "slideInFromLeft 1s ease-out forwards"; // Reapply animation
+            }
+
+            setInterval(() => {
+                currentSlide = (currentSlide + 1) % slides.length;
+                resetTextAnimation();
+            }, 5000);
+
+            resetTextAnimation();
+        });
+    </script>
+</body>
+</html>

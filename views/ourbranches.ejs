@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Branches - ElectroLand</title>
+  <style>
+    /* CSS stays here for now - clean and grouped */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f6fa;
+      padding: 20px;
+    }
+    h1 {
+      color: #2d3436;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    th, td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #e6e9f0;
+    }
+    th {
+      background: #333333;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background: #f8f9fd;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Our Branches</h1>
+
+  <!-- Table to display branch data -->
+  <table>
+    <thead>
+      <tr>
+        <th>Branch ID</th>
+        <th>Branch Name</th>
+        <th>Manager Name</th>
+        <th>Manager Email</th>
+        <th>Manager Phone</th>
+        <th>Address</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Loop through branches array -->
+      <% branches.forEach(branch => { %>
+        <tr>
+          <td><%= branch.bid %></td>
+          <td><%= branch.b_name %></td>
+          <td><%= branch.manager_name %></td>
+          <td><%= branch.manager_email %></td>
+          <td><%= branch.manager_ph_no %></td>
+          <td><%= branch.address %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</body>
+</html>
