@@ -47,8 +47,8 @@ router.get('/sales/:sales_id',salesdetaildisplay);
 const {profits_display} = require('../controllers/profits_display')
 router.get('/profits', profits_display);
 
-//inventory
-const {inventory_display}=require("../controllers/inventory_display");
-router.get("/stocks",inventory_display);
+//admin-salary
+const {salary_display}=require("../controllers/salaries_display");
+router.get("/salaries",salary_display);
 
 module.exports=router;
