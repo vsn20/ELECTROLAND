@@ -1,0 +1,260 @@
+<!-- views/owner/profits.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profits - ElectroLand</title>
+  <style>
+    /* Structural CSS (adapted from shared code) */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f5f6fa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      margin-top: 90px;
+      display: flex;
+      flex: 1;
+      gap: 25px;
+      padding: 0 20px;
+    }
+
+    .content-area {
+      background: #ffffff;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      flex: 1;
+      overflow-x: auto;
+    }
+
+    .content-area h2 {
+      color: #2d3436;
+      margin-bottom: 20px;
+      font-size: 1.5rem; /* Match shared code */
+      text-align: center;
+    }
+
+    /* Month Selector (retained from original) */
+    .content-area .month-selector {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .content-area .month-selector label {
+      font-size: 1.1em;
+      margin-right: 10px;
+      color: #636e72;
+    }
+
+    .content-area .month-selector select {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background: #f8f9fa;
+      color: #2d3436;
+      font-size: 1em;
+      cursor: pointer;
+      transition: border-color 0.3s;
+    }
+
+    .content-area .month-selector select:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+
+    /* Table styling (adapted from shared code) */
+    .table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      min-width: 600px;
+      border-collapse: collapse;
+      background: #ffffff;
+      border-radius: 10px;
+      border-spacing: 0;
+    }
+
+    thead {
+      background: #333333;
+    }
+
+    th {
+      color: white;
+      padding: 12px;
+      text-align: left;
+      font-size: 0.9rem;
+      border-bottom: 2px solid #ffffff;
+    }
+
+    td {
+      padding: 12px;
+      text-align: left;
+      font-size: 0.9rem;
+      border-bottom: 1px solid #e6e9f0;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:nth-child(even) {
+      background: #f8f9fd;
+    }
+
+    /* Message styling (retained from original) */
+    .content-area .message {
+      text-align: center;
+      color: #e74c3c;
+      font-size: 1.2em;
+      margin-top: 20px;
+    }
+
+    /* Responsive adjustments (adapted from shared code) */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        padding: 0 10px;
+      }
+
+      .content-area {
+        padding: 15px;
+      }
+
+      .content-area h2 {
+        font-size: 1.2rem;
+      }
+
+      table {
+        display: block;
+        min-width: 0;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tr {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 15px;
+        border: 1px solid #e6e9f0;
+        border-radius: 5px;
+        padding: 10px;
+        background: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      td {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        font-size: 0.85rem;
+        border-bottom: 1px dashed #e6e9f0;
+      }
+
+      td:last-child {
+        border-bottom: none;
+      }
+
+      td:before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #2d3436;
+        margin-right: 10px;
+        min-width: 100px;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      th, td {
+        padding: 10px;
+        font-size: 0.85rem;
+      }
+
+      .content-area h2 {
+        font-size: 1.3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+
+  <div class="container">
+    <%- include('../partials/admin_sidebar') %>
+
+    <!-- Content Area -->
+    <div class="content-area" id="content">
+      <h2><%= selectedMonth %> Profits</h2>
+
+      <!-- Month Selector -->
+      <div class="month-selector">
+        <label for="month-select">Select Month:</label>
+        <select id="month-select" onchange="updateMonth(this.value)">
+          <option value="December 2024" <%= selectedMonth === 'December 2024' ? 'selected' : '' %>>December 2024</option>
+          <option value="January 2025" <%= selectedMonth === 'January 2025' ? 'selected' : '' %>>January 2025</option>
+          <option value="February 2025" <%= selectedMonth === 'February 2025' ? 'selected' : '' %>>February 2025</option>
+          <option value="March 2025" <%= selectedMonth === 'March 2025' ? 'selected' : '' %>>March 2025</option>
+        </select>
+      </div>
+
+      <!-- Profits Table or Message -->
+      <% if (selectedMonth === 'February 2025') { %>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Branch ID</th>
+                <th>Branch Name</th>
+                <th>Profit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% profits.forEach(profit => { %>
+                <tr>
+                  <td data-label="Branch ID"><%= profit.branch_id %></td>
+                  <td data-label="Branch Name"><%= profit.branch_name %></td>
+                  <td data-label="Profit"><%= profit.profit.toLocaleString() %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <div class="message">
+          This feature is not added but will be in the future.
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <%- include('../partials/footer') %>
+
+  <script>
+    function updateMonth(selectedMonth) {
+      // Force a full page reload to avoid caching issues
+      window.location.href = `/admin/profits?month=${encodeURIComponent(selectedMonth)}&refresh=${new Date().getTime()}`;
+    }
+
+    // Ensure the dropdown reflects the current selected month on load
+    document.addEventListener('DOMContentLoaded', function() {
+      const select = document.getElementById('month-select');
+      select.value = '<%= selectedMonth %>';
+    });
+  </script>
+</body>
+</html>

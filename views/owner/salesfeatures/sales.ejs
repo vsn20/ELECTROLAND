@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales - ElectroLand</title>
+  <style>
+    /* General Styling */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f5f6fa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      margin-top: 90px;
+      display: flex;
+      flex: 1;
+      gap: 25px;
+      padding: 0 20px;
+    }
+
+    .content-area {
+      background: #ffffff;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      flex: 1;
+      overflow-x: auto;
+    }
+
+    /* Table Styling */
+    .table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      min-width: 600px;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: #ffffff;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: center;
+      font-size: 1rem;
+      border: 1px solid #eaeaea;
+      vertical-align: middle;
+    }
+
+    th {
+      background: #333;
+      color: white;
+    }
+
+    tr:nth-child(odd) {
+      background: #f8f9fd;
+    }
+
+    tr:nth-child(even) {
+      background: #eef2f7;
+    }
+
+    td {
+      background: inherit;
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    td:hover {
+      background-color: #f0f4f8;
+      cursor: pointer;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .container {
+        margin-top: 60px; /* Slightly reduced for mobile */
+        flex-direction: column; /* Stack sidebar and content */
+        padding: 0 10px;
+        gap: 15px;
+      }
+
+      .content-area {
+        padding: 15px;
+      }
+
+      thead {
+        display: none; /* Hide header for mobile */
+      }
+
+      tr {
+        display: block; /* Switch to block for card-like layout */
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        padding: 10px;
+        background: #fff;
+      }
+
+      td {
+        display: flex;
+        justify-content: space-between; /* Label on left, value on right */
+        align-items: center;
+        padding: 8px;
+        border: 1px solid #e0e0e0;
+        border-radius: 5px;
+        background: #f8f9fd;
+        margin: 5px 0;
+        text-align: left; /* Left-align for readability */
+      }
+
+      td:before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #2d3436;
+        min-width: 100px; /* Fixed width for consistency */
+      }
+
+      tr:hover {
+        background-color: #f0f4f8;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .container {
+        gap: 20px;
+        padding: 0 15px;
+      }
+
+      th, td {
+        padding: 10px;
+        font-size: 0.95rem; /* Slight reduction for tablets */
+      }
+
+      .content-area {
+        padding: 15px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        margin-top: 50px;
+        padding: 0 5px;
+      }
+
+      th, td {
+        font-size: 0.9rem; /* Smaller text for tiny screens */
+      }
+
+      td {
+        padding: 6px;
+      }
+
+      td:before {
+        min-width: 80px; /* Adjusted for small screens */
+      }
+
+      .content-area {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('../../partials/navbar') %>
+
+  <div class="container">
+    <%- include('../../partials/admin_sidebar') %>
+
+    <!-- Content Area -->
+    <div class="content-area" id="content">
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Sale ID</th>
+              <th>Branch Name</th>
+              <th>Price</th>
+              <th>Profit</th>
+              <th>Sale Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% salers.forEach(sale => { %>
+              <tr onclick="window.location='/admin/sales/<%= sale.sales_id %>'">
+                <td data-label="Sale ID"><%= sale.sales_id %></td>
+                <td data-label="Branch Name"><%= sale.branch_name %></td>
+                <td data-label="Price"><%= sale.amount %></td>
+                <td data-label="Profit"><%= sale.profit_or_loss %></td>
+                <td data-label="Sale Date"><%= sale.sales_date %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../../partials/footer') %>
+</body>
+</html>

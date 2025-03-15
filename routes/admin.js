@@ -38,4 +38,12 @@ router.get("/customers", customers_display);
 const {inventory_display}=require("../controllers/inventory_display");
 router.get("/stocks",inventory_display);
 
+//admin-sales
+const { sales_display,salesdetaildisplay } = require('../controllers/sales_display');
+router.get('/sales',sales_display);
+router.get('/sales/:sales_id',salesdetaildisplay);
+
+//admin-profits
+const {profits_display} = require('../controllers/profits_display')
+router.get('/profits', profits_display);
 module.exports=router;
