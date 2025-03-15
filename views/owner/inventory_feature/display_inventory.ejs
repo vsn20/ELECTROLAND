@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - ElectroLand</title>
+  <style>
+    /* Structural CSS */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f5f6fa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      margin-top: 90px;
+      display: flex;
+      flex: 1;
+      gap: 15px; /* Reduced gap for better mobile fit */
+      padding: 0 15px; /* Adjusted padding */
+    }
+
+    .content-area {
+      background: #ffffff;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Lighter shadow */
+      flex: 1;
+      overflow-x: auto;
+    }
+
+    .content-area h1 {
+      color: #2d3436;
+      margin-bottom: 15px;
+      font-size: 1.5rem;
+    }
+
+    /* Header container styling */
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap; /* Allow wrapping on small screens */
+    }
+
+    /* Add button styling */
+    .add-button {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #333333;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+      font-size: 0.9rem;
+      white-space: nowrap; /* Prevent text wrapping */
+    }
+
+    .add-button:hover {
+      background-color: #555555;
+    }
+
+    /* Table styling */
+    .table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      -ms-overflow-style: none; /* Hide scrollbar in IE/Edge */
+      scrollbar-width: none; /* Hide scrollbar in Firefox */
+    }
+
+    .table-wrapper::-webkit-scrollbar {
+      display: none; /* Hide scrollbar in Webkit browsers */
+    }
+
+    table {
+      width: 100%;
+      min-width: 700px; /* Increased min-width for more columns */
+      border-collapse: collapse;
+      background: #ffffff;
+      border-radius: 10px;
+      border-spacing: 0;
+    }
+
+    thead {
+      background: #333333;
+    }
+
+    th {
+      color: white;
+      padding: 12px;
+      text-align: left;
+      font-size: 0.9rem;
+      border-bottom: 2px solid #ffffff; /* White border to blend with next row */
+    }
+
+    td {
+      padding: 12px;
+      text-align: left;
+      font-size: 0.9rem;
+      border-bottom: 1px solid #e6e9f0;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:nth-child(even) {
+      background: #f8f9fd;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1024px) {
+      .container {
+        gap: 10px;
+        padding: 0 10px;
+      }
+
+      .content-area {
+        padding: 15px;
+      }
+
+      .content-area h1 {
+        font-size: 1.3rem;
+      }
+
+      th, td {
+        padding: 10px;
+        font-size: 0.85rem;
+      }
+
+      .header-container {
+        gap: 10px;
+      }
+
+      .add-button {
+        padding: 8px 15px;
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        padding: 0 5px;
+      }
+
+      .content-area {
+        padding: 10px;
+        border-radius: 8px;
+      }
+
+      .content-area h1 {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+      }
+
+      .header-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .add-button {
+        margin-top: 5px;
+        width: 100%;
+        text-align: center;
+        padding: 8px;
+        font-size: 0.8rem;
+      }
+
+      table {
+        display: block;
+        min-width: 0;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tr {
+        display: grid;
+        grid-template-columns: 1fr 2fr; /* Label and value layout */
+        margin-bottom: 10px;
+        border: 1px solid #e6e9f0;
+        border-radius: 5px;
+        padding: 8px;
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      td {
+        padding: 5px 0;
+        font-size: 0.8rem;
+        border-bottom: none;
+        display: contents; /* Allow grid to handle layout */
+      }
+
+      td:before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #2d3436;
+        margin-right: 5px;
+        white-space: nowrap;
+      }
+
+      tr:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .content-area h1 {
+        font-size: 1rem;
+      }
+
+      th, td {
+        font-size: 0.75rem;
+      }
+
+      tr {
+        padding: 6px;
+      }
+
+      td:before {
+        min-width: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('../../partials/navbar') %>
+
+  <div class="container">
+    <%- include('../../partials/admin_sidebar') %>
+    
+    <!-- Content Area -->
+    <div class="content-area" id="content">
+      <div class="header-container">
+        <h1>Inventory</h1>
+        <a href="/admin/addcompanie" class="add-button">add-company</a>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Branch ID</th>
+              <th>Branch Name</th>
+              <th>Product ID</th>
+              <th>Product Name</th>
+              <th>Company Name</th>
+              <th>Model No</th>
+              <th>Quantity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% stocks.forEach(s => { %>
+              <tr>
+                <td data-label="Branch ID"><%= s.bid %></td>
+                <td data-label="Branch Name"><%= s.bname %></td>
+                <td data-label="Product ID"><%= s.pid %></td>
+                <td data-label="Product Name"><%= s.pname %></td>
+                <td data-label="Company Name"><%= s.cname %></td>
+                <td data-label="Model No"><%= s.modelno %></td>
+                <td data-label="Quantity"><%= s.quantity %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../../partials/footer') %>
+
+  <script>
+    
+  </script>
+</body>
+</html>

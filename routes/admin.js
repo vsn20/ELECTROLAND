@@ -30,4 +30,7 @@ router.get("/branches/add", render_add_branch_form);
 router.get("/branches/edit/:bid", render_edit_branch_form);
 router.post("/branches/edit/:bid", update_branch);
 
+//inventory
+const {inventory_display}=require("../controllers/inventory_display");
+router.get("/stocks",inventory_display);
 module.exports=router;
