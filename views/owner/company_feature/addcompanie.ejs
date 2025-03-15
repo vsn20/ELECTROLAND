@@ -6,78 +6,23 @@
   <title>Admin Dashboard - ElectroLand</title>
   <link rel="stylesheet" href="/styles.css">
   <style>
-    /* Structural CSS only for homepage */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Page-specific styles */
+    .form-container h2 {
+      text-align: center;
     }
 
-    body {
-      background: #f5f6fa;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+    .forgot-password {
+      margin-top: 1em; /* 16px / 16px = 1em */
+      text-align: center;
     }
 
-    .container {
-      margin-top: 90px;
-      display: flex;
-      flex: 1;
-      gap: 25px;
-      padding: 0 40px;
-    }
-
-    .content-area {
-      background: #ffffff;
-      border-radius: 15px;
-      padding: 25px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      flex: 1;
-    }
-
-    .content-area h1 {
+    .forgot-password a {
       color: #2d3436;
-      margin-bottom: 20px;
+      text-decoration: none;
     }
 
-    .content-area p {
+    .forgot-password a:hover {
       color: #636e72;
-      line-height: 1.6;
-    }
-
-    /* Additional form-specific styles */
-    .radio-group {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-    }
-
-    .radio-group label {
-      margin-bottom: 0;
-      font-weight: 500;
-    }
-
-    /* Error styling for form validation */
-    .error {
-      border-color: #e74c3c !important;
-      background-color: #ffe6e6 !important;
-    }
-
-    @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-        padding: 0 20px;
-      }
-
-      .content-area {
-        min-height: auto;
-      }
-
-      .field-group > div {
-        flex: 1 1 100% !important; /* Stack fields on smaller screens */
-      }
     }
   </style>
 </head>
@@ -92,27 +37,27 @@
       <div class="form-container">
         <h2>Company Details</h2>
         <form id="company-details-form" action="/submit-company" method="POST" class="form-container">
-          <fieldset>
-            <legend>Company Information</legend>
+          <fieldset class="form-section">
+            <legend class="section-title">Company Information</legend>
             <div class="field-group">
               <div>
-                <label for="company-name">Company Name</label>
-                <input type="text" id="company-name" name="company-name" required placeholder="Enter company name">
+                <label for="company-name" class="field-label">Company Name</label>
+                <input type="text" id="company-name" name="company-name" class="field-input" required placeholder="Enter company name">
               </div>
               <div>
-                <label for="email">Comapny Email</label>
-                <input type="email" id="email" name="email" required placeholder="Enter email">
+                <label for="email" class="field-label">Company Email</label>
+                <input type="email" id="email" name="email" class="field-input" required placeholder="Enter email">
               </div>
               <div>
-                <label for="phone">Company Phone</label>
-                <input type="tel" id="phone" name="phone" required placeholder="Enter phone number" pattern="[0-9]{10}">
+                <label for="phone" class="field-label">Company Phone</label>
+                <input type="tel" id="phone" name="phone" class="field-input" required placeholder="Enter phone number" pattern="[0-9]{10}">
               </div>
               <div>
-                <label for="address">Comapny Address</label>
-                <textarea id="address" name="address" required placeholder="Enter company address"></textarea>
+                <label for="address" class="field-label">Company Address</label>
+                <textarea id="address" name="address" class="field-textarea" required placeholder="Enter company address"></textarea>
               </div>
               <div>
-                <label>Active</label>
+                <label class="field-label">Active</label>
                 <div class="radio-group">
                   <input type="radio" id="in-stock" name="active" value="active" required>
                   <label for="in-stock">Active</label>
@@ -124,7 +69,7 @@
           </fieldset>
 
           <div id="error-message"></div>
-          <button type="submit">Submit Company</button>
+          <button type="submit" class="form-btn">Submit Company</button>
         </form>
         <div class="forgot-password">
           <a href="/companies">Back to Companies</a>

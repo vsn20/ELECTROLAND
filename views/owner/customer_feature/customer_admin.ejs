@@ -4,183 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard - ElectroLand</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    body {
-      background: #f5f6fa;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .container {
-      margin-top: 90px;
-      display: flex;
-      flex: 1;
-      gap: 25px;
-      padding: 0 40px;
-    }
-
-    .content-area {
-      background: #ffffff;
-      border-radius: 15px;
-      padding: 25px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      flex: 1;
-    }
-
-    .content-area h1 {
-      color: #2d3436;
-      margin-bottom: 20px;
-    }
-
-    .header-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .add-btn {
-      padding: 10px 20px;
-      background: #2d3436;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    .add-btn:hover {
-      background: #636e72;
-    }
-
-    .clickable-btn {
-      background: none;
-      border: none;
-      color: #2d3436;
-      text-decoration: none;
-      cursor: pointer;
-      padding: 0;
-      font-size: inherit;
-      text-align: left;
-    }
-
-    .clickable-btn:hover {
-      color: #636e72;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    }
-
-    th, td {
-      padding: 15px;
-      text-align: left;
-      border-bottom: 1px solid #e6e9f0;
-    }
-
-    th {
-      background: #333333;
-      color: white;
-    }
-
-    tr:nth-child(even) {
-      background: #f8f9fd;
-    }
-
-    @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-        padding: 0 20px;
-      }
-
-      .content-area {
-        padding: 15px;
-      }
-
-      .header-container {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .content-area h1 {
-        font-size: 1.5rem;
-      }
-
-      .add-btn {
-        margin-top: 10px;
-        padding: 8px 15px;
-        font-size: 0.9rem;
-      }
-
-      table {
-        display: block;
-        overflow-x: auto;
-      }
-
-      thead, tbody, tr, th, td {
-        display: block;
-        width: 100%;
-      }
-
-      th, td {
-        padding: 10px;
-        font-size: 0.9rem;
-      }
-
-      th {
-        text-align: center;
-      }
-
-      td {
-        border-bottom: none;
-        padding-left: 50%;
-        position: relative;
-      }
-
-      td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: 10px;
-        width: 45%;
-        padding-right: 10px;
-        font-weight: bold;
-        text-align: left;
-      }
-
-      .clickable-btn {
-        width: 100%;
-        text-align: left;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    <%- include('../../partials/navbar') %>
+  <%- include('../../partials/navbar') %>
 
   <div class="container">
     <%- include('../../partials/admin_sidebar') %>
 
     <!-- Content Area -->
     <div class="content-area" id="content">
-        <div class="header-container">
-          <h1>Our Customers</h1>
-          <!-- Removed the Add Customer button -->
-        </div>
+      <div class="header-container">
+        <h1>Our Customers</h1>
+      </div>
 
-        <!-- Table to display customer data -->
+      <!-- Table to display customer data -->
+      <div class="table-wrapper">
         <table>
           <thead>
             <tr>
@@ -203,9 +42,9 @@
             <% }) %>
           </tbody>
         </table>
+      </div>
     </div>
   </div>
   <%- include('../../partials/footer') %>
-  <!-- Removed the script since buttons are no longer clickable -->
 </body>
 </html>
