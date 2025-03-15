@@ -34,3 +34,9 @@ router.post("/branches/edit/:bid", update_branch);
 const { customers_display} = require("../controllers/admin_customers_display");
 router.get("/customers", customers_display);
 module.exports=router;
+
+//admin-inventory
+
+//inventory
+const {inventory_display}=require("../controllers/inventory_display");
+router.get("/stocks",inventory_display);
