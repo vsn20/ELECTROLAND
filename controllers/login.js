@@ -21,7 +21,8 @@ async function handlelogin(req, res) {
         });
     } else if (result.type === "salesmanager") {
         return res.render("salesmanager/home", { 
-            activePage: 'employee' 
+            activePage: 'employee',
+            activeRoute:'',
         });
     } else if (result.type === "company") {
         return res.render("company/homepage", { 
