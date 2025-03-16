@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Details - ElectroLand</title>
+  <link rel="stylesheet" href="/styles.css"> <!-- Assuming the form-container stylesheet is at public/styles.css -->
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      color: #1a1a1a;
+    }
+
+    .container {
+      margin-top: 90px;
+      display: flex;
+      flex: 1;
+      gap: 25px; /* Matching salary display */
+      padding: 0 20px; /* Matching salary display */
+    }
+
+    .content-area {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 25px; /* Matching salary display */
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.06); /* Matching salary display */
+      flex: 1;
+      overflow-x: auto;
+      border: 1px solid #ebedf0; /* Matching salary display */
+    }
+
+    .content-area h1 {
+      color: #2c3e50;
+      margin-bottom: 25px;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    /* Responsive adjustments to match salary display */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        padding: 0 10px; /* Matching salary display */
+      }
+
+      .content-area {
+        padding: 20px;
+      }
+
+      .content-area h1 {
+        font-size: 1.5rem;
+      }
+
+      .header-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+      }
+
+      .form-container .field-group > div {
+        flex: 1 1 100%;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .content-area h1 {
+        font-size: 1.6rem;
+      }
+
+      .form-container .field-group > div {
+        flex: 1 1 45%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('../../partials/navbar') %>
+
+  <div class="container">
+    <%- include('../../partials/salesman_sidebar') %>
+
+    <div class="content-area">
+      <div class="header-container">
+        <h1>Employee Details</h1>
+      </div>
+
+      <div class="form-container">
+        <!-- Personal Details Section -->
+        <fieldset>
+          <legend>Personal Details</legend>
+          <div class="field-group">
+            <div>
+              <label for="salesmanId">Salesman ID</label>
+              <input type="text" id="salesmanId" value="<%= salesman.salesmanId %>" readonly>
+            </div>
+            <div>
+              <label for="firstName">First Name</label>
+              <input type="text" id="firstName" value="<%= salesman.firstName %>" readonly>
+            </div>
+            <div>
+              <label for="lastName">Last Name</label>
+              <input type="text" id="lastName" value="<%= salesman.lastName %>" readonly>
+            </div>
+            <div>
+              <label for="role">Role</label>
+              <select id="role" disabled>
+                <option><%= salesman.role %></option>
+              </select>
+            </div>
+            <div>
+              <label for="status">Status</label>
+              <select id="status" disabled>
+                <option><%= salesman.status %></option>
+              </select>
+            </div>
+            <div>
+              <label for="branch">Branch Name</label>
+              <select id="branch" disabled>
+                <option><%= salesman.branch %></option>
+              </select>
+            </div>
+            <div>
+              <label for="email">Email</label>
+              <input type="email" id="email" value="<%= salesman.email %>" readonly>
+            </div>
+            <div>
+              <label for="phoneNumber">Phone Number</label>
+              <input type="text" id="phoneNumber" value="<%= salesman.phoneNumber %>" readonly>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Account and Salaries Section -->
+        <fieldset>
+          <legend>Account and Salaries</legend>
+          <div class="field-group">
+            <div>
+              <label for="registrationDate">Registration Date</label>
+              <input type="text" id="registrationDate" value="<%= salesman.formattedRegistrationDate %>" readonly>
+            </div>
+            <div>
+              <label for="accountNumber">Account Number</label>
+              <input type="text" id="accountNumber" value="<%= salesman.accountNumber %>" readonly>
+            </div>
+            <div>
+              <label for="ifscCode">IFSC Code</label>
+              <input type="text" id="ifscCode" value="<%= salesman.ifscCode %>" readonly>
+            </div>
+            <div>
+              <label for="bank">Bank</label>
+              <input type="text" id="bank" value="<%= salesman.bank %>" readonly>
+            </div>
+            <div>
+              <label for="hireDate">Hire Date</label>
+              <input type="text" id="hireDate" value="<%= salesman.formattedHireDate %>" readonly>
+            </div>
+            <div>
+              <label for="monthlySalary">Monthly Salary</label>
+              <input type="text" id="monthlySalary" value="$<%= salesman.monthlySalary %>" readonly>
+            </div>
+            <div style="flex: 1 1 100%;">
+              <label for="address">Address</label>
+              <textarea id="address" readonly><%= salesman.address %></textarea>
+            </div>
+          </div>
+        </fieldset>
+
+      </div>
+    </div>
+  </div>
+
+  <%- include('../../partials/footer') %>
+</body>
+</html>
