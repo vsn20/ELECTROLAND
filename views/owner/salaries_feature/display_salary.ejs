@@ -24,22 +24,22 @@
       margin-top: 90px;
       display: flex;
       flex: 1;
-      gap: 15px; /* Reduced gap for better mobile fit */
-      padding: 0 15px; /* Adjusted padding */
+      gap: 25px; /* Standardized gap to match previous codes */
+      padding: 0 20px; /* Standardized padding to prevent sidebar shift */
     }
 
     .content-area {
       background: #ffffff;
       border-radius: 15px;
       padding: 20px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Lighter shadow */
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* Standardized shadow */
       flex: 1;
       overflow-x: auto;
     }
 
     .content-area h1 {
       color: #2d3436;
-      margin-bottom: 15px;
+      margin-bottom: 20px; /* Standardized margin */
       font-size: 1.5rem;
     }
 
@@ -48,8 +48,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
-      flex-wrap: wrap; /* Allow wrapping on small screens */
+      margin-bottom: 20px; /* Standardized margin */
+      flex-wrap: wrap; /* Kept for flexibility */
     }
 
     /* Add button styling */
@@ -62,7 +62,7 @@
       border-radius: 5px;
       transition: background-color 0.3s;
       font-size: 0.9rem;
-      white-space: nowrap; /* Prevent text wrapping */
+      white-space: nowrap;
     }
 
     .add-button:hover {
@@ -83,7 +83,7 @@
 
     table {
       width: 100%;
-      min-width: 700px; /* Increased min-width for more columns */
+      min-width: 600px; /* Standardized min-width to match previous codes */
       border-collapse: collapse;
       background: #ffffff;
       border-radius: 10px;
@@ -99,7 +99,7 @@
       padding: 12px;
       text-align: left;
       font-size: 0.9rem;
-      border-bottom: 2px solid #ffffff; /* White border to blend with next row */
+      border-bottom: 2px solid #ffffff;
     }
 
     td {
@@ -117,11 +117,48 @@
       background: #f8f9fd;
     }
 
+    /* Page-specific styles for salaries */
+    .date-range {
+      font-size: 1.2em;
+      color: #1a1a1a;
+      margin-left: 0;
+    }
+
+    .controls {
+      display: flex;
+      gap: 0.625em;
+      align-items: center;
+    }
+
+    .month-year-select {
+      padding: 0.625em;
+      border: 0.0625em solid #e6e9f0;
+      border-radius: 0.3125em;
+      font-size: 0.9em;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .generate-btn {
+      padding: 0.625em 1.25em;
+      background-color: #333333;
+      color: white;
+      border: none;
+      border-radius: 0.3125em;
+      font-size: 0.9em;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .generate-btn:hover {
+      background-color: #555555;
+    }
+
     /* Responsive adjustments */
-    @media (max-width: 1024px) {
+    @media (max-width: 768px) {
       .container {
-        gap: 10px;
-        padding: 0 10px;
+        flex-direction: column;
+        padding: 0 10px; /* Consistent with previous responsive padding */
       }
 
       .content-area {
@@ -129,38 +166,7 @@
       }
 
       .content-area h1 {
-        font-size: 1.3rem;
-      }
-
-      th, td {
-        padding: 10px;
-        font-size: 0.85rem;
-      }
-
-      .header-container {
-        gap: 10px;
-      }
-
-      .add-button {
-        padding: 8px 15px;
-        font-size: 0.85rem;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-        padding: 0 5px;
-      }
-
-      .content-area {
-        padding: 10px;
-        border-radius: 8px;
-      }
-
-      .content-area h1 {
-        font-size: 1.1rem;
-        margin-bottom: 10px;
+        font-size: 1.2rem;
       }
 
       .header-container {
@@ -169,12 +175,12 @@
         gap: 10px;
       }
 
-      .add-button {
+      .add-button, .generate-btn {
         margin-top: 5px;
         width: 100%;
         text-align: center;
         padding: 8px;
-        font-size: 0.8rem;
+        font-size: 0.85rem;
       }
 
       table {
@@ -187,96 +193,39 @@
       }
 
       tr {
-        display: grid;
-        grid-template-columns: 1fr 2fr; /* Label and value layout */
-        margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 15px;
         border: 1px solid #e6e9f0;
         border-radius: 5px;
-        padding: 8px;
+        padding: 10px;
         background: #fff;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
 
       td {
-        padding: 5px 0;
-        font-size: 0.8rem;
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        font-size: 0.85rem;
+        border-bottom: 1px dashed #e6e9f0;
+      }
+
+      td:last-child {
         border-bottom: none;
-        display: contents; /* Allow grid to handle layout */
       }
 
       td:before {
         content: attr(data-label);
         font-weight: bold;
         color: #2d3436;
-        margin-right: 5px;
-        white-space: nowrap;
+        margin-right: 10px;
+        min-width: 100px;
       }
 
-      tr:last-child {
-        margin-bottom: 0;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .content-area h1 {
-        font-size: 1rem;
-      }
-
-      th, td {
-        font-size: 0.75rem;
-      }
-
-      tr {
-        padding: 6px;
-      }
-
-      td:before {
-        min-width: 80px;
-      }
-    }
-    
-    /* Page-specific styles for salaries */
-    .date-range {
-      font-size: 1.2em; /* 19.2px / 16px = 1.2em */
-      color: #1a1a1a; /* Dark gray/black color */
-      margin-left: 0; /* Remove left margin to center */
-    }
-
-    .controls {
-      display: flex;
-      gap: 0.625em; /* 10px / 16px = 0.625em */
-      align-items: center;
-    }
-
-    .month-year-select {
-      padding: 0.625em; /* 10px / 16px = 0.625em */
-      border: 0.0625em solid #e6e9f0; /* 1px / 16px = 0.0625em */
-      border-radius: 0.3125em; /* 5px / 16px = 0.3125em */
-      font-size: 0.9em; /* 14.4px / 16px = 0.9em */
-      background: #fff;
-      cursor: pointer;
-    }
-
-    .generate-btn {
-      padding: 0.625em 1.25em; /* 10px 20px */
-      background-color: #333333;
-      color: white;
-      border: none;
-      border-radius: 0.3125em; /* 5px / 16px = 0.3125em */
-      font-size: 0.9em; /* 14.4px / 16px = 0.9em */
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-
-    .generate-btn:hover {
-      background-color: #555555;
-    }
-
-    @media (max-width: 768px) {
       .date-range {
-        font-size: 1.1rem; /* 17.6px / 16px = 1.1rem */
-        margin-left: 0;
-        margin-top: 0.625em; /* 10px / 16px = 0.625em */
+        font-size: 1.1rem;
+        margin-top: 0.625em;
       }
 
       .controls {
@@ -288,13 +237,18 @@
       .month-year-select,
       .generate-btn {
         width: 100%;
-        font-size: 0.85rem; /* 13.6px / 16px = 0.85rem */
+        font-size: 0.85rem;
       }
     }
 
-    @media (max-width: 480px) {
-      .date-range {
-        font-size: 1rem; /* 16px / 16px = 1rem */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .content-area h1 {
+        font-size: 1.3rem;
+      }
+
+      th, td {
+        padding: 10px;
+        font-size: 0.85rem;
       }
     }
   </style>
@@ -308,12 +262,7 @@
     <!-- Content Area -->
     <div class="content-area" id="content">
       <div class="header-container">
-        <div><h1>Salaries</h1></div>
-        <br>
-        <br>
-        <br>
-        <br>
-    <!-- Empty div to balance space on the left -->
+        <h1>Salaries</h1>
         <div class="date-range"><h1>Jan1-Jan31</h1></div>
         <div class="controls">
           <select class="month-year-select" id="month-year">
@@ -367,7 +316,7 @@
   <%- include('../../partials/footer') %>
 
   <script>
-    
+    // Add any necessary script logic here if needed
   </script>
 </body>
 </html>

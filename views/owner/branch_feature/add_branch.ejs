@@ -6,23 +6,7 @@
   <title>Add Branch - ElectroLand</title>
   <link rel="stylesheet" href="/styles.css"> <!-- Link to your common CSS -->
   <style>
-    /* Minimal additional CSS for specific adjustments */
-    .form-container {
-      height: auto; /* Override height to fit content */
-      padding: 25px; /* Match content-area padding */
-      border-radius: 15px; /* Match content-area border-radius */
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* Match content-area shadow */
-    }
-
-    /* Ensure h1 matches your design */
-    .form-container h1 {
-      font-size: 24px; /* Match h2 in styles.css */
-      color: #2d3436;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    /* Structural CSS for layout */
+    /* Structural CSS */
     * {
       margin: 0;
       padding: 0;
@@ -41,14 +25,143 @@
       margin-top: 90px;
       display: flex;
       flex: 1;
-      gap: 25px;
-      padding: 0 40px;
+      gap: 25px; /* Standardized gap */
+      padding: 0 20px !important; /* Standardized padding with !important to prevent override */
+      max-width: 100%; /* Ensure it doesn’t exceed viewport */
     }
 
+    .content-area {
+      background: #ffffff;
+      border-radius: 15px;
+      padding: 20px; /* Standardized padding */
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* Standardized shadow */
+      flex: 1;
+      overflow-x: auto; /* Added for consistency */
+    }
+
+    .content-area h1 {
+      color: #2d3436;
+      margin-bottom: 20px; /* Standardized margin */
+      font-size: 1.5rem; /* Standardized font size (24px = 1.5rem assuming 16px base) */
+      text-align: center; /* Kept from original */
+    }
+
+    /* Form-specific styles */
+    .form-container {
+      max-width: 600px; /* Added for better form readability, consistent with Company Details */
+      margin: 0 auto; /* Center the form */
+    }
+
+    fieldset {
+      border: 1px solid #e6e9f0;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    legend {
+      color: #2d3436;
+      font-weight: bold;
+      padding: 0 10px;
+      font-size: 1.2rem; /* Consistent with Edit Branch */
+    }
+
+    .field-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px; /* Standardized gap */
+    }
+
+    .field-group > div {
+      flex: 1 1 45%; /* Two columns by default, consistent with previous forms */
+      min-width: 200px; /* Consistent min-width */
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #2d3436;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 8px; /* Standardized padding */
+      border: 1px solid #e6e9f0;
+      border-radius: 5px;
+      font-size: 0.9rem; /* Standardized font size */
+      background: #fff;
+      transition: border-color 0.3s;
+    }
+
+    textarea {
+      height: 100px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: #333333;
+      outline: none;
+    }
+
+    button[type="submit"] {
+      display: inline-block;
+      padding: 10px 20px; /* Standardized button padding */
+      background-color: #333333; /* Consistent button color */
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 0.9rem; /* Standardized font size */
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #555555; /* Consistent hover color */
+    }
+
+    #error-message {
+      color: #e74c3c;
+      font-size: 0.85rem;
+      margin: 10px 0;
+      text-align: center;
+    }
+
+    /* Responsive adjustments */
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
-        padding: 0 20px;
+        padding: 0 10px !important; /* Consistent responsive padding */
+      }
+
+      .content-area {
+        padding: 15px;
+      }
+
+      .content-area h1 {
+        font-size: 1.2rem;
+      }
+
+      .field-group > div {
+        flex: 1 1 100%; /* Stack fields on smaller screens */
+      }
+
+      button[type="submit"] {
+        width: 100%;
+        padding: 8px;
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .content-area h1 {
+        font-size: 1.3rem;
+      }
+
+      .field-group > div {
+        flex: 1 1 45%;
       }
     }
   </style>

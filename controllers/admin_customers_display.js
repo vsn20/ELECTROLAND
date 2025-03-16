@@ -49,7 +49,7 @@ async function customers_display(req, res) {
         const activeCustomers = customerData;
         res.render("owner/customer_feature/customer_admin", {
             customerData: activeCustomers,
-            activePage: 'customer',
+            activePage: 'employee',
             activeRoute: 'customers'
         });
     } catch (error) {

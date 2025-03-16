@@ -12,6 +12,13 @@ router.get("/employees", (req, res) => {
     });
 });
 
+//admin-home
+
+router.get("/home",(req,res)=>res.render("owner/homepage",{
+    activePage: 'employee',
+    activeRoute: '',
+}));
+
 //admin-company
 const { comapny_display, render_edit_company_form, update_company } = require("../controllers/company_display");
 router.get("/company", comapny_display);

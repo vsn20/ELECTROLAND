@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sale Details - ElectroLand</title>
   <style>
+    /* Structural CSS */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      font-size: 1rem;
     }
 
     body {
@@ -24,26 +24,32 @@
       margin-top: 90px;
       display: flex;
       flex: 1;
-      gap: 25px;
-      padding: 0 40px;
+      gap: 25px; /* Standardized gap */
+      padding: 0 20px !important; /* Standardized padding with !important to prevent override */
+      max-width: 100%; /* Ensure it doesn’t exceed viewport */
     }
 
     .content-area {
       background: #ffffff;
       border-radius: 15px;
-      padding: 25px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      padding: 20px; /* Standardized padding */
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* Standardized shadow */
       flex: 1;
+      overflow-x: auto; /* Horizontal scroll if needed */
+      overflow-y: auto; /* Vertical scroll for overflow content */
+      height: calc(100vh - 90px); /* Match sidebar height exactly */
     }
 
     h2 {
       color: #2d3436;
-      margin-bottom: 20px;
+      margin-bottom: 20px; /* Standardized margin */
+      font-size: 1.5rem; /* Standardized font size */
     }
 
     h3 {
       color: #2d3436;
       margin: 20px 0 10px;
+      font-size: 1.2rem; /* Consistent with section titles */
     }
 
     .form-group {
@@ -53,56 +59,110 @@
     .form-group label {
       display: block;
       margin-bottom: 5px;
-      color: #636e72;
+      color: #2d3436; /* Updated to match other labels */
+      font-weight: 500; /* Consistent with other forms */
     }
 
     .form-group input {
       width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
+      padding: 8px; /* Standardized padding */
+      border: 1px solid #e6e9f0; /* Consistent border color */
       border-radius: 5px;
-      background: #f8f9fa;
+      font-size: 0.9rem; /* Standardized font size */
+      background: #f8f9fa; /* Kept original background */
       color: #2d3436;
+      transition: border-color 0.3s; /* Added for consistency */
+    }
+
+    .form-group input:focus {
+      border-color: #333333;
+      outline: none;
     }
 
     .form-row {
       display: flex;
-      gap: 20px;
+      gap: 15px; /* Standardized gap */
       flex-wrap: wrap;
     }
 
     .form-row .form-group {
-      flex: 1;
-      min-width: 200px;
-      max-width: 400px;
+      flex: 1 1 45%; /* Two columns by default, consistent with previous forms */
+      min-width: 200px; /* Consistent min-width */
+      max-width: 400px; /* Kept original max-width */
     }
 
     .button {
-      background-color: #2d3436;
+      display: inline-block;
+      padding: 10px 20px; /* Standardized button padding */
+      background-color: #333333; /* Consistent button color */
       color: white;
-      padding: 10px 20px;
       border: none;
       border-radius: 5px;
+      font-size: 0.9rem; /* Standardized font size */
       cursor: pointer;
+      transition: background-color 0.3s;
       width: 100%;
       margin-top: 20px;
     }
 
-    .back-link {
-      display: block;
-      margin-top: 10px;
-      color: #007bff;
-      text-decoration: none;
+    .button:hover {
+      background-color: #555555; /* Consistent hover color */
     }
 
+    .back-link {
+      display: block;
+      margin-top: 15px; /* Adjusted for consistency */
+      color: #2d3436; /* Updated to match other links */
+      text-decoration: none;
+      font-size: 0.9rem; /* Standardized font size */
+      text-align: center; /* Added for better presentation */
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive adjustments */
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
-        padding: 0 20px;
+        padding: 0 10px !important; /* Consistent responsive padding */
+      }
+
+      .content-area {
+        padding: 15px;
+        height: auto; /* Switch to auto height on smaller screens */
+      }
+
+      h2 {
+        font-size: 1.2rem;
+      }
+
+      h3 {
+        font-size: 1.1rem;
       }
 
       .form-row {
         flex-direction: column;
+      }
+
+      .form-row .form-group {
+        flex: 1 1 100%; /* Stack fields on smaller screens */
+      }
+
+      .button {
+        padding: 8px;
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      h2 {
+        font-size: 1.3rem;
+      }
+
+      .form-row .form-group {
+        flex: 1 1 45%;
       }
     }
   </style>
