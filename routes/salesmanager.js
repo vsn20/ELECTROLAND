@@ -15,4 +15,7 @@ router.get("/stocks",inventory_display);
 const { customers_display} = require("../controllers/salesmanager/admin_customers_display");
 router.get("/customers", customers_display);
 
+//admin-salary
+const {salary_display}=require("../controllers/salesmanager/salary");
+router.get("/salaries",salary_display);
 module.exports=router;
