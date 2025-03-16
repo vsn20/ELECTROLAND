@@ -34,11 +34,15 @@ function restrict(usertype) {
     };
 }
 
+function employeerestrict()
+{
+    return (req, res, next) => {
+        next();
+    };
+}
 
 
 
-
-
-module.exports={restrictlogedinuser,restrict
+module.exports={restrictlogedinuser,restrict,employeerestrict
     
 };

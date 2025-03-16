@@ -6,12 +6,13 @@ const cookieparser = require("cookie-parser");
 
 // importing routers and middlewares
 
-const {restrictlogedinuser,restrict}= require("./middlewares/auth");
+const {restrictlogedinuser,restrict,employeerestrict}= require("./middlewares/auth");
 const staticrouter = require("./routes/staticrouter");
 const loginrouter=require("./routes/login");
 const adminroutes = require("./routes/admin");
 const companyroutes=require("./routes/comapany");
 const salesmanagerroutes=require("./routes/salesmanager");
+const salesmanroutes=require("./routes/salesman");
 
 // importing connection function
 const {connectmongodb}= require("./connection");
@@ -40,7 +41,7 @@ app.use("/loginvalidation",loginrouter);
 
 app.use(restrictlogedinuser);
 
-
+app.use("/salesman",employeerestrict(),salesmanroutes);
 app.use("/admin",restrict("admin"),adminroutes);
 app.use("/company",restrict("company"),companyroutes);
 app.use("/salesmanager",restrict("salesmanager"),salesmanagerroutes);
