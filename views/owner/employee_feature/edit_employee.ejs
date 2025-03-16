@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Employee - ElectroLand</title>
+  <link rel="stylesheet" href="/styles.css"> <!-- Reuse your form CSS -->
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f5f6fa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      margin-top: 90px;
+      display: flex;
+      flex: 1;
+      gap: 25px;
+      padding: 0 40px;
+    }
+
+    .content-area {
+      background: #ffffff;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      flex: 1;
+    }
+
+    .content-area h1 {
+      color: #2d3436;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        padding: 0 20px;
+      }
+
+      .content-area {
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('../../partials/navbar') %>
+
+  <div class="container">
+    <%- include('../../partials/admin_sidebar') %>
+
+    <!-- Content Area -->
+    <div class="content-area" id="content">
+      <div class="form-container">
+        <h2>Edit Employee</h2>
+        <form id="edit-employee-form" action="/admin/employee/update/<%= employee.e_id %>" method="POST">
+          <!-- Personal Details Section -->
+          <fieldset>
+            <legend>Personal Details</legend>
+            <div class="field-group">
+              <div>
+                <label for="f_name">First Name</label>
+                <input type="text" id="f_name" name="f_name" value="<%= employee.f_name %>" required placeholder="Enter first name">
+              </div>
+              <div>
+                <label for="last_name">Last Name</label>
+                <input type="text" id="last_name" name="last_name" value="<%= employee.last_name %>" required placeholder="Enter last name">
+              </div>
+              <div>
+                <label for="role">Role</label>
+                <select id="role" name="role" required>
+                  <option value="Sales Manager" <%= employee.role === 'Sales Manager' ? 'selected' : '' %>>Sales Manager</option>
+                  <option value="Salesman" <%= employee.role === 'Salesman' ? 'selected' : '' %>>Salesman</option>
+                </select>
+              </div>
+              <div>
+                <label for="bid">Branch</label>
+                <select id="bid" name="bid" required>
+                  <option value="B001" <%= employee.bid === 'B001' ? 'selected' : '' %>>B001 - North Branch</option>
+                  <option value="B002" <%= employee.bid === 'B002' ? 'selected' : '' %>>B002 - South Branch</option>
+                  <option value="B003" <%= employee.bid === 'B003' ? 'selected' : '' %>>B003 - East Branch</option>
+                  <option value="B004" <%= employee.bid === 'B004' ? 'selected' : '' %>>B004 - West Branch</option>
+                  <option value="null" <%= !employee.bid ? 'selected' : '' %>>Not Assigned</option>
+                </select>
+              </div>
+              <div>
+                <label for="status">Status</label>
+                <select id="status" name="status" required>
+                  <option value="active" <%= employee.status === 'active' ? 'selected' : '' %>>Active</option>
+                  <option value="resigned" <%= employee.status === 'resigned' ? 'selected' : '' %>>Resigned</option>
+                  <option value="fired" <%= employee.status === 'fired' ? 'selected' : '' %>>Fired</option>
+                </select>
+              </div>
+              <div>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value="<%= employee.email %>" required placeholder="Enter email">
+              </div>
+              <div>
+                <label for="phone_no">Phone Number</label>
+                <input type="tel" id="phone_no" name="phone_no" value="<%= employee.phone_no || '' %>" placeholder="Enter phone number" pattern="[0-9]{10}">
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Account and Salaries Section -->
+          <fieldset>
+            <legend>Account and Salaries</legend>
+            <div class="field-group">
+              <div>
+                <label for="acno">Account Number</label>
+                <input type="text" id="acno" name="acno" value="<%= employee.acno %>" required placeholder="Enter account number">
+              </div>
+              <div>
+                <label for="ifsc">IFSC Code</label>
+                <input type="text" id="ifsc" name="ifsc" value="<%= employee.ifsc %>" required placeholder="Enter IFSC code">
+              </div>
+              <div>
+                <label for="bankname">Bank Name</label>
+                <input type="text" id="bankname" name="bankname" value="<%= employee.bankname %>" required placeholder="Enter bank name">
+              </div>
+              <div>
+                <label for="base_salary">Monthly Salary</label>
+                <input type="number" id="base_salary" name="base_salary" value="<%= employee.base_salary %>" required placeholder="Enter monthly salary" step="0.01">
+              </div>
+              <div>
+                <label for="address">Address</label>
+                <textarea id="address" name="address" placeholder="Enter address"><%= employee.address || '' %></textarea>
+              </div>
+            </div>
+          </fieldset>
+
+          <div id="error-message"></div>
+          <button type="submit">Update Employee</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../../partials/footer') %>
+
+  <script>
+    const form = document.getElementById('edit-employee-form');
+    const email = document.getElementById('email');
+    const phone = document.getElementById('phone_no');
+    const errorMessage = document.getElementById('error-message');
+
+    form.addEventListener('submit', function(event) {
+      email.style.borderColor = '#ddd';
+      email.style.backgroundColor = '#f9f9f9';
+      phone.style.borderColor = '#ddd';
+      phone.style.backgroundColor = '#f9f9f9';
+      errorMessage.textContent = '';
+
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email.value)) {
+        event.preventDefault();
+        email.style.borderColor = '#e74c3c';
+        email.style.backgroundColor = '#fff5f5';
+        errorMessage.textContent = 'Please enter a valid email address.';
+        return;
+      }
+
+      const phonePattern = /^[0-9]{10}$/;
+      if (phone.value && !phonePattern.test(phone.value)) {
+        event.preventDefault();
+        phone.style.borderColor = '#e74c3c';
+        phone.style.backgroundColor = '#fff5f5';
+        errorMessage.textContent = 'Please enter a valid 10-digit phone number.';
+        return;
+      }
+    });
+  </script>
+</body>
+</html>

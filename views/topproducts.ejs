@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Top Products - ElectroLand</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f5f6fa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      margin-top: 90px;
+      display: flex;
+      flex: 1;
+      gap: 25px;
+      padding: 0 40px;
+    }
+
+    .content-area {
+      background: #ffffff;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      flex: 1;
+    }
+
+    .content-area h1 {
+      color: #2d3436;
+      margin-bottom: 20px;
+    }
+
+    .products-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .product-item {
+      flex: 1 1 calc(33.33% - 20px);
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    .slideshow-container {
+      position: relative;
+      width: 100%;
+      margin: 0 auto 10px auto;
+    }
+
+    .slides {
+      display: none;
+      width: 100%;
+      height: auto;
+      border-radius: 5px;
+    }
+
+    .slides.active {
+      display: block;
+    }
+
+    .product-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .product-details span {
+      color: #2d3436;
+      font-size: 1.1rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        padding: 0 20px;
+      }
+
+      .content-area {
+        padding: 15px;
+      }
+
+      .content-area h1 {
+        font-size: 1.5rem;
+      }
+
+      .product-item {
+        flex: 1 1 calc(33.33% - 13.33px); /* Adjust gap proportionately */
+      }
+
+      .slideshow-container {
+        width: 100%;
+      }
+
+      .product-details span {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('./partials/navbar') %>
+
+  <div class="container">
+
+    <!-- Content Area -->
+    <div class="content-area" id="content">
+      <h1>Top Products</h1>
+
+      <!-- Product items -->
+      <div class="products-container">
+        <% topproductData.forEach(product => { %>
+          <div class="product-item">
+            <div class="slideshow-container">
+              <% product.prod_photos.forEach((photo, index) => { %>
+                <img src="<%= photo %>" alt="Product Photo" class="slides <%= index === 0 ? 'active' : '' %>">
+              <% }) %>
+            </div>
+            <div class="product-details">
+              <span><strong>Product ID:</strong> <%= product.prod_id %></span>
+              <span><strong>Model Number:</strong> <%= product.Model_no %></span>
+              <span><strong>Company Name:</strong> <%= product.com_name %></span>
+              <span><strong>Stock:</strong> <%= product.stock %></span>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+
+  <%- include('./partials/footer') %>
+
+  <script>
+    document.querySelectorAll('.slideshow-container').forEach(container => {
+      const slides = container.querySelectorAll('.slides');
+      let currentSlide = 0;
+      function showNextSlide() {
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (currentSlide + 1) % slides.length;
+        slides[currentSlide].classList.add('active');
+      }
+      slides[0].classList.add('active');
+      setInterval(showNextSlide, 2000);
+    });
+  </script>
+</body>
+</html>
