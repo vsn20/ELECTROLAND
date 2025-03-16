@@ -45,7 +45,10 @@ async function branches_display(req, res) {
     try {
         // Filter for active branches and send directly to EJS
         const activeBranches = branchData.filter(branch => branch.active === "active");
-        res.render("ourbranches", { branches: activeBranches });
+        res.render("ourbranches", { branches: activeBranches ,
+            activePage:'our-branches',
+            activeRoute:'',
+        });
     } catch (error) {
         console.error("Error rendering branches:", error);
         res.status(500).send("Internal Server Error");
