@@ -24,7 +24,8 @@
       display: flex;
       flex: 1;
       gap: 25px;
-      padding: 0 40px;
+      padding: 0; /* Remove padding to align sidebar flush left */
+      max-width: 100%; /* Ensure full width */
     }
 
     .content-area {
@@ -33,11 +34,20 @@
       padding: 25px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       flex: 1;
+      height: calc(100vh - 90px); /* Match sidebar height */
+      overflow-y: auto; /* Enable scrolling */
+      -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
+      scrollbar-width: none; /* Hide scrollbar in Firefox */
+    }
+
+    .content-area::-webkit-scrollbar {
+      display: none; /* Hide scrollbar in Webkit browsers */
     }
 
     .content-area h1 {
       color: #2d3436;
       margin-bottom: 20px;
+      font-size: 1.5rem;
     }
 
     .photos {
@@ -130,14 +140,16 @@
       color: #636e72;
     }
 
+    /* Responsive adjustments */
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
-        padding: 0 20px;
+        padding: 0; /* Keep sidebar flush left */
       }
 
       .content-area {
         padding: 15px;
+        height: auto; /* Expand naturally on mobile */
       }
 
       .field-group {
@@ -145,7 +157,7 @@
       }
 
       .content-area h1 {
-        font-size: 1.5rem;
+        font-size: 1.2rem; /* Adjusted for mobile */
       }
 
       .photos img {
@@ -154,6 +166,12 @@
 
       .edit-btn, .back-link {
         font-size: 1rem;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .content-area h1 {
+        font-size: 1.3rem;
       }
     }
   </style>

@@ -24,20 +24,29 @@
       display: flex;
       flex: 1;
       gap: 25px;
-      padding: 0 40px;
+      padding: 0; /* Matches reference intent for flush-left sidebar */
     }
 
     .content-area {
       background: #ffffff;
       border-radius: 15px;
-      padding: 25px;
+      padding: 20px; /* Matches Sales page */
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       flex: 1;
+      height: calc(100vh - 90px); /* Matches sidebar height */
+      overflow-y: auto; /* Enable scrolling */
+      -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
+      scrollbar-width: none; /* Hide scrollbar in Firefox */
+    }
+
+    .content-area::-webkit-scrollbar {
+      display: none; /* Hide scrollbar in Webkit browsers */
     }
 
     .content-area h1 {
       color: #2d3436;
       margin-bottom: 20px;
+      font-size: 1.5rem;
     }
 
     .header-container {
@@ -117,14 +126,18 @@
       color: #636e72;
     }
 
+    /* Responsive adjustments */
     @media (max-width: 768px) {
       .container {
+        margin-top: 60px; /* Matches Sales page */
         flex-direction: column;
-        padding: 0 20px;
+        padding: 0 10px; /* Matches Sales page */
+        gap: 15px; /* Matches Sales page */
       }
 
       .content-area {
-        padding: 15px;
+        padding: 15px; /* Matches Sales page */
+        height: auto; /* Expand naturally on mobile */
       }
 
       .header-container {
@@ -143,7 +156,7 @@
       }
 
       .content-area h1 {
-        font-size: 1.5rem;
+        font-size: 1.2rem; /* Matches Sales adjustment */
       }
 
       .product-item {
@@ -158,6 +171,32 @@
         font-size: 1rem;
       }
     }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .container {
+        gap: 20px; /* Matches Sales page */
+        padding: 0 15px; /* Matches Sales page */
+      }
+
+      .content-area {
+        padding: 15px; /* Matches Sales page */
+      }
+
+      .content-area h1 {
+        font-size: 1.3rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        margin-top: 50px; /* Matches Sales page */
+        padding: 0 5px; /* Matches Sales page */
+      }
+
+      .content-area {
+        padding: 10px; /* Matches Sales page */
+      }
+    }
   </style>
 </head>
 <body>
@@ -168,32 +207,32 @@
 
     <!-- Content Area -->
     <div class="content-area" id="content">
-        <div class="header-container">
-          <h1>Products</h1>
-          <div class="header-buttons">
-            <button onclick="window.location.href='/admin/products/rejected'">Rejected Products</button>
-            <button onclick="window.location.href='/admin/products/new'">New Products</button>
-          </div>
+      <div class="header-container">
+        <h1>Products</h1>
+        <div class="header-buttons">
+          <button onclick="window.location.href='/admin/products/rejected'">Rejected Products</button>
+          <button onclick="window.location.href='/admin/products/new'">New Products</button>
         </div>
+      </div>
 
-        <!-- Product items -->
-        <div class="products-container">
-          <% productData.forEach(product => { %>
-            <div class="product-item">
-              <div class="slideshow-container" data-pid="<%= product.prod_id %>" onclick="window.location.href='/admin/products/details/<%= product.prod_id %>'">
-                <% product.prod_photos.forEach((photo, index) => { %>
-                  <img src="<%= photo %>" alt="Product Photo" class="slides <%= index === 0 ? 'active' : '' %>">
-                <% }) %>
-              </div>
-              <div class="product-details">
-                <span class="clickable" onclick="window.location.href='/admin/products/details/<%= product.prod_id %>'"><%= product.prod_id %></span>
-                <span class="clickable" onclick="window.location.href='/admin/products/details/<%= product.prod_id %>'"><%= product.Model_no %></span>
-                <span class="clickable" onclick="window.location.href='/admin/products/details/<%= product.prod_id %>'"><%= product.stock %></span>
-                <span class="clickable" onclick="window.location.href='/admin/products/details/<%= product.prod_id %>'"><%= product.Status %></span>
-              </div>
+      <!-- Product items -->
+      <div class="products-container">
+        <% productData.forEach(product => { %>
+          <div class="product-item">
+            <div class="slideshow-container" data-pid="<%= product.prod_id %>" onclick="window.location.href='/admin/products/details/<%= product.prod_id %>'">
+              <% product.prod_photos.forEach((photo, index) => { %>
+                <img src="<%= photo %>" alt="Product Photo" class="slides <%= index === 0 ? 'active' : '' %>">
+              <% }) %>
             </div>
-          <% }) %>
-        </div>
+            <div class="product-details">
+              <span class="clickable" onclick="window.location.href='/admin/products/details/<%= product.prod_id %>'"><%= product.prod_id %></span>
+              <span class="clickable" onclick="window.location.href='/admin/products/details/<%= product.prod_id %>'"><%= product.Model_no %></span>
+              <span class="clickable" onclick="window.location.href='/admin/products/details/<%= product.prod_id %>'"><%= product.stock %></span>
+              <span class="clickable" onclick="window.location.href='/admin/products/details/<%= product.prod_id %>'"><%= product.Status %></span>
+            </div>
+          </div>
+        <% }) %>
+      </div>
     </div>
   </div>
   <%- include('../../partials/footer') %>
