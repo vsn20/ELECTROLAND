@@ -25,8 +25,9 @@ async function handlelogin(req, res) {
             activeRoute:'',
         });
     } else if (result.type === "company") {
-        return res.render("company/homepage", { 
-            activePage: 'employee' 
+        return res.render("company/home", { 
+            activePage: 'employee' ,
+            activeRoute:'',
         });
     }
 }

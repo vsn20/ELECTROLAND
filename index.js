@@ -10,7 +10,7 @@ const {restrictlogedinuser,restrict,employeerestrict}= require("./middlewares/au
 const staticrouter = require("./routes/staticrouter");
 const loginrouter=require("./routes/login");
 const adminroutes = require("./routes/admin");
-const companyroutes=require("./routes/comapany");
+const companyroutes=require("./routes/company");
 const salesmanagerroutes=require("./routes/salesmanager");
 const salesmanroutes=require("./routes/salesman");
 
