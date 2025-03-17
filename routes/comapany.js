@@ -6,8 +6,8 @@ const { orders_display } = require("../controllers/company/orders_display");
 const { company_messages_display, render_compose_message_form, compose_message } = require("../controllers/company/company_messages_display"); // New controller
 
 router.get("/home", (req, res) => res.render("company/home", {
-    activePage: 'employee',
-    activeRoute: 'stocks'
+    activePage: 'company',
+    activeRoute: ''
 }));
 router.get("/products", companyproducts_display);
 router.get("/products/details/:prod_id", getProductById);
