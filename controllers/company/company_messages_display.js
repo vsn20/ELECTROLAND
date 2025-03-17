@@ -11,7 +11,7 @@ async function company_messages_display(req, res) {
     try {
         res.render("company/messages_feature/messages_company", {
             messages,
-            activePage: 'employee', // Adjust based on your navigation
+            activePage: 'employee',
             activeRoute: 'messages'
         });
     } catch (error) {
@@ -39,7 +39,7 @@ async function compose_message(req, res) {
             from, 
             to, 
             messages: messageContent,
-            ...(to !== 'all' && { branch_id, branch_name }) // Add branch fields if "to" is not "all"
+            ...(to !== 'all' && { branch_id, branch_name })
         };
         messages.push(newMessage);
         res.redirect("/company/messages");
@@ -49,4 +49,20 @@ async function compose_message(req, res) {
     }
 }
 
-module.exports = { company_messages_display, render_compose_message_form, compose_message };
+async function view_message(req, res) {
+    try {
+        const { from, to, msg } = req.query; // Get query params
+        res.render("company/messages_feature/views_messages", {
+            from,
+            to,
+            messages: msg,
+            activePage: 'company',
+            activeRoute: 'messages'
+        });
+    } catch (error) {
+        console.error("Error rendering message details:", error);
+        res.status(500).send("Internal Server Error");
+    }
+}
+
+module.exports = { company_messages_display, render_compose_message_form, compose_message, view_message };

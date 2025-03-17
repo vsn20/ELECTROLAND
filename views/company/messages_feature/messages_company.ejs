@@ -24,7 +24,7 @@
       display: flex;
       flex: 1;
       gap: 25px;
-      padding: 0 20px !important; /* Standardized padding with !important to prevent override */
+      padding: 0 20px !important;
       max-width: 100%;
     }
 
@@ -64,6 +64,14 @@
       background: #f8f9fd;
     }
 
+    tr {
+      cursor: pointer; /* Indicate clickability */
+    }
+
+    tr:hover {
+      background: #e9ecef; /* Hover effect */
+    }
+
     .header-container {
       display: flex;
       justify-content: space-between;
@@ -89,7 +97,7 @@
   <%- include('../../partials/navbar') %>
 
   <div class="container">
-    <%- include('../../partials/company_sidebar') %> <!-- Assuming a company sidebar exists -->
+    <%- include('../../partials/company_sidebar') %>
 
     <!-- Content Area -->
     <div class="content-area" id="content">
@@ -109,7 +117,7 @@
           </thead>
           <tbody>
             <% messages.forEach(message => { %>
-              <tr>
+              <tr onclick="window.location='/company/messages/view?from=<%= encodeURIComponent(message.from) %>&to=<%= encodeURIComponent(message.to) %>&msg=<%= encodeURIComponent(message.messages) %>'">
                 <td data-label="From"><%= message.from %></td>
                 <td data-label="To"><%= message.to %></td>
                 <td data-label="Message"><%= message.messages %></td>
