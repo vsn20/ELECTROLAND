@@ -194,7 +194,8 @@
 </head>
 
 <body>
-    <%- include('partials/navbar') %>
+    <!-- Added activePage -->
+    <%- include('partials/navbar', { activePage: 'company' }) %>
 
     <div class="content-wrapper">
         <div class="main-container">
@@ -212,19 +213,19 @@
                         <div class="error-message">
                             <%= loginError %>
                         </div>
-                        <% } %>
-                            <form id="companyForm" action="/company-loginvalidation" method="POST">
-                                <input type="text" id="companyUserId" name="user_id" placeholder="Enter your User ID"
-                                    required>
-                                <input type="password" id="companyPassword" name="password" placeholder="Enter password"
-                                    required>
-                                <button type="submit">Login</button>
+                    <% } %>
+                    <form id="companyForm" action="/company-loginvalidation" method="POST">
+                        <input type="text" id="companyUserId" name="user_id" placeholder="Enter your User ID"
+                            required>
+                        <input type="password" id="companyPassword" name="password" placeholder="Enter password"
+                            required>
+                        <button type="submit">Login</button>
 
-                                <div class="link-container">
-                                    <a id="toggleSignup">Don't have an account? Sign Up</a>
-                                    <a href="/forgot-password">Forgot Password?</a>
-                                </div>
-                            </form>
+                        <div class="link-container">
+                            <a id="toggleSignup">Don't have an account? Sign Up</a>
+                            <a href="/forgot-password">Forgot Password?</a>
+                        </div>
+                    </form>
                 </div>
 
                 <div id="signupForm" class="signup-form">
@@ -233,24 +234,25 @@
                         <div class="error-message">
                             <%= signupError %>
                         </div>
-                        <% } %>
-                            <form id="companySignupForm" action="/company-signupvalidation" method="POST">
-                                <input type="text" name="user_id" placeholder="User ID" required>
-                                <input type="email" name="email" placeholder="Email" required>
-                                <input type="password" name="password" placeholder="Password" required>
-                                <input type="password" name="confirm_password" placeholder="Confirm Password" required>
-                                <button type="submit">Sign Up</button>
+                    <% } %>
+                    <form id="companySignupForm" action="/company-signupvalidation" method="POST">
+                        <input type="text" name="user_id" placeholder="User ID" required>
+                        <input type="email" name="email" placeholder="Email" required>
+                        <input type="password" name="password" placeholder="Password" required>
+                        <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+                        <button type="submit">Sign Up</button>
 
-                                <div class="link-container">
-                                    <a id="toggleLogin">Already have an account? Login</a>
-                                </div>
-                            </form>
+                        <div class="link-container">
+                            <a id="toggleLogin">Already have an account? Login</a>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <%- include('partials/footer') %>
+    <!-- Added activePage -->
+    <%- include('partials/footer', { activePage: 'company' }) %>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
