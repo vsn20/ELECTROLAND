@@ -97,4 +97,11 @@ router.get("/salaries",salary_display);
 const {orders_display}=require("../controllers/admin_orders_display");
 router.get("/orders",orders_display)
 
+//admin messages
+const { admin_messages_display, render_compose_message_form, compose_message } = require("../controllers/admin_messages_display");
+
+router.get("/messages", admin_messages_display);
+router.get("/messages/compose", render_compose_message_form);
+router.post("/messages/compose", compose_message);
+
 module.exports=router;

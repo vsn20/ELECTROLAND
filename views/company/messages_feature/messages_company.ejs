@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Company Dashboard - ElectroLand</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f5f6fa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      margin-top: 90px;
+      display: flex;
+      flex: 1;
+      gap: 25px;
+      padding: 0 20px !important; /* Standardized padding with !important to prevent override */
+      max-width: 100%;
+    }
+
+    .content-area {
+      background: #ffffff;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      flex: 1;
+    }
+
+    .content-area h1 {
+      color: #2d3436;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    th, td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #e6e9f0;
+    }
+
+    th {
+      background: #333333;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background: #f8f9fd;
+    }
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .compose-btn {
+      background: #333333;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .compose-btn:hover {
+      background: #555555;
+    }
+  </style>
+</head>
+<body>
+  <%- include('../../partials/navbar') %>
+
+  <div class="container">
+    <%- include('../../partials/company_sidebar') %> <!-- Assuming a company sidebar exists -->
+
+    <!-- Content Area -->
+    <div class="content-area" id="content">
+        <div class="header-container">
+          <h1>Messages</h1>
+          <a href="/company/messages/compose" class="compose-btn">Compose</a>
+        </div>
+
+        <!-- Table to display messages -->
+        <table>
+          <thead>
+            <tr>
+              <th>From</th>
+              <th>To</th>
+              <th>Message</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% messages.forEach(message => { %>
+              <tr>
+                <td data-label="From"><%= message.from %></td>
+                <td data-label="To"><%= message.to %></td>
+                <td data-label="Message"><%= message.messages %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+    </div>
+  </div>
+
+  <%- include('../../partials/footer') %>
+</body>
+</html>
