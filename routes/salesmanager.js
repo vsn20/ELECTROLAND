@@ -15,10 +15,6 @@ router.get("/stocks", inventory_display);
 const { customers_display } = require("../controllers/salesmanager/admin_customers_display");
 router.get("/customers", customers_display);
 
-<<<<<<< HEAD
-//admin-salary
-const {salary_display}=require("../controllers/salesmanager/salary");
-router.get("/salaries",salary_display);
 
 //sales
 const { sales_display, sales_details, addsale_post } = require('../controllers/salesmanager/sales');
@@ -40,7 +36,6 @@ router.get('/orders/:id', order_details);
 router.get('/orders/edit/:id', order_edit);
 router.post('/orders/update/:id', order_update);
 module.exports=router;
-=======
 // Salesmanager salary
 const { salary_display } = require("../controllers/salesmanager/salary");
 router.get("/salaries", salary_display);
@@ -53,4 +48,3 @@ router.post("/messages/compose", compose_message);
 router.get("/messages/view", view_message); // New route for viewing message details
 
 module.exports = router;
->>>>>>> a909ed8624457d3cba6cc87d02607031ec7a1bed
