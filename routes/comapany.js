@@ -21,4 +21,9 @@ router.get("/messages", company_messages_display);
 router.get("/messages/compose", render_compose_message_form);
 router.post("/messages/compose", compose_message);
 
+
+//company sales
+const{sales_display,salesdetaildisplay}=require("../controllers/company/sale")
+router.get("/sales",sales_display);
+router.get("/sales/:salesid",salesdetaildisplay);
 module.exports = router;
