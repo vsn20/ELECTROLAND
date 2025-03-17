@@ -9,15 +9,52 @@ const {topproducts_display}=require("../controllers/topproducts_display");
 const { branches_display } = require("../controllers/branches_display");
 
 router.get("/",(req,res)=>res.render("home.ejs",{ activePage: 'home' }));
-router.get("/employeelogin", (req, res) => {
-    res.render("employeelogin", {
-      activePage: "employee",
-      loginError: null, // Default to null or empty string
-      signupError: null, // Default to null or empty string
-    });
-  });
-router.get("/customerlogin",(req,res)=>res.render("customerlogin.ejs",{ activePage: 'customer' }));
-router.get("/companylogin",(req,res)=>res.render("companylogin.ejs",{ activePage: 'companyr' }));
+
+
+router.get('/employeelogin', (req, res) => {
+  if (res.locals.user) {
+      const userType = res.locals.user.type;
+      switch (userType) {
+          case "owner":
+              return res.redirect('admin/home');
+          case "sales manager":
+              return res.redirect('salesmanager/home');
+          case "salesman":
+              return res.redirect('salesman/home');
+          default:
+              // If not an employee type, show the login page
+              return res.render('employeelogin', { activePage: 'employee', loginError: null, signupError: null });
+      }
+  }
+  res.render('employeelogin', { activePage: 'employee', loginError: null, signupError: null });
+});
+
+router.get('/customerlogin', (req, res) => {
+  if (res.locals.user) {
+      const userType = res.locals.user.type;
+      if (userType === "customer") {
+          return res.redirect('/customer/home');
+      }
+      // If not "customer", show the login page
+      return res.render('customerlogin', { activePage: 'customer', error: null });
+  }
+  res.render('customerlogin', { activePage: 'customer', error: null });
+});
+router.get('/companylogin', (req, res) => {
+    if (res.locals.user) {
+        const userType = res.locals.user.type;
+        if (userType === "company") {
+            return res.redirect('/company/home');
+        }
+        // If not "company", show the login page
+        return res.render('companylogin', { activePage: 'company', loginError: null, signupError: null });
+    }
+    res.render('companylogin', { activePage: 'company', loginError: null, signupError: null });
+});
+
+
+
+
 router.get("/about-us",(req,res)=>res.render("aboutus.ejs",{ activePage: 'about-us' }));
 router.get("/signup",(req,res)=>res.render("signup.ejs",{ activePage: 'employee' }));
 router.get("/forgot-password",(req,res)=>res.render("forget_password.ejs",{ activePage: 'employee' }));

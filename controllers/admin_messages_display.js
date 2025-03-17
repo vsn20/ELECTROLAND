@@ -39,14 +39,30 @@ async function compose_message(req, res) {
             from, 
             to, 
             messages: messageContent,
-            ...(to !== 'admin' && { branch_id, branch_name }) // Add branch fields only if "to" is not "admin"
+            ...(to !== 'admin' && { branch_id, branch_name })
         };
-        messages.push(newMessage); // Add the new message to the array
-        res.redirect("/admin/messages"); // Redirect to the messages list
+        messages.push(newMessage);
+        res.redirect("/admin/messages");
     } catch (error) {
         console.error("Error composing message:", error);
         res.status(500).send("Internal Server Error");
     }
 }
 
-module.exports = { admin_messages_display, render_compose_message_form, compose_message };
+async function view_message(req, res) {
+    try {
+        const { from, to, msg } = req.query; // Get query params
+        res.render("owner/messages_feature/view_messages", {
+            from,
+            to,
+            messages: msg, // Rename msg to messages for consistency in EJS
+            activePage: 'employee',
+            activeRoute: 'messages'
+        });
+    } catch (error) {
+        console.error("Error rendering message details:", error);
+        res.status(500).send("Internal Server Error");
+    }
+}
+
+module.exports = { admin_messages_display, render_compose_message_form, compose_message, view_message };

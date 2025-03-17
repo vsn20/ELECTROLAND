@@ -11,7 +11,7 @@ async function salesmanager_messages_display(req, res) {
     try {
         res.render("salesmanager/messages_feature/messages_salesmanager", {
             messages,
-            activePage: 'employee', // Adjust based on your navigation
+            activePage: 'employee',
             activeRoute: 'messages'
         });
     } catch (error) {
@@ -39,7 +39,7 @@ async function compose_message(req, res) {
             from, 
             to, 
             messages: messageContent,
-            ...(to !== 'all' && { branch_id, branch_name }) // Add branch fields if "to" is not "all"
+            ...(to !== 'all' && { branch_id, branch_name })
         };
         messages.push(newMessage);
         res.redirect("/salesmanager/messages");
@@ -49,4 +49,20 @@ async function compose_message(req, res) {
     }
 }
 
-module.exports = { salesmanager_messages_display, render_compose_message_form, compose_message };
+async function view_message(req, res) {
+    try {
+        const { from, to, msg } = req.query; // Get query params
+        res.render("salesmanager/messages_feature/view_message", {
+            from,
+            to,
+            messages: msg,
+            activePage: 'employee',
+            activeRoute: 'messages'
+        });
+    } catch (error) {
+        console.error("Error rendering message details:", error);
+        res.status(500).send("Internal Server Error");
+    }
+}
+
+module.exports = { salesmanager_messages_display, render_compose_message_form, compose_message, view_message };
