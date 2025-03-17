@@ -1,20 +1,21 @@
 const express = require("express");
-
 const router = express.Router();
 
-//salesmanager-home
-router.get("/home",(req,res)=>res.render("salesmanager/home",{
+// Salesmanager home
+router.get("/home", (req, res) => res.render("salesmanager/home", {
     activePage: 'employee',
-    activeRoute: '',
-}))
-//salesmanager-inventory
-const {inventory_display}=require("../controllers/salesmanager/inventory_display");
-router.get("/stocks",inventory_display);
+    activeRoute: ''
+}));
 
-//salesmanager-customer
-const { customers_display} = require("../controllers/salesmanager/admin_customers_display");
+// Salesmanager inventory
+const { inventory_display } = require("../controllers/salesmanager/inventory_display");
+router.get("/stocks", inventory_display);
+
+// Salesmanager customer
+const { customers_display } = require("../controllers/salesmanager/admin_customers_display");
 router.get("/customers", customers_display);
 
+<<<<<<< HEAD
 //admin-salary
 const {salary_display}=require("../controllers/salesmanager/salary");
 router.get("/salaries",salary_display);
@@ -39,3 +40,17 @@ router.get('/orders/:id', order_details);
 router.get('/orders/edit/:id', order_edit);
 router.post('/orders/update/:id', order_update);
 module.exports=router;
+=======
+// Salesmanager salary
+const { salary_display } = require("../controllers/salesmanager/salary");
+router.get("/salaries", salary_display);
+
+// Salesmanager messages
+const { salesmanager_messages_display, render_compose_message_form, compose_message, view_message } = require("../controllers/salesmanager/salesmanager_messages_display");
+router.get("/messages", salesmanager_messages_display);
+router.get("/messages/compose", render_compose_message_form);
+router.post("/messages/compose", compose_message);
+router.get("/messages/view", view_message); // New route for viewing message details
+
+module.exports = router;
+>>>>>>> a909ed8624457d3cba6cc87d02607031ec7a1bed

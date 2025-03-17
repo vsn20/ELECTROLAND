@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Order Data - ElectroLand</title>
+  <title>Admin Dashboard - ElectroLand</title>
   <style>
     /* Structural CSS */
     * {
@@ -24,60 +24,47 @@
       margin-top: 90px;
       display: flex;
       flex: 1;
-      gap: 25px; /* Standardized gap */
-      padding: 0 20px !important; /* Standardized padding */
-      max-width: 100%; /* Ensure it doesn’t exceed viewport */
-    }
-
-    /* Sidebar Styling (Explicitly defined here for clarity) */
-    .sidebar {
-      width: 250px; /* Fixed width for sidebar */
-      background: #2d3436; /* Example background color */
-      color: white;
-      padding: 20px;
-      border-radius: 15px;
-      height: calc(100vh - 90px); /* Match content height */
-      flex-shrink: 0; /* Prevent sidebar from shrinking */
+      gap: 25px;
+      padding: 0 20px !important; /* Standardized padding with !important to prevent override */
+      max-width: 100%;
     }
 
     .content-area {
       background: #ffffff;
       border-radius: 15px;
-      padding: 20px;
+      padding: 20px; /* Adjusted to match previous code */
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      flex: 1; /* Allow content to take remaining space */
-      overflow-x: auto;
-      min-width: 0; /* Ensure content doesn’t overflow */
+      flex: 1;
+      overflow-x: auto; /* Added for consistency */
     }
 
     .content-area h1 {
       color: #2d3436;
       margin-bottom: 20px;
-      font-size: 1.5rem;
+      font-size: 1.5rem; /* Consistent font size */
     }
 
-    .header-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
+    .content-area p {
+      color: #636e72;
+      line-height: 1.6;
+      font-size: 0.9rem; /* Added for consistency */
     }
 
+    /* Table styling from second code */
     .table-wrapper {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
-      -ms-overflow-style: none;
-      scrollbar-width: none;
+      -ms-overflow-style: none; /* Hide scrollbar in IE/Edge */
+      scrollbar-width: none; /* Hide scrollbar in Firefox */
     }
 
     .table-wrapper::-webkit-scrollbar {
-      display: none;
+      display: none; /* Hide scrollbar in Webkit browsers */
     }
 
     table {
       width: 100%;
-      min-width: 600px;
+      min-width: 600px; /* Standardized min-width */
       border-collapse: collapse;
       background: #ffffff;
       border-radius: 10px;
@@ -115,28 +102,22 @@
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
-        padding: 0 10px !important;
-      }
-
-      .sidebar {
-        width: 100%; /* Full width on mobile */
-        height: auto; /* Adjust height */
+        padding: 0 10px; /* Consistent with previous responsive padding */
       }
 
       .content-area {
-        padding: 15px;
+        padding: 15px; /* Reduced padding for smaller screens */
       }
 
       .content-area h1 {
-        font-size: 1.2rem;
+        font-size: 1.2rem; /* Adjusted for responsiveness */
       }
 
-      .header-container {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
+      .content-area p {
+        font-size: 0.85rem; /* Slightly smaller text */
       }
 
+      /* Responsive table adjustments from second code */
       table {
         display: block;
         min-width: 0;
@@ -180,9 +161,14 @@
 
     @media (min-width: 769px) and (max-width: 1024px) {
       .content-area h1 {
-        font-size: 1.3rem;
+        font-size: 1.3rem; /* Consistent intermediate size */
       }
 
+      .content-area p {
+        font-size: 0.85rem; /* Consistent intermediate size */
+      }
+
+      /* Table adjustments for tablet from second code */
       th, td {
         padding: 10px;
         font-size: 0.85rem;
@@ -194,10 +180,8 @@
   <%- include('../../partials/navbar') %>
 
   <div class="container">
-    <div class="sidebar">
-      <%- include('../../partials/company_sidebar') %>
-    </div>
-    
+    <%- include('../../partials/company_sidebar') %>
+
     <!-- Content Area -->
     <div class="content-area" id="content">
       <div class="header-container">
@@ -235,7 +219,7 @@
         </table>
       </div>
     </div>
-  </div>
+  </div><!-- Close the .container div -->
 
   <%- include('../../partials/footer') %>
 </body>

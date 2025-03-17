@@ -146,7 +146,7 @@ async function companyproducts_display(req, res) {
         const activeProducts = companyproductData.filter(p => p.Status === "Accepted" || p.Status === "Hold");
         res.render("company/company_products", {
             companyproductData: activeProducts,
-            activePage: 'employee',
+            activePage: 'company',
             activeRoute: 'products'
         });
     } catch (error) {
@@ -160,13 +160,13 @@ async function getProductById(req, res) {
         const product = companyproductData.find(p => p.prod_id === prod_id);
         if (!product) {
             return res.status(404).render("company/company_product_details", {
-                activePage: 'employee',
+                activePage: 'company',
                 activeRoute: 'product_details',
                 product: null
             });
         }
         res.render("company/company_product_details", {
-            activePage: 'employee',
+            activePage: 'company',
             activeRoute: 'product_details',
             product: product
         });
@@ -178,7 +178,7 @@ async function getProductById(req, res) {
 async function renderAddProductForm(req, res) {
     try {
         res.render("company/add_product", {
-            activePage: 'employee',
+            activePage: 'company',
             activeRoute: 'add_product'
         });
     } catch (error) {
@@ -233,7 +233,7 @@ async function getinventory(req, res) {
         res.render("company/inventory_feature/display_inventory", {
             companyid: companyid,
             products: products,
-            activePage: 'employee',
+            activePage: 'company',
             activeRoute: 'stocks'
         });
     } catch (error) {
