@@ -11,7 +11,6 @@ async function company_messages_display(req, res) {
     try {
         res.render("company/messages_feature/messages_company", {
             messages,
-            activePage: 'employee',
             activePage: 'company', // Adjust based on your navigation
             activeRoute: 'messages'
         });

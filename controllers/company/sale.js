@@ -65,7 +65,7 @@ async function sales_display(req, res) {
         const realsales = salesData;
         res.render("company/sales_feature/sales", {
             salers: realsales,
-            activePage: 'employee',
+            activePage: 'company',
             activeRoute: 'sales',
         });
     } catch (error) {
@@ -83,7 +83,7 @@ async function salesdetaildisplay(req, res) {
         }
         res.render("company/sales_feature/salesdetails", {
             sale: realsales,
-            activePage: 'employee',
+            activePage: 'company',
             activeRoute: 'sales',
         });
     } catch (error) {

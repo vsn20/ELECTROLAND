@@ -46,7 +46,7 @@ async function orders_display(req, res) {
         const ordersdata = orderdata;
         res.render("company/orders_feature/orderdata", {
             orders: ordersdata,
-            activePage: 'employee',
+            activePage: 'company',
             activeRoute: 'orders'
         });
     } catch (error) {
