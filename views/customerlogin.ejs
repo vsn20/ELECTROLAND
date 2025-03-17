@@ -161,7 +161,7 @@
     </style>
 </head>
 <body>
-    <%- include('partials/navbar') %>
+    <%- include('partials/navbar',{ activePage: 'customer' }) %>
 
     <div class="content-wrapper">
         <div class="main-container">
@@ -195,7 +195,7 @@
         </div>
     </div>
 
-    <%- include('partials/footer') %>
+    <%- include('partials/footer',{ activePage: 'customer' }) %>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {

@@ -14,7 +14,9 @@ router.post('/', async (req, res) => {
     if (!trimmedMobileNumber.match(/^[0-9]{10}$/)) {
         console.log("Invalid mobile number");
         return res.render("customerlogin", {
-            error: "Please enter a valid 10-digit mobile number"
+            error: "Please enter a valid 10-digit mobile number",
+            activePage: 'customer',
+
         });
     }
 

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Sale - ElectroLand</title>
+  <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f5f6fa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      margin-top: 90px;
+      display: flex;
+      flex: 1;
+      gap: 25px;
+      padding: 0 20px; /* Updated padding to match Admin Dashboard */
+    }
+
+    /* Content area styles */
+    .content-area {
+      background: #ffffff;
+      border-radius: 15px;
+      padding: 25px; /* Updated padding to match Admin Dashboard */
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      flex: 1;
+      position: relative; /* For potential button positioning */
+    }
+
+    .content-area h1 {
+      color: #2d3436;
+      margin-bottom: 20px;
+      display: inline-block; /* Matches Admin Dashboard */
+    }
+
+    /* Offer content styling */
+    .content-area p {
+      color: #636e72;
+      line-height: 1.6;
+      font-size: 0.9rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        padding: 0 20px; /* Matches Admin Dashboard */
+      }
+
+      .content-area {
+        min-height: auto; /* Matches Admin Dashboard */
+        padding: 15px; /* Slightly reduced padding for mobile */
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('../../partials/navbar') %>
+
+  <div class="container">
+    <%- include('../../partials/customer_sidebar') %>
+
+    <!-- Content Area -->
+    <div class="content-area" id="content">
+      <h1>Ongoing Offers</h1>
+      <p><%= offer %></p> <!-- Wrapped in <p> for consistent styling -->
+    </div>
+  </div>
+
+  <%- include('../../partials/footer') %>
+</body>
+</html>
