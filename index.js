@@ -4,7 +4,6 @@ const portnumber = 8000;
 const path = require("path");
 const cookieParser = require("cookie-parser");
 
-// Importing routers and middlewares
 const { restrictlogedinuser, restrict } = require("./middlewares/auth");
 const staticrouter = require("./routes/staticrouter");
 const loginrouter = require("./routes/login");
@@ -15,43 +14,57 @@ const salesmanagerroutes = require("./routes/salesmanager");
 const customerlogin = require("./routes/customerlogin");
 const customer = require("./routes/customer");
 const companyauth = require("./routes/companyauth");
-const salesmanroutes=require("./routes/salesman");
+const salesmanroutes = require("./routes/salesman");
 
-// Importing connection function
 const { connectmongodb } = require("./connection");
+const { getuser } = require("./service/auth");
 
-// Connecting to MongoDB
 connectmongodb("mongodb://127.0.0.1:27017/electroworld")
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error("MongoDB connection failed:", err));
+    .then(() => console.log("MongoDB connected"))
+    .catch((err) => console.error("MongoDB connection failed:", err));
 
-// Set view engine and views directory
 app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
 
-// Middleware
 app.use(express.static("public"));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-// Routes (no middleware required)
+// Middleware for user info
+app.use((req, res, next) => {
+    const token = req.cookies && req.cookies.uid ? req.cookies.uid : null;
+    res.locals.user = getuser(token);
+    res.locals.activePage = res.locals.activePage || '';
+    next();
+});
+
+
+
+app.get('/logout', (req, res) => {
+    res.clearCookie('uid');
+    res.redirect("/");
+});
+
+// Routes without middleware
 app.use("/", staticrouter);
+
+// Apply redirectIfLoggedIn to login/signup validation routes
 app.use("/loginvalidation", loginrouter);
 app.use("/signupvalidation", signuprouter);
 app.use("/customer-login", customerlogin);
-app.use("/", companyauth); // Mount at root to match full paths
+app.use("/", companyauth);
 
-// Apply restrictlogedinuser middleware to protected routes
+
+// Protected routes with restrictlogedinuser
 app.use(restrictlogedinuser);
 
-// Protected routes
 app.use("/admin", restrict("owner"), adminroutes);
 app.use("/company", restrict("company"), companyroutes);
 app.use("/salesmanager", restrict("sales manager"), salesmanagerroutes);
 app.use("/customer", restrict("customer"), customer);
-app.use("/salesman", restrict("salesman"),salesmanroutes );
+app.use("/salesman", restrict("salesman"), salesmanroutes);
 
 app.listen(portnumber, () =>
-  console.log(`Server started at port ${portnumber}`)
+    console.log(`Server started at port ${portnumber}`)
 );
