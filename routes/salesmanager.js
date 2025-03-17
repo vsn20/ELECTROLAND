@@ -47,4 +47,9 @@ router.get("/messages/compose", render_compose_message_form);
 router.post("/messages/compose", compose_message);
 router.get("/messages/view", view_message); // New route for viewing message details
 
+//salesmanager employee
+const { employeeDisplay,employeeDetail } = require("../controllers/salesmanager/salesmanager_employee");
+router.get("/employees", employeeDisplay);
+router.get("/employee-details/:e_id", employeeDetail);
+
 module.exports = router;
