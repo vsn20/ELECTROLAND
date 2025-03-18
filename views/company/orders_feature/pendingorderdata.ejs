@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - ElectroLand</title>
+  <style>
+    /* Structural CSS */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f5f6fa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      margin-top: 90px;
+      display: flex;
+      flex: 1;
+      gap: 25px;
+      padding: 0 20px !important; /* Standardized padding with !important to prevent override */
+      max-width: 100%;
+    }
+
+    .content-area {
+      background: #ffffff;
+      border-radius: 15px;
+      padding: 20px; /* Adjusted to match previous code */
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      flex: 1;
+      overflow-x: auto; /* Added for consistency, though not critical here */
+    }
+
+    .content-area h1 {
+      color: #2d3436;
+      margin-bottom: 20px;
+      font-size: 1.5rem; /* Consistent font size */
+    }
+
+    .content-area p {
+      color: #636e72;
+      line-height: 1.6;
+      font-size: 0.9rem; /* Added for consistency */
+    }
+
+    /* Header Container for Title and Button */
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    /* Pending Orders Button Styling (Reused for Edit Button) */
+    .pending-orders-btn {
+      display: inline-block;
+      padding: 8px 16px;
+      background-color: #333333;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 0.85rem;
+      transition: background-color 0.3s;
+    }
+
+    .pending-orders-btn:hover {
+      background-color: #555555;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        padding: 0 10px; /* Consistent with previous responsive padding */
+      }
+
+      .content-area {
+        padding: 15px; /* Reduced padding for smaller screens */
+      }
+
+      .content-area h1 {
+        font-size: 1.2rem; /* Adjusted for responsiveness */
+      }
+
+      .content-area p {
+        font-size: 0.85rem; /* Slightly smaller text */
+      }
+
+      .header-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .pending-orders-btn {
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .content-area h1 {
+        font-size: 1.3rem; /* Consistent intermediate size */
+      }
+
+      .content-area p {
+        font-size: 0.85rem; /* Consistent intermediate size */
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('../../partials/navbar') %>
+
+  <div class="container">
+    <%- include('../../partials/company_sidebar') %>
+
+    <!-- Content Area -->
+    <div class="content-area" id="content">
+      <div class="header-container">
+        <h1>Comapny Dashboard</h1> <!-- Typo 'Comapny' left as is per your code -->
+        <a href="/company/orders/pending/edit" class="pending-orders-btn">Edit</a>
+      </div>
+      <p>Welcome to the ElectroLand, Company pending Dashboard. Use the sidebar to navigate to different management sections.</p>
+      <p>Welcome to the ElectroLand, Company pending Dashboard. Use the sidebar to navigate to different management sections.</p>
+      <p>Welcome to the ElectroLand, Company pending Dashboard. Use the sidebar to navigate to different management sections.</p>
+    </div>
+  </div><!-- Close the .container div -->
+
+  <%- include('../../partials/footer') %>
+</body>
+</html>
