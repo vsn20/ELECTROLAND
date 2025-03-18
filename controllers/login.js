@@ -28,11 +28,11 @@ async function handlelogin(req, res) {
 
   const userType = employee.role.toLowerCase();
   if (userType === "owner") {
-      return res.render("owner/homepage", { activePage: "employee", activeRoute: "" });
+      return res.redirect("admin/home");
   } else if (userType === "sales manager") {
-      return res.render("salesmanager/home", { activePage: "employee", activeRoute: "" });
+      return res.redirect("salesmanager/home");
   } else if (userType === "salesman") {
-      return res.render("salesman/home", { activePage: "employee", activeRoute: "" });
+      return res.redirect("salesman/home");
   } else {
       return res.status(403).send("Unauthorized role");
   }

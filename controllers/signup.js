@@ -9,11 +9,11 @@ async function handlesignup(req, res) {
   const trimmedPassword = password ? password.trim() : "";
   const trimmedConfirmPassword = confirm_password ? confirm_password.trim() : "";
 
-  console.log("Received user_id:", user_id);
-  console.log("Received email:", email);
-  console.log("Received password:", trimmedPassword);
-  console.log("Received confirm_password:", trimmedConfirmPassword);
-  console.log("Passwords match?", trimmedPassword === trimmedConfirmPassword);
+  //console.log("Received user_id:", user_id);
+  //console.log("Received email:", email);
+  //console.log("Received password:", trimmedPassword);
+  //console.log("Received confirm_password:", trimmedConfirmPassword);
+  //console.log("Passwords match?", trimmedPassword === trimmedConfirmPassword);
 
   // Check if passwords match
   if (trimmedPassword !== trimmedConfirmPassword) {
@@ -69,11 +69,11 @@ async function handlesignup(req, res) {
 
     const userType = employee.role.toLowerCase();
     if (userType === "owner") {
-      return res.render("owner/homepage", { activePage: "employee", activeRoute: "" });
+      return res.redirect("admin/home");
     } else if (userType === "sales manager") {
-      return res.render("salesmanager/home", { activePage: "employee", activeRoute: "" });
+      return res.redirect("salesmanager/home");
     } else if (userType === "salesman") {
-      return res.render("salesman/home", { activePage: "employee", activeRoute: "" });
+      return res.redirect("salesman/home");
     } else {
       return res.status(403).send("Unauthorized role");
     }
