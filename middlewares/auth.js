@@ -4,7 +4,7 @@ function restrictlogedinuser(req, res, next) {
     const token = req.cookies.uid;
     const user = getuser(token);
 
-    if (!user) return res.redirect("/login");
+    if (!user) return res.redirect("/");
 
     req.user = user;
     next();
