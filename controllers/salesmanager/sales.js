@@ -9,7 +9,9 @@ const sales_display = (req, res) => {
         res.render('salesmanager/sales_feature/salesdisplay', {
             activePage: 'employee',
             activeRoute: 'sales',
-            sales: rows
+            sales: rows,
+            branchid: 'B001',
+            branchname: 'Hyderabad Branch'
         });
     });
 };

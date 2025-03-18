@@ -30,11 +30,18 @@ router.get('/add-sale', (req, res) => {
 router.post('/add-sale', addsale_post);
 
 // Orders routes
-const { orders_display, order_details, order_edit, order_update } = require('../controllers/salesmanager/orders');
+const { orders_display, order_details, order_edit, order_update, addorder_post } = require('../controllers/salesmanager/orders');
 router.get('/orders', orders_display);
 router.get('/orders/:id', order_details);
 router.get('/orders/edit/:id', order_edit);
 router.post('/orders/update/:id', order_update);
+router.get('/add-order', (req, res) => {
+    res.render('salesmanager/orders_feature/addorder', {
+        activePage: 'employee',
+        activeRoute: 'orders'
+    });
+});
+router.post('/add-order', addorder_post);
 module.exports=router;
 // Salesmanager salary
 const { salary_display } = require("../controllers/salesmanager/salary");
