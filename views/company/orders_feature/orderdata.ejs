@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard - ElectroLand</title>
   <style>
-    /* Structural CSS */
     * {
       margin: 0;
       padding: 0;
@@ -25,46 +24,45 @@
       display: flex;
       flex: 1;
       gap: 25px;
-      padding: 0 20px !important; /* Standardized padding with !important to prevent override */
+      padding: 0 20px !important;
       max-width: 100%;
     }
 
     .content-area {
       background: #ffffff;
       border-radius: 15px;
-      padding: 20px; /* Adjusted to match previous code */
+      padding: 20px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       flex: 1;
-      overflow-x: auto; /* Added for consistency */
+      overflow-x: auto;
     }
 
     .content-area h1 {
       color: #2d3436;
       margin-bottom: 20px;
-      font-size: 1.5rem; /* Consistent font size */
+      font-size: 1.5rem;
     }
 
     .content-area p {
       color: #636e72;
       line-height: 1.6;
-      font-size: 0.9rem; /* Added for consistency */
+      font-size: 0.9rem;
     }
 
-    /* Table styling from second code */
     .table-wrapper {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
-      -ms-overflow-style: none; /* Hide scrollbar in IE/Edge */
-      scrollbar-width: none; /* Hide scrollbar in Firefox */
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
 
     .table-wrapper::-webkit-scrollbar {
-      display: none; /* Hide scrollbar in Webkit browsers */
+      display: none;
     }
 
     table {
       width: 100%;
-      min-width: 600px; /* Standardized min-width */
+      min-width: 600px;
       border-collapse: collapse;
       background: #ffffff;
       border-radius: 10px;
@@ -98,26 +96,62 @@
       background: #f8f9fd;
     }
 
-    /* Responsive adjustments */
+    .clickable-btn {
+      background: none;
+      border: none;
+      color: inherit;
+      text-decoration: none;
+      cursor: pointer;
+      padding: 0;
+      font-size: inherit;
+      width: 100%;
+      text-align: left;
+    }
+
+    .clickable-btn:hover {
+      text-decoration: underline;
+    }
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .pending-orders-btn {
+      display: inline-block;
+      padding: 8px 16px;
+      background-color: #333333;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 0.85rem;
+      transition: background-color 0.3s;
+    }
+
+    .pending-orders-btn:hover {
+      background-color: #555555;
+    }
+
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
-        padding: 0 10px; /* Consistent with previous responsive padding */
+        padding: 0 10px;
       }
 
       .content-area {
-        padding: 15px; /* Reduced padding for smaller screens */
+        padding: 15px;
       }
 
       .content-area h1 {
-        font-size: 1.2rem; /* Adjusted for responsiveness */
+        font-size: 1.2rem;
       }
 
       .content-area p {
-        font-size: 0.85rem; /* Slightly smaller text */
+        font-size: 0.85rem;
       }
 
-      /* Responsive table adjustments from second code */
       table {
         display: block;
         min-width: 0;
@@ -157,18 +191,33 @@
         margin-right: 10px;
         min-width: 100px;
       }
+
+      .clickable-btn {
+        flex: 1;
+        text-align: right;
+      }
+
+      .header-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .pending-orders-btn {
+        width: 100%;
+        text-align: center;
+      }
     }
 
     @media (min-width: 769px) and (max-width: 1024px) {
       .content-area h1 {
-        font-size: 1.3rem; /* Consistent intermediate size */
+        font-size: 1.3rem;
       }
 
       .content-area p {
-        font-size: 0.85rem; /* Consistent intermediate size */
+        font-size: 0.85rem;
       }
 
-      /* Table adjustments for tablet from second code */
       th, td {
         padding: 10px;
         font-size: 0.85rem;
@@ -186,6 +235,7 @@
     <div class="content-area" id="content">
       <div class="header-container">
         <h1>Orders</h1>
+        <a href="/company/orders/pending" class="pending-orders-btn">Pending Orders</a>
       </div>
 
       <div class="table-wrapper">
@@ -205,22 +255,31 @@
           <tbody>
             <% orders.forEach(order => { %>
               <tr>
-                <td data-label="Order ID"><%= order.oid %></td>
-                <td data-label="Branch ID"><%= order.bid %></td>
-                <td data-label="Product ID"><%= order.pid %></td>
-                <td data-label="Quantity"><%= order.quantity %></td>
-                <td data-label="Status"><%= order.status %></td>
-                <td data-label="Order Date"><%= order.orderdate %></td>
-                <td data-label="Delivery Date"><%= order.deliverydate %></td>
-                <td data-label="Installation Type"><%= order.installationtype %></td>
+                <td data-label="Order ID"><button class="clickable-btn" data-oid="<%= order.oid %>"><%= order.oid %></button></td>
+                <td data-label="Branch ID"><button class="clickable-btn" data-oid="<%= order.oid %>"><%= order.bid %></button></td>
+                <td data-label="Product ID"><button class="clickable-btn" data-oid="<%= order.oid %>"><%= order.pid %></button></td>
+                <td data-label="Quantity"><button class="clickable-btn" data-oid="<%= order.oid %>"><%= order.quantity %></button></td>
+                <td data-label="Status"><button class="clickable-btn" data-oid="<%= order.oid %>"><%= order.status %></button></td>
+                <td data-label="Order Date"><button class="clickable-btn" data-oid="<%= order.oid %>"><%= order.orderdate %></button></td>
+                <td data-label="Delivery Date"><button class="clickable-btn" data-oid="<%= order.oid %>"><%= order.deliverydate %></button></td>
+                <td data-label="Installation Type"><button class="clickable-btn" data-oid="<%= order.oid %>"><%= order.installationtype %></button></td>
               </tr>
             <% }) %>
           </tbody>
         </table>
       </div>
     </div>
-  </div><!-- Close the .container div -->
+  </div>
 
   <%- include('../../partials/footer') %>
+
+  <script>
+    document.querySelectorAll('.clickable-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const oid = button.getAttribute('data-oid');
+        window.location.href = `/company/orders/${oid}`;
+      });
+    });
+  </script>
 </body>
 </html>

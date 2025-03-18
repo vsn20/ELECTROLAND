@@ -55,6 +55,53 @@ async function orders_display(req, res) {
     }
 }
 
+async function ordersedit_display(req, res) {
+    try {
+        const orderid = req.params.oid;
+        const order = orderdata.find(b => b.oid === orderid);
+        if (!order) {
+            return res.status(404).send("Branch not found");
+        }
+        res.render("company/orders_feature/orderedit", {
+            order,
+            activePage: 'company',
+            activeRoute: 'orders'
+        });
+    } catch (error) {
+        console.error("Error rendering edit branch form:", error);
+        res.status(500).send("Internal Server Error");
+    }
+}
+
+
+async function pendingorders_display(req, res) {
+    try {
+        res.render("company/orders_feature/pendingorderdata", {
+            activePage: 'company',
+            activeRoute: 'orders'
+        });
+    } catch (error) {
+        console.error("Error rendering pending orders:", error);
+        res.status(500).send("Internal Server Error");
+    }
+}
+
+async function pendingedit_display(req, res) {
+    try {
+        res.render("company/orders_feature/pendingedit", {
+            activePage: 'company',
+            activeRoute: 'orders'
+        });
+    } catch (error) {
+        console.error("Error rendering pending orders:", error);
+        res.status(500).send("Internal Server Error");
+    }
+}
+
+pendingedit_display
 module.exports = {
     orders_display,
+    ordersedit_display,
+    pendingorders_display,
+    pendingedit_display
 };
