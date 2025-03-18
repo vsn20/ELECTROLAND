@@ -31,14 +31,16 @@
     .content-area {
       background: #ffffff;
       border-radius: 15px;
-      padding: 25px;
+      padding: 20px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       flex: 1;
+      overflow-x: auto;
     }
 
     .content-area h1 {
       color: #2d3436;
       margin-bottom: 20px;
+      font-size: 1.5rem;
     }
 
     .section {
@@ -58,8 +60,8 @@
     .field-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 10px;
+      gap: 15px;
+      margin-bottom: 15px;
     }
 
     .field-group {
@@ -77,13 +79,15 @@
 
     .field-group .value {
       background: #dfe6e9;
-      padding: 8px;
+      padding: 10px;
       border-radius: 5px;
       color: #2d3436;
       display: block;
       width: 100%;
       box-sizing: border-box;
       border: 1px solid #ccc;
+      font-size: 0.9rem;
+      word-wrap: break-word; /* Ensure long text wraps */
     }
 
     .back-btn {
@@ -95,6 +99,8 @@
       cursor: pointer;
       text-decoration: none;
       display: inline-block;
+      transition: background-color 0.3s;
+      font-size: 0.9rem;
     }
 
     .back-btn:hover {
@@ -103,12 +109,9 @@
 
     /* Responsive adjustments */
     @media (max-width: 768px) {
-      .field-row {
+      .container {
         flex-direction: column;
-      }
-
-      .field-group {
-        min-width: 100%;
+        padding: 0 10px !important;
       }
 
       .content-area {
@@ -117,6 +120,64 @@
 
       .content-area h1 {
         font-size: 1.2rem;
+      }
+
+      .section {
+        padding: 10px;
+      }
+
+      .section h2 {
+        font-size: 1rem;
+      }
+
+      .field-row {
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .field-group {
+        min-width: 100%;
+      }
+
+      .field-group label {
+        font-size: 0.85rem;
+      }
+
+      .field-group .value {
+        padding: 8px;
+        font-size: 0.85rem;
+      }
+
+      .back-btn {
+        width: 100%;
+        text-align: center;
+        padding: 8px;
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .content-area h1 {
+        font-size: 1.3rem;
+      }
+
+      .section h2 {
+        font-size: 1.1rem;
+      }
+
+      .field-group label {
+        font-size: 0.85rem;
+      }
+
+      .field-group .value {
+        padding: 8px;
+        font-size: 0.85rem;
+      }
+
+      .back-btn {
+        padding: 8px 15px;
+        font-size: 0.85rem;
       }
     }
   </style>
