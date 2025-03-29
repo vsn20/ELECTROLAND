@@ -16,11 +16,12 @@ const customer = require("./routes/customer");
 const companyauth = require("./routes/companyauth");
 const salesmanroutes = require("./routes/salesman");
 
-const { connectmongodb } = require("./connection");
+const connectmongodb = require("./connection"); // Import MongoDB connection
 const { getuser } = require("./service/auth");
 
-connectmongodb("mongodb://127.0.0.1:27017/electroworld")
-    .then(() => console.log("MongoDB connected"))
+// Updated MongoDB connection to Atlas
+connectmongodb() 
+    .then(() => console.log("MongoDB connected successfully"))
     .catch((err) => console.error("MongoDB connection failed:", err));
 
 app.set("view engine", "ejs");
@@ -39,8 +40,6 @@ app.use((req, res, next) => {
     next();
 });
 
-
-
 app.get('/logout', (req, res) => {
     res.clearCookie('uid');
     res.redirect("/");
@@ -54,7 +53,6 @@ app.use("/loginvalidation", loginrouter);
 app.use("/signupvalidation", signuprouter);
 app.use("/customer-login", customerlogin);
 app.use("/", companyauth);
-
 
 // Protected routes with restrictlogedinuser
 app.use(restrictlogedinuser);
