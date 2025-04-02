@@ -13,7 +13,19 @@ const BranchSchema = new mongoose.Schema({
     location: { 
         type: String, 
         required: true 
-    }, // Branch location (e.g., city or address)
+    }, // Branch location (mapped from 'address')
+    manager_name: { 
+        type: String, 
+        default: "Not Assigned" 
+    }, // Manager name
+    manager_email: { 
+        type: String, 
+        default: "N/A" 
+    }, // Manager email
+    manager_ph_no: { 
+        type: String, 
+        default: "N/A" 
+    }, // Manager phone number
     manager_assigned: { 
         type: Boolean, 
         default: false 
