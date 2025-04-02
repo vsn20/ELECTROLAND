@@ -1,63 +1,79 @@
-const comapnydata = [
-    {
-        cid: "1",
-        cname: "panasonic",
-        email: "panasonic@gmail.com",
-        phone: "1234567890",
-        address: "Nizamabad,Telangana",
-        active: "active",
-    },
-    {
-        cid: "2",
-        cname: "samsung",
-        email: "samsung@gmail.com",
-        phone: "1324657980",
-        address: "Sricity,Andrapradesh",
-        active: "active",
-    },
-    {
-        cid: "3",
-        cname: "LG",
-        email: "lg@gmail.com",
-        phone: "9213498012",
-        address: "Chennai,Tamilnadu",
-        active: "inactive",
-    },
-    {
-        cid: "4",
-        cname: "Sony",
-        email: "sony@gmail.com",
-        phone: "5432167890",
-        address: "mumbai,maharastra",
-        active: "active",
-    },
-];
+const Company = require("../models/Company");
 
-async function comapny_display(req, res) {
+async function company_display(req, res) {
     try {
-        const company = comapnydata;
+        const activeCompanies = await Company.find({ active: "active" });
         res.render("owner/company_feature/displaycomapny", {
-            companies: company,
-            activePage: 'employee',
-            activeRoute: 'company',
+            companies: activeCompanies,
+            activePage: "employee",
+            activeRoute: "company",
         });
     } catch (error) {
-        console.log("error rendering companies:", error);
-        res.status(500).send("internal server error");
+        console.error("Error fetching companies:", error);
+        res.status(500).send("Internal Server Error");
+    }
+}
+
+async function render_add_company_form(req, res) {
+    try {
+        res.render("owner/company_feature/addcompanie", {
+            activePage: "employee",
+            activeRoute: "company",
+        });
+    } catch (error) {
+        console.error("Error rendering add company form:", error);
+        res.status(500).send("Internal Server Error");
+    }
+}
+
+async function add_company(req, res) {
+    try {
+        console.log("Request body:", req.body);
+        const { cname, address, email, phone } = req.body;
+
+        if (!cname || !address || !email || !phone) {
+            return res.status(400).send("All fields are required");
+        }
+
+        const lastCompany = await Company.findOne().sort({ cid: -1 });
+        let newCid;
+        if (lastCompany && lastCompany.cid && lastCompany.cid.startsWith("C")) {
+            const lastNum = parseInt(lastCompany.cid.slice(1)) || 0;
+            newCid = `C${String(lastNum + 1).padStart(3, "0")}`;
+        } else {
+            newCid = "C001";
+        }
+        console.log("Generated CID:", newCid);
+
+        const newCompany = new Company({
+            cid: newCid,
+            cname,
+            email,
+            phone,
+            address,
+            active: "active",
+        });
+
+        await newCompany.save();
+        console.log("Company saved successfully");
+        res.redirect("/admin/company");
+    } catch (error) {
+        console.error("Error adding company:", error.message);
+        res.status(500).send("Internal Server Error: " + error.message);
     }
 }
 
 async function render_edit_company_form(req, res) {
     try {
         const companyId = req.params.cid;
-        const company = comapnydata.find(b => b.cid === companyId);
+        const company = await Company.findOne({ cid: companyId });
         if (!company) {
-            return res.status(404).send("Branch not found");
+            return res.status(404).send("Company not found");
         }
         res.render("owner/company_feature/editcompany", {
             company,
-            activePage: 'employee',
-            activeRoute: 'company'
+            activePage: "employee",
+            activeRoute: "company",
         });
     } catch (error) {
         console.error("Error rendering edit company form:", error);
@@ -68,16 +84,17 @@ async function render_edit_company_form(req, res) {
 async function update_company(req, res) {
     try {
         const companyId = req.params.cid;
-        const companyIndex = comapnydata.findIndex(b => b.cid === companyId);
-        if (companyIndex === -1) {
+        const { cname, address, email, phone } = req.body;
+
+        const company = await Company.findOneAndUpdate(
+            { cid: companyId },
+            { cname, email, phone, address },
+            { new: true }
+        );
+
+        if (!company) {
             return res.status(404).send("Company not found");
         }
-        // Update all editable fields
-        comapnydata[companyIndex].cname = req.body.cname;
-        comapnydata[companyIndex].address = req.body.address;
-        comapnydata[companyIndex].phone = req.body.phone;
-        comapnydata[companyIndex].email = req.body.email;
-        comapnydata[companyIndex].active = req.body.active; // This will now work with the new radio buttons
         res.redirect("/admin/company");
     } catch (error) {
         console.error("Error updating company:", error);
@@ -85,4 +102,10 @@ async function update_company(req, res) {
     }
 }
 
-module.exports = { comapny_display, render_edit_company_form, update_company };
+module.exports = {
+    company_display,
+    render_add_company_form,
+    add_company,
+    render_edit_company_form,
+    update_company,
+};
