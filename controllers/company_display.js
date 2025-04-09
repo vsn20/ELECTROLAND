@@ -1,4 +1,4 @@
-const Company = require("../models/Company");
+const Company = require("../models/company");
 
 async function company_display(req, res) {
     try {
