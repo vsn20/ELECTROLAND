@@ -1,4 +1,4 @@
-const Company = require("../models/Company");
+const Company = require("../models/company");
 
 async function company_display(req, res) {
     try {
@@ -28,25 +28,21 @@ async function render_add_company_form(req, res) {
 
 async function add_company(req, res) {
     try {
-        console.log("Request body:", req.body);
         const { cname, address, email, phone } = req.body;
 
         if (!cname || !address || !email || !phone) {
             return res.status(400).send("All fields are required");
         }
 
-        const lastCompany = await Company.findOne().sort({ cid: -1 });
-        let newCid;
-        if (lastCompany && lastCompany.cid && lastCompany.cid.startsWith("C")) {
-            const lastNum = parseInt(lastCompany.cid.slice(1)) || 0;
-            newCid = `C${String(lastNum + 1).padStart(3, "0")}`;
-        } else {
-            newCid = "C001";
+        const lastCompany = await Company.findOne().sort({ c_id: -1 });
+        let newCId = "C001";
+        if (lastCompany && lastCompany.c_id && lastCompany.c_id.startsWith("C")) {
+            const lastNum = parseInt(lastCompany.c_id.slice(1)) || 0;
+            newCId = `C${String(lastNum + 1).padStart(3, "0")}`;
         }
-        console.log("Generated CID:", newCid);
 
         const newCompany = new Company({
-            cid: newCid,
+            c_id: newCId, // Changed from cid
             cname,
             email,
             phone,
@@ -55,7 +51,6 @@ async function add_company(req, res) {
         });
 
         await newCompany.save();
-        console.log("Company saved successfully");
         res.redirect("/admin/company");
     } catch (error) {
         console.error("Error adding company:", error.message);
@@ -65,8 +60,8 @@ async function add_company(req, res) {
 
 async function render_edit_company_form(req, res) {
     try {
-        const companyId = req.params.cid;
-        const company = await Company.findOne({ cid: companyId });
+        const companyId = req.params.cid; // Kept as cid for route compatibility
+        const company = await Company.findOne({ c_id: companyId });
         if (!company) {
             return res.status(404).send("Company not found");
         }
@@ -83,13 +78,13 @@ async function render_edit_company_form(req, res) {
 
 async function update_company(req, res) {
     try {
-        const companyId = req.params.cid;
+        const companyId = req.params.cid; // Kept as cid for route compatibility
         const { cname, address, email, phone } = req.body;
 
         const company = await Company.findOneAndUpdate(
-            { cid: companyId },
+            { c_id: companyId },
             { cname, email, phone, address },
-            { new: true }
+            { new: true, runValidators: true }
         );
 
         if (!company) {

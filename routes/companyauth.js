@@ -25,7 +25,7 @@ async function handleCompanyLogin(req, res) {
         });
     }
 
-    const token = setuser(user, { c_name: company.c_name });
+    const token = setuser(user, { cname: company.cname });
     res.cookie("uid", token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
 
     return res.redirect('/company/home');
@@ -66,12 +66,12 @@ async function handleCompanySignup(req, res) {
     // Create new user with c_id from Company
     const newUser = new User({
         user_id,
-        c_id: company.c_id, // Use c_id from the found Company
+        c_id: company.c_id,
         password
     });
     await newUser.save();
 
-    const token = setuser(newUser, { c_name: company.c_name });
+    const token = setuser(newUser, { cname: company.cname });
     res.cookie("uid", token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
 
     return res.redirect('/company/home');

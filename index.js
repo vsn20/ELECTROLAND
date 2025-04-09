@@ -16,11 +16,10 @@ const customer = require("./routes/customer");
 const companyauth = require("./routes/companyauth");
 const salesmanroutes = require("./routes/salesman");
 
-const connectmongodb = require("./connection"); // Import MongoDB connection
+const connectmongodb = require("./connection");
 const { getuser } = require("./service/auth");
 
-// Updated MongoDB connection to Atlas
-connectmongodb() 
+connectmongodb()
     .then(() => console.log("MongoDB connected successfully"))
     .catch((err) => console.error("MongoDB connection failed:", err));
 
@@ -32,7 +31,6 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-// Middleware for user info
 app.use((req, res, next) => {
     const token = req.cookies && req.cookies.uid ? req.cookies.uid : null;
     res.locals.user = getuser(token);
@@ -45,16 +43,12 @@ app.get('/logout', (req, res) => {
     res.redirect("/");
 });
 
-// Routes without middleware
 app.use("/", staticrouter);
-
-// Apply redirectIfLoggedIn to login/signup validation routes
 app.use("/loginvalidation", loginrouter);
 app.use("/signupvalidation", signuprouter);
 app.use("/customer-login", customerlogin);
 app.use("/", companyauth);
 
-// Protected routes with restrictlogedinuser
 app.use(restrictlogedinuser);
 
 app.use("/admin", restrict("owner"), adminroutes);

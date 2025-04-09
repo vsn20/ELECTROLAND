@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const companySchema = new mongoose.Schema({
-    cid: { type: String, unique: true, required: true },
+    c_id: { type: String, unique: true, required: true }, // Changed from cid
     cname: { type: String, required: true },
     email: { type: String, required: true },
     phone: { type: String, required: true },
@@ -10,4 +10,4 @@ const companySchema = new mongoose.Schema({
     active: { type: String, enum: ["active", "inactive"], default: "active" }
 });
 
-module.exports = mongoose.models.Company || mongoose.model("Company", companySchema);
+module.exports = mongoose.model("Company", companySchema);
