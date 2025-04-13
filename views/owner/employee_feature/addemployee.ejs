@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard - ElectroLand</title>
+  <title>Add Employee - ElectroLand</title>
   <link rel="stylesheet" href="/styles.css">
   <style>
-    /* Your existing CSS remains unchanged */
     * {
       margin: 0;
       padding: 0;
@@ -26,7 +25,7 @@
       display: flex;
       flex: 1;
       gap: 25px;
-      padding: 0 20px !important; /* Standardized padding with !important to prevent override */
+      padding: 0 20px !important;
       max-width: 100%;
     }
 
@@ -38,31 +37,113 @@
       flex: 1;
     }
 
-    .content-area h1 {
+    .content-area h2 {
       color: #2d3436;
       margin-bottom: 20px;
     }
 
-    .content-area p {
-      color: #636e72;
-      line-height: 1.6;
+    fieldset {
+      border: 1px solid #e6e9f0;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    legend {
+      color: #2d3436;
+      font-weight: bold;
+      padding: 0 10px;
+      font-size: 1.2rem;
+    }
+
+    .field-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .field-group > div {
+      flex: 1 1 45%;
+      min-width: 200px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #2d3436;
+      font-weight: 500;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #e6e9f0;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      background: #fff;
+      transition: border-color 0.3s;
+    }
+
+    textarea {
+      height: 100px;
+      resize: vertical;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: #333333;
+      outline: none;
+    }
+
+    button[type="submit"] {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #333333;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #555555;
+    }
+
+    #error-message {
+      color: #e74c3c;
+      font-size: 0.85rem;
+      margin: 10px 0;
+      text-align: center;
+    }
+
+    .branch-option {
+      display: none;
+    }
+
+    .branch-option.show {
+      display: block;
     }
 
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
-        padding: 0 20px;
+        padding: 0 10px !important;
       }
-      .content-area {
-        min-height: auto;
-      }
-    }
 
-    /* Add error message styling */
-    #error-message {
-      color: #e74c3c;
-      margin: 10px 0;
-      min-height: 20px;
+      .content-area {
+        padding: 15px;
+      }
+
+      .field-group > div {
+        flex: 1 1 100%;
+      }
+
+      button[type="submit"] {
+        width: 100%;
+        padding: 8px;
+        font-size: 0.85rem;
+      }
     }
   </style>
 </head>
@@ -100,11 +181,12 @@
                 <label for="bid">Branch</label>
                 <select id="bid" name="bid" required>
                   <option value="" disabled selected>Select branch</option>
-                  <option value="B001">B001 - North Branch</option>
-                  <option value="B002">B002 - South Branch</option>
-                  <option value="B003">B003 - East Branch</option>
-                  <option value="B004">B004 - West Branch</option>
-                  <option value="null">Not Assigned</option>
+                  <% allBranches.forEach(branch => { %>
+                    <option value="<%= branch.bid %>" class="branch-option all-branches <%= unassignedBranches.some(ub => ub.bid === branch.bid) ? 'unassigned' : '' %>">
+                      <%= branch.bid %> - <%= branch.b_name %>
+                    </option>
+                  <% }) %>
+                  <option value="null" class="branch-option all-branches unassigned">Not Assigned</option>
                 </select>
               </div>
               <div>
@@ -113,7 +195,7 @@
               </div>
               <div>
                 <label for="phone_no">Phone Number</label>
-                <input type="tel" id="phone_no" name="phone_no" required placeholder="Enter phone number" pattern="[0-9]{10}">
+                <input type="tel" id="phone_no" name="phone_no" placeholder="Enter phone number" pattern="[0-9]{10}">
               </div>
             </div>
           </fieldset>
@@ -140,7 +222,7 @@
               </div>
               <div>
                 <label for="address">Address</label>
-                <textarea id="address" name="address" required placeholder="Enter address"></textarea>
+                <textarea id="address" name="address" placeholder="Enter address"></textarea>
               </div>
             </div>
           </fieldset>
@@ -156,18 +238,33 @@
 
   <script>
     const form = document.getElementById('employee-login-form');
+    const roleSelect = document.getElementById('role');
+    const branchSelect = document.getElementById('bid');
     const email = document.getElementById('email');
     const phone = document.getElementById('phone_no');
     const errorMessage = document.getElementById('error-message');
 
+    // Update branch dropdown visibility based on role
+    roleSelect.addEventListener('change', function() {
+      const options = branchSelect.querySelectorAll('.branch-option');
+      options.forEach(option => {
+        if (roleSelect.value === 'Sales Manager') {
+          option.classList.contains('unassigned') ? option.classList.add('show') : option.classList.remove('show');
+        } else {
+          option.classList.contains('all-branches') ? option.classList.add('show') : option.classList.remove('show');
+        }
+      });
+      branchSelect.value = ''; // Reset selection
+    });
+
     form.addEventListener('submit', async function(event) {
-      event.preventDefault(); // Prevent default form submission
+      event.preventDefault();
 
       // Reset styles
-      email.style.borderColor = '#ddd';
-      email.style.backgroundColor = '#f9f9f9';
-      phone.style.borderColor = '#ddd';
-      phone.style.backgroundColor = '#f9f9f9';
+      email.style.borderColor = '#e6e9f0';
+      email.style.backgroundColor = '#fff';
+      phone.style.borderColor = '#e6e9f0';
+      phone.style.backgroundColor = '#fff';
       errorMessage.textContent = '';
 
       // Client-side validation
@@ -180,7 +277,7 @@
       }
 
       const phonePattern = /^[0-9]{10}$/;
-      if (!phonePattern.test(phone.value)) {
+      if (phone.value && !phonePattern.test(phone.value)) {
         phone.style.borderColor = '#e74c3c';
         phone.style.backgroundColor = '#fff5f5';
         errorMessage.textContent = 'Please enter a valid 10-digit phone number.';
@@ -190,7 +287,6 @@
       // Prepare form data
       const formData = new FormData(form);
       const data = Object.fromEntries(formData);
-      console.log('Form Data:', data)
 
       try {
         const response = await fetch('/admin/addemployee', {
@@ -204,7 +300,6 @@
         const result = await response.json();
 
         if (result.success) {
-          // Redirect to the URL provided by the server
           window.location.href = result.redirect;
         } else {
           errorMessage.textContent = result.message || 'An error occurred while adding the employee.';

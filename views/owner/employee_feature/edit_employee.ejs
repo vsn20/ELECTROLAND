@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Employee - ElectroLand</title>
-  <link rel="stylesheet" href="/styles.css"> <!-- Reuse your form CSS -->
+  <link rel="stylesheet" href="/styles.css">
   <style>
     * {
       margin: 0;
@@ -25,7 +25,7 @@
       display: flex;
       flex: 1;
       gap: 25px;
-      padding: 0 20px !important; /* Standardized padding with !important to prevent override */
+      padding: 0 20px !important;
       max-width: 100%;
     }
 
@@ -37,19 +37,112 @@
       flex: 1;
     }
 
-    .content-area h1 {
+    .content-area h2 {
       color: #2d3436;
       margin-bottom: 20px;
+    }
+
+    fieldset {
+      border: 1px solid #e6e9f0;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    legend {
+      color: #2d3436;
+      font-weight: bold;
+      padding: 0 10px;
+      font-size: 1.2rem;
+    }
+
+    .field-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .field-group > div {
+      flex: 1 1 45%;
+      min-width: 200px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #2d3436;
+      font-weight: 500;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #e6e9f0;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      background: #fff;
+      transition: border-color 0.3s;
+    }
+
+    textarea {
+      height: 100px;
+      resize: vertical;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: #333333;
+      outline: none;
+    }
+
+    button[type="submit"] {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #333333;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #555555;
+    }
+
+    #error-message {
+      color: #e74c3c;
+      font-size: 0.85rem;
+      margin: 10px 0;
+      text-align: center;
+    }
+
+    .branch-option {
+      display: none;
+    }
+
+    .branch-option.show {
+      display: block;
     }
 
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
-        padding: 0 20px;
+        padding: 0 10px !important;
       }
 
       .content-area {
-        min-height: auto;
+        padding: 15px;
+      }
+
+      .field-group > div {
+        flex: 1 1 100%;
+      }
+
+      button[type="submit"] {
+        width: 100%;
+        padding: 8px;
+        font-size: 0.85rem;
       }
     }
   </style>
@@ -60,7 +153,6 @@
   <div class="container">
     <%- include('../../partials/admin_sidebar') %>
 
-    <!-- Content Area -->
     <div class="content-area" id="content">
       <div class="form-container">
         <h2>Edit Employee</h2>
@@ -87,19 +179,15 @@
               <div>
                 <label for="bid">Branch</label>
                 <select id="bid" name="bid" required>
-                  <option value="B001" <%= employee.bid === 'B001' ? 'selected' : '' %>>B001 - North Branch</option>
-                  <option value="B002" <%= employee.bid === 'B002' ? 'selected' : '' %>>B002 - South Branch</option>
-                  <option value="B003" <%= employee.bid === 'B003' ? 'selected' : '' %>>B003 - East Branch</option>
-                  <option value="B004" <%= employee.bid === 'B004' ? 'selected' : '' %>>B004 - West Branch</option>
-                  <option value="null" <%= !employee.bid ? 'selected' : '' %>>Not Assigned</option>
-                </select>
-              </div>
-              <div>
-                <label for="status">Status</label>
-                <select id="status" name="status" required>
-                  <option value="active" <%= employee.status === 'active' ? 'selected' : '' %>>Active</option>
-                  <option value="resigned" <%= employee.status === 'resigned' ? 'selected' : '' %>>Resigned</option>
-                  <option value="fired" <%= employee.status === 'fired' ? 'selected' : '' %>>Fired</option>
+                  <option value="" disabled>Select branch</option>
+                  <% allBranches.forEach(branch => { %>
+                    <option value="<%= branch.bid %>" 
+                            class="branch-option all-branches <%= unassignedBranches.some(ub => ub.bid === branch.bid) || (currentBranch && currentBranch.bid === branch.bid) ? 'sales-manager' : '' %>"
+                            <%= employee.bid === branch.bid ? 'selected' : '' %>>
+                      <%= branch.bid %> - <%= branch.b_name %>
+                    </option>
+                  <% }) %>
+                  <option value="null" class="branch-option all-branches sales-manager" <%= employee.bid === null ? 'selected' : '' %>>Not Assigned</option>
                 </select>
               </div>
               <div>
@@ -140,6 +228,20 @@
             </div>
           </fieldset>
 
+          <!-- Status Section -->
+          <fieldset>
+            <legend>Status</legend>
+            <div class="field-group">
+              <div>
+                <label for="status">Status</label>
+                <select id="status" name="status" required>
+                  <option value="active" <%= employee.status === 'active' ? 'selected' : '' %>>Active</option>
+                  <option value="inactive" <%= employee.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+                </select>
+              </div>
+            </div>
+          </fieldset>
+
           <div id="error-message"></div>
           <button type="submit">Update Employee</button>
         </form>
@@ -151,20 +253,57 @@
 
   <script>
     const form = document.getElementById('edit-employee-form');
+    const roleSelect = document.getElementById('role');
+    const branchSelect = document.getElementById('bid');
     const email = document.getElementById('email');
     const phone = document.getElementById('phone_no');
     const errorMessage = document.getElementById('error-message');
 
-    form.addEventListener('submit', function(event) {
-      email.style.borderColor = '#ddd';
-      email.style.backgroundColor = '#f9f9f9';
-      phone.style.borderColor = '#ddd';
-      phone.style.backgroundColor = '#f9f9f9';
+    // Function to update branch dropdown visibility
+    function updateBranchDropdown() {
+      const options = branchSelect.querySelectorAll('.branch-option');
+      options.forEach(option => {
+        if (roleSelect.value === 'Sales Manager') {
+          option.classList.contains('sales-manager') ? option.classList.add('show') : option.classList.remove('show');
+        } else {
+          option.classList.contains('all-branches') ? option.classList.add('show') : option.classList.remove('show');
+        }
+      });
+    }
+
+    // Initialize dropdown based on current role
+    updateBranchDropdown();
+
+    // Update dropdown when role changes
+    roleSelect.addEventListener('change', function() {
+      updateBranchDropdown();
+      // Restore current branch or 'Not Assigned'
+      let currentBid = '<%= employee.bid %>';
+      if (!currentBid || currentBid === 'null') {
+        currentBid = 'null';
+      }
+      // Only set value if the option is visible
+      const selectedOption = branchSelect.querySelector(`option[value="${currentBid}"]`);
+      if (selectedOption && selectedOption.classList.contains('show')) {
+        branchSelect.value = currentBid;
+      } else {
+        branchSelect.value = '';
+      }
+    });
+
+    form.addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      // Reset styles
+      email.style.borderColor = '#e6e9f0';
+      email.style.backgroundColor = '#fff';
+      phone.style.borderColor = '#e6e9f0';
+      phone.style.backgroundColor = '#fff';
       errorMessage.textContent = '';
 
+      // Client-side validation
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailPattern.test(email.value)) {
-        event.preventDefault();
         email.style.borderColor = '#e74c3c';
         email.style.backgroundColor = '#fff5f5';
         errorMessage.textContent = 'Please enter a valid email address.';
@@ -173,11 +312,34 @@
 
       const phonePattern = /^[0-9]{10}$/;
       if (phone.value && !phonePattern.test(phone.value)) {
-        event.preventDefault();
         phone.style.borderColor = '#e74c3c';
         phone.style.backgroundColor = '#fff5f5';
         errorMessage.textContent = 'Please enter a valid 10-digit phone number.';
         return;
+      }
+
+      // Prepare form data
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData);
+
+      try {
+        const response = await fetch(`/admin/employee/update/<%= employee.e_id %>`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          window.location.href = result.redirect;
+        } else {
+          errorMessage.textContent = result.message || 'An error occurred while updating the employee.';
+        }
+      } catch (error) {
+        errorMessage.textContent = 'Network error: ' + error.message;
       }
     });
   </script>

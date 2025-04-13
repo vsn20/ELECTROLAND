@@ -14,6 +14,11 @@ const BranchSchema = new mongoose.Schema({
         type: String, 
         required: true 
     }, // Branch location (mapped from 'address')
+    manager_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Employee",
+        default: null
+    }, // Reference to Employee as manager
     manager_name: { 
         type: String, 
         default: "Not Assigned" 

@@ -1,4 +1,5 @@
 const Employee = require('../../models/employees');
+const Branch = require('../../models/branches');
 
 async function addemployee(req, res) {
   try {
@@ -7,7 +8,7 @@ async function addemployee(req, res) {
       f_name,
       last_name,
       role,
-      bid: bidFromForm, // Rename to avoid shadowing
+      bid: bidFromForm,
       email,
       phone_no,
       acno,
@@ -33,8 +34,8 @@ async function addemployee(req, res) {
       f_name,
       last_name,
       role,
-      status: 'active', // Default to "active"
-      bid, // Store null for "Not Assigned"
+      status: 'active',
+      bid,
       email,
       phone_no,
       address,
@@ -42,21 +43,43 @@ async function addemployee(req, res) {
       ifsc,
       bankname,
       base_salary,
-      createdBy, // From cookies or default
-      hiredAt: new Date(), // Default to now
-      resignation_date: null, // Default
-      fired_date: null,      // Default
-      reason_for_exit: null  // Default
+      createdBy,
+      hiredAt: new Date(),
+      resignation_date: null,
+      fired_date: null,
+      reason_for_exit: null
     });
 
     // Save to MongoDB
     await newEmployee.save();
 
-    // Send JSON success response instead of rendering
+    // If the employee is a Sales Manager and a branch is assigned, update the branch
+    if (role === 'Sales Manager' && bid && bid !== 'null') {
+      const branch = await Branch.findOne({ bid });
+      if (branch) {
+        // Check if another Sales Manager is already assigned
+        if (branch.manager_assigned) {
+          return res.status(400).json({
+            success: false,
+            message: `Branch ${bid} already has a Sales Manager assigned.`
+          });
+        }
+        branch.manager_id = newEmployee._id;
+        branch.manager_name = `${f_name} ${last_name}`;
+        branch.manager_email = email;
+        branch.manager_ph_no = phone_no || 'N/A';
+        branch.manager_assigned = true;
+        await branch.save();
+      } else {
+        console.warn(`Branch with bid ${bid} not found.`);
+      }
+    }
+
+    // Send JSON success response
     res.status(201).json({
       success: true,
       message: 'Employee added successfully',
-      redirect: '/admin/employees' // Client can use this URL for GET request
+      redirect: '/admin/employees'
     });
 
   } catch (error) {
