@@ -157,7 +157,6 @@
       <div class="form-container">
         <h2>Edit Employee</h2>
         <form id="edit-employee-form" action="/admin/employee/update/<%= employee.e_id %>" method="POST">
-          <!-- Personal Details Section -->
           <fieldset>
             <legend>Personal Details</legend>
             <div class="field-group">
@@ -178,16 +177,16 @@
               </div>
               <div>
                 <label for="bid">Branch</label>
-                <select id="bid" name="bid" required>
+                <select id="bid" name="bid">
                   <option value="" disabled>Select branch</option>
                   <% allBranches.forEach(branch => { %>
                     <option value="<%= branch.bid %>" 
-                            class="branch-option all-branches <%= unassignedBranches.some(ub => ub.bid === branch.bid) || (currentBranch && currentBranch.bid === branch.bid) ? 'sales-manager' : '' %>"
+                            class="branch-option all-branches <%= unassignedBranches.some(ub => ub.bid === branch.bid) || (currentBranch && currentBranch.bid === branch.bid) ? 'unassigned' : '' %>"
                             <%= employee.bid === branch.bid ? 'selected' : '' %>>
                       <%= branch.bid %> - <%= branch.b_name %>
                     </option>
                   <% }) %>
-                  <option value="null" class="branch-option all-branches sales-manager" <%= employee.bid === null ? 'selected' : '' %>>Not Assigned</option>
+                  <option value="null" class="branch-option all-branches unassigned" <%= employee.bid === null ? 'selected' : '' %>>Not Assigned</option>
                 </select>
               </div>
               <div>
@@ -201,7 +200,6 @@
             </div>
           </fieldset>
 
-          <!-- Account and Salaries Section -->
           <fieldset>
             <legend>Account and Salaries</legend>
             <div class="field-group">
@@ -228,7 +226,6 @@
             </div>
           </fieldset>
 
-          <!-- Status Section -->
           <fieldset>
             <legend>Status</legend>
             <div class="field-group">
@@ -236,7 +233,8 @@
                 <label for="status">Status</label>
                 <select id="status" name="status" required>
                   <option value="active" <%= employee.status === 'active' ? 'selected' : '' %>>Active</option>
-                  <option value="inactive" <%= employee.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+                  <option value="resigned" <%= employee.status === 'resigned' ? 'selected' : '' %>>Resigned</option>
+                  <option value="fired" <%= employee.status === 'fired' ? 'selected' : '' %>>Fired</option>
                 </select>
               </div>
             </div>
@@ -259,30 +257,25 @@
     const phone = document.getElementById('phone_no');
     const errorMessage = document.getElementById('error-message');
 
-    // Function to update branch dropdown visibility
     function updateBranchDropdown() {
       const options = branchSelect.querySelectorAll('.branch-option');
       options.forEach(option => {
         if (roleSelect.value === 'Sales Manager') {
-          option.classList.contains('sales-manager') ? option.classList.add('show') : option.classList.remove('show');
+          option.classList.contains('unassigned') ? option.classList.add('show') : option.classList.remove('show');
         } else {
           option.classList.contains('all-branches') ? option.classList.add('show') : option.classList.remove('show');
         }
       });
     }
 
-    // Initialize dropdown based on current role
     updateBranchDropdown();
 
-    // Update dropdown when role changes
     roleSelect.addEventListener('change', function() {
       updateBranchDropdown();
-      // Restore current branch or 'Not Assigned'
       let currentBid = '<%= employee.bid %>';
       if (!currentBid || currentBid === 'null') {
         currentBid = 'null';
       }
-      // Only set value if the option is visible
       const selectedOption = branchSelect.querySelector(`option[value="${currentBid}"]`);
       if (selectedOption && selectedOption.classList.contains('show')) {
         branchSelect.value = currentBid;
@@ -294,14 +287,12 @@
     form.addEventListener('submit', async function(event) {
       event.preventDefault();
 
-      // Reset styles
       email.style.borderColor = '#e6e9f0';
       email.style.backgroundColor = '#fff';
       phone.style.borderColor = '#e6e9f0';
       phone.style.backgroundColor = '#fff';
       errorMessage.textContent = '';
 
-      // Client-side validation
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailPattern.test(email.value)) {
         email.style.borderColor = '#e74c3c';
@@ -318,7 +309,6 @@
         return;
       }
 
-      // Prepare form data
       const formData = new FormData(form);
       const data = Object.fromEntries(formData);
 
@@ -331,11 +321,10 @@
           body: JSON.stringify(data),
         });
 
-        const result = await response.json();
-
-        if (result.success) {
-          window.location.href = result.redirect;
+        if (response.redirected) {
+          window.location.href = response.url;
         } else {
+          const result = await response.json();
           errorMessage.textContent = result.message || 'An error occurred while updating the employee.';
         }
       } catch (error) {

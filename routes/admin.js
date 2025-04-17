@@ -1,24 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const { addemployee } = require("../controllers/owner/addemployee");
-const { loademployeedata, getEmployeeDetails, getEditEmployee, updateEmployee } = require("../controllers/owner/load_employee_data");
+const { loademployeedata, getEmployeeDetails, getEditEmployee, updateEmployee, syncEmployeeBranchData } = require("../controllers/owner/load_employee_data");
 const Branch = require("../models/branches");
 
 router.get("/employees", loademployeedata);
 router.get("/employee/:e_id", getEmployeeDetails);
 router.get("/employee/edit/:e_id", getEditEmployee);
 router.post("/employee/update/:e_id", updateEmployee);
+router.get("/sync-employee-branch-data", syncEmployeeBranchData);
 router.get("/addemployee", async (req, res) => {
   try {
-    // Fetch all active branches for Salesman role
     const allBranches = await Branch.find({ active: "active" }).lean();
-    // Fetch unassigned branches for Sales Manager role
     const unassignedBranches = await Branch.find({
       active: "active",
-      $or: [
-        { manager_assigned: false },
-        { manager_assigned: { $exists: false } }
-      ]
+      manager_assigned: false
     }).lean();
     res.render("owner/employee_feature/addemployee", {
       activePage: "employee",
