@@ -24,7 +24,7 @@
       display: flex;
       flex: 1;
       gap: 25px;
-      padding: 0 20px !important; /* Standardized padding with !important to prevent override */
+      padding: 0 20px !important;
       max-width: 100%;
     }
 
@@ -89,6 +89,11 @@
       font-size: 1rem;
     }
 
+    .field-input:disabled {
+      background: #f0f0f0;
+      cursor: not-allowed;
+    }
+
     .field-input-file {
       width: 100%;
       padding: 10px 0;
@@ -129,7 +134,6 @@
       color: #636e72;
     }
 
-    /* Responsive adjustments */
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
@@ -167,7 +171,6 @@
   <div class="container">
     <%- include('../partials/company_sidebar') %>
 
-    <!-- Content Area -->
     <div class="content-area" id="content">
       <h1>Add New Product</h1>
       <form action="/company/products/add" method="POST" enctype="multipart/form-data">
@@ -175,16 +178,12 @@
           <legend class="section-title">Product Information</legend>
           <div class="field-group">
             <div>
-              <label for="prod-id" class="field-label">Product ID</label>
-              <input type="text" id="prod-id" name="prod_id" class="field-input" required>
-            </div>
-            <div>
               <label for="prod-name" class="field-label">Product Name</label>
               <input type="text" id="prod-name" name="Prod_name" class="field-input" required>
             </div>
             <div>
               <label for="com-id" class="field-label">Company ID</label>
-              <input type="text" id="com-id" name="Com_id" class="field-input" required>
+              <input type="text" id="com-id" name="Com_id" value="<%= companyId %>" class="field-input" disabled>
             </div>
             <div>
               <label for="model-no" class="field-label">Model Number</label>
@@ -192,7 +191,7 @@
             </div>
             <div>
               <label for="com-name" class="field-label">Company Name</label>
-              <input type="text" id="com-name" name="com_name" class="field-input" required>
+              <input type="text" id="com-name" name="com_name" value="<%= companyName %>" class="field-input" disabled>
             </div>
             <div>
               <label for="prod-year" class="field-label">Production Year</label>
@@ -201,14 +200,6 @@
             <div>
               <label for="stock" class="field-label">Stock</label>
               <input type="text" id="stock" name="stock" class="field-input" required>
-            </div>
-            <div>
-              <label for="status" class="field-label">Status</label>
-              <select id="status" name="Status" class="field-input" required>
-                <option value="Accepted">Accepted</option>
-                <option value="Hold">Hold</option>
-                <option value="Rejected">Rejected</option>
-              </select>
             </div>
             <div>
               <label for="description" class="field-label">Description</label>
@@ -225,20 +216,22 @@
             <div>
               <label for="installation" class="field-label">Installation</label>
               <select id="installation" name="installation" class="field-input" required>
+                <option value="">Select Installation</option>
                 <option value="Required">Required</option>
                 <option value="Not Required">Not Required</option>
               </select>
             </div>
             <div>
               <label for="installation-type" class="field-label">Installation Type</label>
-              <select id="installation-type" name="installationType" class="field-input" required>
+              <select id="installation-type" name="installationType" class="field-input" disabled>
+                <option value="">Select Type</option>
                 <option value="Paid">Paid</option>
                 <option value="Free">Free</option>
               </select>
             </div>
             <div>
               <label for="installation-charge" class="field-label">Installation Charge</label>
-              <input type="text" id="installation-charge" name="installationcharge" class="field-input" required>
+              <input type="text" id="installation-charge" name="installationcharge" class="field-input" disabled>
             </div>
             <div>
               <label for="prod-photos" class="field-label">Product Photos</label>
@@ -253,5 +246,31 @@
   </div>
 
   <%- include('../partials/footer') %>
-</body>
-</html>
+
+  <script>
+    // Dynamic field enabling/disabling
+    document.getElementById('installation').addEventListener('change', function() {
+      const installationType = document.getElementById('installation-type');
+      const installationCharge = document.getElementById('installation-charge');
+      if (this.value === 'Required') {
+        installationType.disabled = false;
+        installationType.focus();
+      } else {
+        installationType.disabled = true;
+        installationType.value = '';
+        installationCharge.disabled = true;
+        installationCharge.value = '';
+      }
+    });
+
+    document.getElementById('installation-type').addEventListener('change', function() {
+      const installationCharge = document.getElementById('installation-charge');
+      if (this.value === 'Paid') {
+        installationCharge.disabled = false;
+        installationCharge.focus();
+      } else {
+        installationCharge.disabled = true;
+        installationCharge.value = '';
+      }
+    });
+  </script>

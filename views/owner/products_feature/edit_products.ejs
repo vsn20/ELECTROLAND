@@ -24,24 +24,24 @@
       display: flex;
       flex: 1;
       gap: 25px;
-      padding: 0 20px !important; /* Standardized padding with !important to prevent override */
-      max-width: 100%; /* Matches reference intent for flush-left sidebar */
+      padding: 0 20px !important;
+      max-width: 100%;
     }
 
     .content-area {
       background: #ffffff;
       border-radius: 15px;
-      padding: 20px; /* Matches Sales page */
+      padding: 20px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       flex: 1;
-      height: calc(100vh - 90px); /* Matches sidebar height */
-      overflow-y: auto; /* Enable vertical scrolling */
-      -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
-      scrollbar-width: none; /* Hide scrollbar in Firefox */
+      height: calc(100vh - 90px);
+      overflow-y: auto;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
 
     .content-area::-webkit-scrollbar {
-      display: none; /* Hide scrollbar in Webkit browsers */
+      display: none;
     }
 
     .content-area h1 {
@@ -111,22 +111,21 @@
       background: #636e72;
     }
 
-    /* Responsive adjustments */
     @media (max-width: 768px) {
       .container {
-        margin-top: 60px; /* Matches Sales page */
+        margin-top: 60px;
         flex-direction: column;
-        padding: 0 10px; /* Matches Sales page */
-        gap: 15px; /* Matches Sales page */
+        padding: 0 10px;
+        gap: 15px;
       }
 
       .content-area {
-        padding: 15px; /* Matches Sales page */
-        height: auto; /* Expand naturally on mobile */
+        padding: 15px;
+        height: auto;
       }
 
       .content-area h1 {
-        font-size: 1.2rem; /* Matches Sales adjustment */
+        font-size: 1.2rem;
       }
 
       .field-group {
@@ -136,12 +135,12 @@
 
     @media (min-width: 769px) and (max-width: 1024px) {
       .container {
-        gap: 20px; /* Matches Sales page */
-        padding: 0 15px; /* Matches Sales page */
+        gap: 20px;
+        padding: 0 15px;
       }
 
       .content-area {
-        padding: 15px; /* Matches Sales page */
+        padding: 15px;
       }
 
       .content-area h1 {
@@ -151,12 +150,12 @@
 
     @media (max-width: 480px) {
       .container {
-        margin-top: 50px; /* Matches Sales page */
-        padding: 0 5px; /* Matches Sales page */
+        margin-top: 50px;
+        padding: 0 5px;
       }
 
       .content-area {
-        padding: 10px; /* Matches Sales page */
+        padding: 10px;
       }
     }
   </style>
@@ -167,7 +166,6 @@
   <div class="container">
     <%- include('../../partials/admin_sidebar') %>
 
-    <!-- Content Area -->
     <div class="content-area" id="content">
       <h1>Edit Product</h1>
       <% if (product) { %>
@@ -198,10 +196,9 @@
               <div>
                 <label for="status" class="field-label">Status</label>
                 <select id="status" name="status" class="field-select" required>
-                  <option value="Accepted" <%= product.Status === 'Accepted' ? 'selected' : '' %>>Accepted</option>
-                  <option value="Hold" <%= product.Status === 'Hold' ? 'selected' : '' %>>Hold</option>
-                  <option value="Rejected" <%= product.Status === 'Rejected' ? 'selected' : '' %>>Rejected</option>
-                  <option value="Pending" <%= product.Status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                  <option value="Hold" <%= product.Status === 'Hold' ? 'selected' : '' %> disabled>Hold (Initial State)</option>
+                  <option value="Accepted" <%= product.Status === 'Accepted' ? 'selected' : '' %>>Accepted (Move to Products)</option>
+                  <option value="Rejected" <%= product.Status === 'Rejected' ? 'selected' : '' %>>Rejected (Move to Rejected)</option>
                 </select>
               </div>
             </div>
@@ -215,5 +212,3 @@
   </div>
 
   <%- include('../../partials/footer') %>
-</body>
-</html>

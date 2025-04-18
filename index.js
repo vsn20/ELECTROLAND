@@ -3,6 +3,16 @@ const app = express();
 const portnumber = 8000;
 const path = require("path");
 const cookieParser = require("cookie-parser");
+const multer = require('multer');
+
+// Multer configuration for file uploads
+const storage = multer.diskStorage({
+  destination: './public/uploads/',
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+const upload = multer({ storage: storage });
 
 const { restrictlogedinuser, restrict } = require("./middlewares/auth");
 const staticrouter = require("./routes/staticrouter");
@@ -20,8 +30,8 @@ const connectmongodb = require("./connection");
 const { getuser } = require("./service/auth");
 
 connectmongodb()
-    .then(() => console.log("MongoDB connected successfully"))
-    .catch((err) => console.error("MongoDB connection failed:", err));
+  .then(() => console.log("MongoDB connected successfully"))
+  .catch((err) => console.error("MongoDB connection failed:", err));
 
 app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
@@ -30,17 +40,18 @@ app.use(express.static("public"));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(upload.array('prod_photos')); // Middleware for handling multiple file uploads
 
 app.use((req, res, next) => {
-    const token = req.cookies && req.cookies.uid ? req.cookies.uid : null;
-    res.locals.user = getuser(token);
-    res.locals.activePage = res.locals.activePage || '';
-    next();
+  const token = req.cookies && req.cookies.uid ? req.cookies.uid : null;
+  res.locals.user = getuser(token);
+  res.locals.activePage = res.locals.activePage || '';
+  next();
 });
 
 app.get('/logout', (req, res) => {
-    res.clearCookie('uid');
-    res.redirect("/");
+  res.clearCookie('uid');
+  res.redirect("/");
 });
 
 app.use("/", staticrouter);
@@ -58,5 +69,5 @@ app.use("/customer", restrict("customer"), customer);
 app.use("/salesman", restrict("salesman"), salesmanroutes);
 
 app.listen(portnumber, () =>
-    console.log(`Server started at port ${portnumber}`)
+  console.log(`Server started at port ${portnumber}`)
 );

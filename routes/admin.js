@@ -3,6 +3,7 @@ const router = express.Router();
 const { addemployee } = require("../controllers/owner/addemployee");
 const { loademployeedata, getEmployeeDetails, getEditEmployee, updateEmployee } = require("../controllers/owner/load_employee_data");
 const Branch = require("../models/branches");
+const { products_display, rejected_products_display, new_products_display, render_product_details, render_add_product_form, render_edit_product_form, update_product } = require("../controllers/admin_products_display");
 
 router.get("/employees", loademployeedata);
 router.get("/employee/:e_id", getEmployeeDetails);
@@ -10,9 +11,7 @@ router.get("/employee/edit/:e_id", getEditEmployee);
 router.post("/employee/update/:e_id", updateEmployee);
 router.get("/addemployee", async (req, res) => {
   try {
-    // Fetch all active branches for Salesman role
     const allBranches = await Branch.find({ active: "active" }).lean();
-    // Fetch unassigned branches for Sales Manager role
     const unassignedBranches = await Branch.find({
       active: "active",
       $or: [
@@ -33,7 +32,6 @@ router.get("/addemployee", async (req, res) => {
 });
 router.post("/addemployee", addemployee);
 
-const { products_display, rejected_products_display, new_products_display, render_product_details, render_add_product_form, render_edit_product_form, update_product } = require("../controllers/admin_products_display");
 router.get("/products", products_display);
 router.get("/products/rejected", rejected_products_display);
 router.get("/products/new", new_products_display);
