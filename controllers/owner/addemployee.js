@@ -3,7 +3,6 @@ const Branch = require('../../models/branches');
 
 async function addemployee(req, res) {
   try {
-    // Extract form data from request body
     const {
       f_name,
       last_name,
@@ -18,17 +17,33 @@ async function addemployee(req, res) {
       address
     } = req.body;
 
-    // Get createdBy from cookies, default to "owner"
     const createdBy = req.cookies.createdBy || 'owner';
 
-    // Simple auto-increment: Count existing employees and add 1
+    // Generate unique employee ID
     const employeeCount = await Employee.countDocuments();
-    const e_id = `EMP${employeeCount + 1}`; // e.g., EMP1, EMP2, etc.
+    const e_id = `EMP${employeeCount + 1}`;
 
-    // Handle "Not Assigned" (convert "null" string to actual null)
+    // Handle branch assignment
     const bid = bidFromForm === 'null' ? null : bidFromForm;
 
-    // Create new employee instance
+    // Validate Sales Manager branch assignment
+    if (role === 'Sales Manager' && bid && bid !== 'null') {
+      const branch = await Branch.findOne({ bid });
+      if (!branch) {
+        return res.status(404).json({
+          success: false,
+          message: `Branch ${bid} not found.`
+        });
+      }
+      if (branch.manager_assigned) {
+        return res.status(400).json({
+          success: false,
+          message: `Branch ${bid} already has a Sales Manager assigned.`
+        });
+      }
+    }
+
+    // Create new employee
     const newEmployee = new Employee({
       e_id,
       f_name,
@@ -37,8 +52,8 @@ async function addemployee(req, res) {
       status: 'active',
       bid,
       email,
-      phone_no,
-      address,
+      phone_no: phone_no || null,
+      address: address || null,
       acno,
       ifsc,
       bankname,
@@ -50,32 +65,22 @@ async function addemployee(req, res) {
       reason_for_exit: null
     });
 
-    // Save to MongoDB
     await newEmployee.save();
 
-    // If the employee is a Sales Manager and a branch is assigned, update the branch
+    // Update branch if Sales Manager
     if (role === 'Sales Manager' && bid && bid !== 'null') {
-      const branch = await Branch.findOne({ bid });
-      if (branch) {
-        // Check if another Sales Manager is already assigned
-        if (branch.manager_assigned) {
-          return res.status(400).json({
-            success: false,
-            message: `Branch ${bid} already has a Sales Manager assigned.`
-          });
+      await Branch.findOneAndUpdate(
+        { bid },
+        {
+          manager_id: newEmployee._id,
+          manager_name: `${f_name} ${last_name}`,
+          manager_email: email,
+          manager_ph_no: phone_no || 'N/A',
+          manager_assigned: true
         }
-        branch.manager_id = newEmployee._id;
-        branch.manager_name = `${f_name} ${last_name}`;
-        branch.manager_email = email;
-        branch.manager_ph_no = phone_no || 'N/A';
-        branch.manager_assigned = true;
-        await branch.save();
-      } else {
-        console.warn(`Branch with bid ${bid} not found.`);
-      }
+      );
     }
 
-    // Send JSON success response
     res.status(201).json({
       success: true,
       message: 'Employee added successfully',

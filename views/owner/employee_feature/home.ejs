@@ -24,7 +24,7 @@
       display: flex;
       flex: 1;
       gap: 25px;
-      padding: 0 20px !important; /* Standardized padding with !important to prevent override */
+      padding: 0 20px !important;
       max-width: 100%;
     }
 
@@ -34,7 +34,7 @@
       padding: 25px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       flex: 1;
-      position: relative; /* For button positioning */
+      position: relative;
     }
 
     .content-area h1 {
@@ -60,8 +60,8 @@
     }
 
     .table-wrapper {
-      max-height: calc(100vh - 230px); /* Adjust based on navbar + footer height */
-      overflow-y: auto; /* Scrollbar for table */
+      max-height: calc(100vh - 230px);
+      overflow-y: auto;
       margin-top: 20px;
     }
 
@@ -80,7 +80,7 @@
       background-color: #2d3436;
       color: white;
       position: sticky;
-      top: 0; /* Keep header fixed while scrolling */
+      top: 0;
       z-index: 1;
     }
 
@@ -106,7 +106,7 @@
       }
 
       .table-wrapper {
-        max-height: none; /* Full height on mobile */
+        max-height: none;
       }
     }
   </style>
@@ -140,7 +140,7 @@
                 <td><%= employee.f_name %></td>
                 <td><%= employee.last_name %></td>
                 <td><%= employee.role %></td>
-                <td><%= employee.bid || 'Not Assigned' %></td>
+                <td><%= employee.bid ? employee.bid : 'Not Assigned' %></td>
                 <td><%= employee.status %></td>
               </tr>
             <% }) %>

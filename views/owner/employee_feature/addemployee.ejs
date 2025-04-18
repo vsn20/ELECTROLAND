@@ -157,7 +157,6 @@
       <div class="form-container">
         <h2>Add Employee</h2>
         <form id="employee-login-form" action="/admin/addemployee" method="POST">
-          <!-- Personal Details Section -->
           <fieldset>
             <legend>Personal Details</legend>
             <div class="field-group">
@@ -179,7 +178,7 @@
               </div>
               <div>
                 <label for="bid">Branch</label>
-                <select id="bid" name="bid" required>
+                <select id="bid" name="bid">
                   <option value="" disabled selected>Select branch</option>
                   <% allBranches.forEach(branch => { %>
                     <option value="<%= branch.bid %>" class="branch-option all-branches <%= unassignedBranches.some(ub => ub.bid === branch.bid) ? 'unassigned' : '' %>">
@@ -200,7 +199,6 @@
             </div>
           </fieldset>
 
-          <!-- Account and Salaries Section -->
           <fieldset>
             <legend>Account and Salaries</legend>
             <div class="field-group">
@@ -244,8 +242,7 @@
     const phone = document.getElementById('phone_no');
     const errorMessage = document.getElementById('error-message');
 
-    // Update branch dropdown visibility based on role
-    roleSelect.addEventListener('change', function() {
+    function updateBranchDropdown() {
       const options = branchSelect.querySelectorAll('.branch-option');
       options.forEach(option => {
         if (roleSelect.value === 'Sales Manager') {
@@ -254,20 +251,21 @@
           option.classList.contains('all-branches') ? option.classList.add('show') : option.classList.remove('show');
         }
       });
-      branchSelect.value = ''; // Reset selection
-    });
+      branchSelect.value = '';
+    }
+
+    roleSelect.addEventListener('change', updateBranchDropdown);
+    updateBranchDropdown();
 
     form.addEventListener('submit', async function(event) {
       event.preventDefault();
 
-      // Reset styles
       email.style.borderColor = '#e6e9f0';
       email.style.backgroundColor = '#fff';
       phone.style.borderColor = '#e6e9f0';
       phone.style.backgroundColor = '#fff';
       errorMessage.textContent = '';
 
-      // Client-side validation
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailPattern.test(email.value)) {
         email.style.borderColor = '#e74c3c';
@@ -284,7 +282,6 @@
         return;
       }
 
-      // Prepare form data
       const formData = new FormData(form);
       const data = Object.fromEntries(formData);
 
