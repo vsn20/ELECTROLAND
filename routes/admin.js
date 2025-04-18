@@ -1,8 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const { addemployee } = require("../controllers/owner/addemployee");
-const { loademployeedata, getEmployeeDetails, getEditEmployee, updateEmployee, syncEmployeeBranchData } = require("../controllers/owner/load_employee_data");
+const { 
+  loademployeedata, 
+  getEmployeeDetails, 
+  getEditEmployee, 
+  updateEmployee, 
+  syncEmployeeBranchData 
+} = require("../controllers/owner/load_employee_data");
 const Branch = require("../models/branches");
+const Employee = require("../models/employees");
 
 router.get("/employees", loademployeedata);
 router.get("/employee/:e_id", getEmployeeDetails);

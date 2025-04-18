@@ -3,7 +3,13 @@ const Branch = require('../../models/branches');
 
 async function loademployeedata(req, res) {
   try {
-    const employees = await Employee.find();
+    const employees = await Employee.find().lean(); // Use lean for performance
+    console.log('Employees fetched for homepage:', employees.map(emp => ({
+      e_id: emp.e_id,
+      role: emp.role,
+      status: emp.status,
+      bid: emp.bid
+    })));
     res.render('owner/employee_feature/home.ejs', {
       activePage: 'employee',
       activeRoute: 'employees',
@@ -47,13 +53,15 @@ async function getEditEmployee(req, res) {
     if (employee.bid) {
       currentBranch = await Branch.findOne({ bid: employee.bid }).lean();
     }
+    const isEditable = employee.status === 'active';
     res.render('owner/employee_feature/edit_employee.ejs', {
       activePage: 'employee',
       activeRoute: 'employees',
       employee,
       allBranches,
       unassignedBranches,
-      currentBranch
+      currentBranch,
+      isEditable
     });
   } catch (error) {
     console.error('Error loading edit employee page:', error);
@@ -79,60 +87,17 @@ async function updateEmployee(req, res) {
       address
     } = req.body;
 
-    const bid = bidFromForm === 'null' ? null : bidFromForm;
-
     const employee = await Employee.findOne({ e_id });
     if (!employee) {
-      return res.status(404).send('Employee not found');
+      return res.status(404).json({ message: 'Employee not found' });
     }
 
-    if (role === 'Sales Manager' && bid && bid !== 'null') {
-      const branch = await Branch.findOne({ bid });
-      if (!branch) {
-        return res.status(404).send(`Branch ${bid} not found.`);
-      }
-      if (branch.manager_assigned && branch.manager_id && branch.manager_id.toString() !== employee._id.toString()) {
-        return res.status(400).send(`Branch ${bid} already has a Sales Manager assigned.`);
-      }
-    }
-
-    const updatedEmployee = await Employee.findOneAndUpdate(
-      { e_id },
-      {
-        f_name,
-        last_name,
-        role,
-        bid,
-        status,
-        email,
-        phone_no: phone_no || null,
-        acno,
-        ifsc,
-        bankname,
-        base_salary,
-        address: address || null
-      },
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedEmployee) {
-      return res.status(404).send('Employee not found');
-    }
-
-    if (role === 'Sales Manager') {
-      if (bid && bid !== 'null') {
-        await Branch.findOneAndUpdate(
-          { bid },
-          {
-            manager_id: updatedEmployee._id,
-            manager_name: `${f_name} ${last_name}`,
-            manager_email: email,
-            manager_ph_no: phone_no || 'N/A',
-            manager_assigned: true
-          }
-        );
-      }
-      if (employee.bid && (bid !== employee.bid || !bid || bid === 'null')) {
+    // Determine final bid
+    let finalBid = bidFromForm === 'null' ? null : bidFromForm;
+    if (role === 'Sales Manager' && (status === 'resigned' || status === 'fired')) {
+      finalBid = null; // Automatically unassign branch
+      if (employee.bid) {
+        // Clear branch manager details
         await Branch.findOneAndUpdate(
           { bid: employee.bid },
           {
@@ -144,8 +109,68 @@ async function updateEmployee(req, res) {
           }
         );
       }
-    } else if (employee.role === 'Sales Manager') {
-      if (employee.bid) {
+    }
+
+    // Validate Sales Manager branch assignment for active status
+    if (role === 'Sales Manager' && finalBid && status === 'active') {
+      const branch = await Branch.findOne({ bid: finalBid });
+      if (!branch) {
+        return res.status(404).json({ message: `Branch ${finalBid} not found` });
+      }
+      if (branch.manager_assigned && branch.manager_id && branch.manager_id.toString() !== employee._id.toString()) {
+        return res.status(400).json({ message: `Branch ${finalBid} already has a Sales Manager assigned` });
+      }
+    }
+
+    // Update employee
+    const updatedEmployee = await Employee.findOneAndUpdate(
+      { e_id },
+      {
+        f_name,
+        last_name,
+        role,
+        bid: finalBid,
+        status,
+        email,
+        phone_no: phone_no || null,
+        acno,
+        ifsc,
+        bankname,
+        base_salary,
+        address: address || null,
+        ...(status === 'resigned' ? { resignation_date: new Date() } : {}),
+        ...(status === 'fired' ? { fired_date: new Date() } : {})
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedEmployee) {
+      return res.status(404).json({ message: 'Employee not found' });
+    }
+
+    // Debug: Log updated employee data
+    console.log('Updated employee:', {
+      e_id: updatedEmployee.e_id,
+      role: updatedEmployee.role,
+      status: updatedEmployee.status,
+      bid: updatedEmployee.bid
+    });
+
+    // Update branch if Sales Manager is active and assigned
+    if (role === 'Sales Manager' && status === 'active' && finalBid) {
+      await Branch.findOneAndUpdate(
+        { bid: finalBid },
+        {
+          manager_id: updatedEmployee._id,
+          manager_name: `${f_name} ${last_name}`,
+          manager_email: email,
+          manager_ph_no: phone_no || 'N/A',
+          manager_assigned: true
+        }
+      );
+    } else if (employee.role === 'Sales Manager' && (role !== 'Sales Manager' || !finalBid)) {
+      // Clear branch if role changes from Sales Manager or branch is unassigned
+      if (employee.bid && employee.bid !== finalBid) {
         await Branch.findOneAndUpdate(
           { bid: employee.bid },
           {
@@ -162,17 +187,15 @@ async function updateEmployee(req, res) {
     res.redirect(`/admin/employee/${e_id}`);
   } catch (error) {
     console.error('Error updating employee:', error);
-    res.status(500).send('Error updating employee: ' + error.message);
+    res.status(500).json({ message: 'Error updating employee: ' + error.message });
   }
 }
 
 async function syncEmployeeBranchData(req, res) {
   try {
-    // Fetch all branches and employees
     const branches = await Branch.find();
     const employees = await Employee.find();
 
-    // Reset all branches to "Not Assigned"
     await Branch.updateMany({}, {
       manager_id: null,
       manager_name: 'Not Assigned',
@@ -181,12 +204,10 @@ async function syncEmployeeBranchData(req, res) {
       manager_assigned: false
     });
 
-    // Check for orphaned manager assignments (branches with non-existent managers)
     for (const branch of branches) {
       if (branch.manager_assigned && branch.manager_id) {
         const managerExists = employees.some(emp => emp._id.toString() === branch.manager_id.toString());
         if (!managerExists) {
-          // Clear details for branches with non-existent managers
           await Branch.findOneAndUpdate(
             { bid: branch.bid },
             {
@@ -201,9 +222,8 @@ async function syncEmployeeBranchData(req, res) {
       }
     }
 
-    // Assign valid Sales Managers to branches
     for (const employee of employees) {
-      if (employee.role === 'Sales Manager' && employee.bid) {
+      if (employee.role === 'Sales Manager' && employee.bid && employee.status === 'active') {
         const branch = await Branch.findOne({ bid: employee.bid });
         if (branch && !branch.manager_assigned) {
           await Branch.findOneAndUpdate(
