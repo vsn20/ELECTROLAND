@@ -12,14 +12,12 @@
       box-sizing: border-box;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
     body {
       background: #f5f6fa;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
-
     .container {
       margin-top: 90px;
       display: flex;
@@ -27,7 +25,6 @@
       gap: 25px;
       padding: 0 20px;
     }
-
     .content-area {
       background: #ffffff;
       border-radius: 15px;
@@ -35,26 +32,63 @@
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       flex: 1;
     }
-
-    .content-area h1 {
+    .content-area h2 {
       color: #2d3436;
       margin-bottom: 20px;
     }
-
-    @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-        padding: 0 20px;
-      }
-      .content-area {
-        min-height: auto;
-      }
+    .field-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
     }
-
+    .field-group > div {
+      flex: 1 1 45%;
+      min-width: 200px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #2d3436;
+      font-weight: 500;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #e6e9f0;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      background: #f8f9fa;
+      color: #2d3436;
+    }
+    input[readonly] {
+      background: #e9ecef;
+      cursor: default;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #333333;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: #555555;
+    }
     #error-message {
       color: #e74c3c;
       margin: 10px 0;
       min-height: 20px;
+    }
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        padding: 0 10px;
+      }
+      .field-group > div {
+        flex: 1 1 100%;
+      }
     }
   </style>
 </head>
@@ -73,15 +107,22 @@
             <div class="field-group">
               <div>
                 <label for="branch_name">Branch</label>
-                <input type="text" id="branch_name" name="branch_name" value="Hyderabad Branch" readonly>
+                <input type="text" id="branch_name" name="branch_name" value="<%= branchname %>" readonly>
               </div>
               <div>
-                <label for="company_name">Company Name</label>
-                <input type="text" id="company_name" name="company_name" required placeholder="Enter company name">
+                <label for="company_id">Company Name</label>
+                <select id="company_id" name="company_id" required>
+                  <option value="">Select a company</option>
+                  <% companies.forEach(company => { %>
+                    <option value="<%= company.c_id %>"><%= company.cname %></option>
+                  <% }) %>
+                </select>
               </div>
               <div>
-                <label for="product_name">Product Name</label>
-                <input type="text" id="product_name" name="product_name" required placeholder="Enter product name">
+                <label for="product_id">Product Name</label>
+                <select id="product_id" name="product_id" required>
+                  <option value="">Select a product</option>
+                </select>
               </div>
               <div>
                 <label for="quantity">Quantity</label>
@@ -104,18 +145,39 @@
 
   <script>
     const form = document.getElementById('order-form');
+    const companySelect = document.getElementById('company_id');
+    const productSelect = document.getElementById('product_id');
     const quantity = document.getElementById('quantity');
     const errorMessage = document.getElementById('error-message');
+
+    companySelect.addEventListener('change', async function() {
+      const companyId = this.value;
+      productSelect.innerHTML = '<option value="">Select a product</option>';
+
+      if (companyId) {
+        try {
+          const response = await fetch(`/salesmanager/products-by-company/${companyId}`);
+          const products = await response.json();
+
+          products.forEach(product => {
+            const option = document.createElement('option');
+            option.value = product.prod_id;
+            option.textContent = product.Prod_name;
+            productSelect.appendChild(option);
+          });
+        } catch (error) {
+          errorMessage.textContent = 'Error fetching products: ' + error.message;
+        }
+      }
+    });
 
     form.addEventListener('submit', async function(event) {
       event.preventDefault();
 
-      // Reset styles
       quantity.style.borderColor = '#ddd';
-      quantity.style.backgroundColor = '#f9f9f9';
+      quantity.style.backgroundColor = '#f8f9fa';
       errorMessage.textContent = '';
 
-      // Client-side validation
       if (quantity.value <= 0) {
         quantity.style.borderColor = '#e74c3c';
         quantity.style.backgroundColor = '#fff5f5';
@@ -123,10 +185,8 @@
         return;
       }
 
-      // Prepare form data
       const formData = new FormData(form);
       const data = Object.fromEntries(formData);
-      console.log('Form Data:', data);
 
       try {
         const response = await fetch('/salesmanager/add-order', {

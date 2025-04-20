@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard - ElectroLand</title>
+  <title>Orders - ElectroLand</title>
   <style>
     * {
       margin: 0;
@@ -11,23 +11,20 @@
       box-sizing: border-box;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
     body {
       background: #f5f6fa;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
-
     .container {
       margin-top: 90px;
       display: flex;
       flex: 1;
       gap: 25px;
-      padding: 0 20px !important;
+      padding: 0 20px;
       max-width: 100%;
     }
-
     .content-area {
       background: #ffffff;
       border-radius: 15px;
@@ -36,30 +33,25 @@
       flex: 1;
       overflow-x: auto;
     }
-
     .content-area h1 {
       color: #2d3436;
       margin-bottom: 20px;
       font-size: 1.5rem;
     }
-
     .content-area p {
       color: #636e72;
       line-height: 1.6;
       font-size: 0.9rem;
     }
-
     .table-wrapper {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
-
     .table-wrapper::-webkit-scrollbar {
       display: none;
     }
-
     table {
       width: 100%;
       min-width: 600px;
@@ -68,11 +60,9 @@
       border-radius: 10px;
       border-spacing: 0;
     }
-
     thead {
       background: #333333;
     }
-
     th {
       color: white;
       padding: 12px;
@@ -80,22 +70,18 @@
       font-size: 0.9rem;
       border-bottom: 2px solid #ffffff;
     }
-
     td {
       padding: 12px;
       text-align: left;
       font-size: 0.9rem;
       border-bottom: 1px solid #e6e9f0;
     }
-
     tr:last-child td {
       border-bottom: none;
     }
-
     tr:nth-child(even) {
       background: #f8f9fd;
     }
-
     .clickable-btn {
       background: none;
       border: none;
@@ -107,18 +93,15 @@
       width: 100%;
       text-align: left;
     }
-
     .clickable-btn:hover {
       text-decoration: underline;
     }
-
     .header-container {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
     }
-
     .pending-orders-btn {
       display: inline-block;
       padding: 8px 16px;
@@ -129,38 +112,30 @@
       font-size: 0.85rem;
       transition: background-color 0.3s;
     }
-
     .pending-orders-btn:hover {
       background-color: #555555;
     }
-
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
         padding: 0 10px;
       }
-
       .content-area {
         padding: 15px;
       }
-
       .content-area h1 {
         font-size: 1.2rem;
       }
-
       .content-area p {
         font-size: 0.85rem;
       }
-
       table {
         display: block;
         min-width: 0;
       }
-
       thead {
         display: none;
       }
-
       tr {
         display: flex;
         flex-direction: column;
@@ -171,7 +146,6 @@
         background: #fff;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
-
       td {
         display: flex;
         justify-content: space-between;
@@ -179,11 +153,9 @@
         font-size: 0.85rem;
         border-bottom: 1px dashed #e6e9f0;
       }
-
       td:last-child {
         border-bottom: none;
       }
-
       td:before {
         content: attr(data-label);
         font-weight: bold;
@@ -191,33 +163,27 @@
         margin-right: 10px;
         min-width: 100px;
       }
-
       .clickable-btn {
         flex: 1;
         text-align: right;
       }
-
       .header-container {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
       }
-
       .pending-orders-btn {
         width: 100%;
         text-align: center;
       }
     }
-
     @media (min-width: 769px) and (max-width: 1024px) {
       .content-area h1 {
         font-size: 1.3rem;
       }
-
       .content-area p {
         font-size: 0.85rem;
       }
-
       th, td {
         padding: 10px;
         font-size: 0.85rem;
@@ -231,7 +197,6 @@
   <div class="container">
     <%- include('../../partials/company_sidebar') %>
 
-    <!-- Content Area -->
     <div class="content-area" id="content">
       <div class="header-container">
         <h1>Orders</h1>
@@ -243,8 +208,8 @@
           <thead>
             <tr>
               <th>Order ID</th>
-              <th>Branch ID</th>
-              <th>Product ID</th>
+              <th>Branch</th>
+              <th>Product</th>
               <th>Quantity</th>
               <th>Status</th>
               <th>Order Date</th>
@@ -255,14 +220,14 @@
           <tbody>
             <% orders.forEach(order => { %>
               <tr>
-                <td data-label="Order ID"><button class="clickable-btn" data-oid="<%= order.oid %>"><%= order.oid %></button></td>
-                <td data-label="Branch ID"><button class="clickable-btn" data-oid="<%= order.oid %>"><%= order.bid %></button></td>
-                <td data-label="Product ID"><button class="clickable-btn" data-oid="<%= order.oid %>"><%= order.pid %></button></td>
-                <td data-label="Quantity"><button class="clickable-btn" data-oid="<%= order.oid %>"><%= order.quantity %></button></td>
-                <td data-label="Status"><button class="clickable-btn" data-oid="<%= order.oid %>"><%= order.status %></button></td>
-                <td data-label="Order Date"><button class="clickable-btn" data-oid="<%= order.oid %>"><%= order.orderdate %></button></td>
-                <td data-label="Delivery Date"><button class="clickable-btn" data-oid="<%= order.oid %>"><%= order.deliverydate %></button></td>
-                <td data-label="Installation Type"><button class="clickable-btn" data-oid="<%= order.oid %>"><%= order.installationtype %></button></td>
+                <td data-label="Order ID"><button class="clickable-btn" data-oid="<%= order.order_id %>"><%= order.order_id %></button></td>
+                <td data-label="Branch"><%= order.branch_name %></td>
+                <td data-label="Product"><%= order.product_name %></td>
+                <td data-label="Quantity"><%= order.quantity %></td>
+                <td data-label="Status"><%= order.status %></td>
+                <td data-label="Order Date"><%= order.ordered_date.toISOString().split('T')[0] %></td>
+                <td data-label="Delivery Date"><%= order.delivery_date ? order.delivery_date.toISOString().split('T')[0] : '-' %></td>
+                <td data-label="Installation Type"><%= order.installation_type %></td>
               </tr>
             <% }) %>
           </tbody>

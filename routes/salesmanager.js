@@ -15,10 +15,8 @@ router.get("/stocks", inventory_display);
 const { customers_display } = require("../controllers/salesmanager/admin_customers_display");
 router.get("/customers", customers_display);
 
-
-//sales
+// Sales
 const { sales_display, sales_details, addsale_post } = require('../controllers/salesmanager/sales');
-
 router.get('/sales', sales_display);
 router.get('/sales/:id', sales_details);
 router.get('/add-sale', (req, res) => {
@@ -30,19 +28,18 @@ router.get('/add-sale', (req, res) => {
 router.post('/add-sale', addsale_post);
 
 // Orders routes
-const { orders_display, order_details, order_edit, order_update, addorder_post } = require('../controllers/salesmanager/orders');
+const { orders_display, order_details, order_edit, order_update, addorder_post, renderAddOrderForm } = require('../controllers/salesmanager/orders');
 router.get('/orders', orders_display);
 router.get('/orders/:id', order_details);
 router.get('/orders/edit/:id', order_edit);
 router.post('/orders/update/:id', order_update);
-router.get('/add-order', (req, res) => {
-    res.render('salesmanager/orders_feature/addorder', {
-        activePage: 'employee',
-        activeRoute: 'orders'
-    });
-});
+router.get('/add-order', renderAddOrderForm);
 router.post('/add-order', addorder_post);
-module.exports=router;
+
+// New route for fetching products by company
+const { getProductsByCompany } = require("../controllers/salesmanager/products");
+router.get("/products-by-company/:companyId", getProductsByCompany);
+
 // Salesmanager salary
 const { salary_display } = require("../controllers/salesmanager/salary");
 router.get("/salaries", salary_display);
@@ -52,10 +49,10 @@ const { salesmanager_messages_display, render_compose_message_form, compose_mess
 router.get("/messages", salesmanager_messages_display);
 router.get("/messages/compose", render_compose_message_form);
 router.post("/messages/compose", compose_message);
-router.get("/messages/view", view_message); // New route for viewing message details
+router.get("/messages/view", view_message);
 
-//salesmanager employee
-const { employeeDisplay,employeeDetail } = require("../controllers/salesmanager/salesmanager_employee");
+// Salesmanager employee
+const { employeeDisplay, employeeDetail } = require("../controllers/salesmanager/salesmanager_employee");
 router.get("/employees", employeeDisplay);
 router.get("/employee-details/:e_id", employeeDetail);
 
