@@ -3,21 +3,14 @@ const Branch = require('../../models/branches');
 
 async function loademployeedata(req, res) {
   try {
-    const employees = await Employee.find().lean(); // Use lean for performance
-    console.log('Employees fetched for homepage:', employees.map(emp => ({
-      e_id: emp.e_id,
-      role: emp.role,
-      status: emp.status,
-      bid: emp.bid
-    })));
+    const employees = await Employee.find().lean();
     res.render('owner/employee_feature/home.ejs', {
       activePage: 'employee',
       activeRoute: 'employees',
       employees: employees
     });
   } catch (error) {
-    console.error('Error loading employee data:', error);
-    res.status(500).send('Error loading employee data: ' + error.message);
+    res.status(500).send(`Error loading employee data: ${error.message}`);
   }
 }
 
@@ -33,8 +26,7 @@ async function getEmployeeDetails(req, res) {
       employee: employee
     });
   } catch (error) {
-    console.error('Error loading employee details:', error);
-    res.status(500).send('Error loading employee details: ' + error.message);
+    res.status(500).send(`Error loading employee details: ${error.message}`);
   }
 }
 
@@ -64,8 +56,7 @@ async function getEditEmployee(req, res) {
       isEditable
     });
   } catch (error) {
-    console.error('Error loading edit employee page:', error);
-    res.status(500).send('Error loading edit employee page: ' + error.message);
+    res.status(500).send(`Error loading edit employee page: ${error.message}`);
   }
 }
 
@@ -96,19 +87,28 @@ async function updateEmployee(req, res) {
     let finalBid = bidFromForm === 'null' ? null : bidFromForm;
     if (role === 'Sales Manager' && (status === 'resigned' || status === 'fired')) {
       finalBid = null; // Automatically unassign branch
-      if (employee.bid) {
-        // Clear branch manager details
-        await Branch.findOneAndUpdate(
-          { bid: employee.bid },
-          {
-            manager_id: null,
-            manager_name: 'Not Assigned',
-            manager_email: 'N/A',
-            manager_ph_no: 'N/A',
-            manager_assigned: false
-          }
-        );
+    }
+
+    // Validate bid if provided
+    if (finalBid && finalBid !== 'null') {
+      const branchExists = await Branch.findOne({ bid: finalBid });
+      if (!branchExists) {
+        return res.status(400).json({ message: `Invalid branch ID: ${finalBid}` });
       }
+    }
+
+    // Clear old branch if Sales Manager's branch changes or is unassigned
+    if (employee.role === 'Sales Manager' && employee.bid && (employee.bid !== finalBid || finalBid === null)) {
+      await Branch.findOneAndUpdate(
+        { bid: employee.bid },
+        {
+          manager_id: null,
+          manager_name: 'Not Assigned',
+          manager_email: 'N/A',
+          manager_ph_no: 'N/A',
+          manager_assigned: false
+        }
+      );
     }
 
     // Validate Sales Manager branch assignment for active status
@@ -148,15 +148,7 @@ async function updateEmployee(req, res) {
       return res.status(404).json({ message: 'Employee not found' });
     }
 
-    // Debug: Log updated employee data
-    console.log('Updated employee:', {
-      e_id: updatedEmployee.e_id,
-      role: updatedEmployee.role,
-      status: updatedEmployee.status,
-      bid: updatedEmployee.bid
-    });
-
-    // Update branch if Sales Manager is active and assigned
+    // Update new branch if Sales Manager is active and assigned
     if (role === 'Sales Manager' && status === 'active' && finalBid) {
       await Branch.findOneAndUpdate(
         { bid: finalBid },
@@ -168,26 +160,11 @@ async function updateEmployee(req, res) {
           manager_assigned: true
         }
       );
-    } else if (employee.role === 'Sales Manager' && (role !== 'Sales Manager' || !finalBid)) {
-      // Clear branch if role changes from Sales Manager or branch is unassigned
-      if (employee.bid && employee.bid !== finalBid) {
-        await Branch.findOneAndUpdate(
-          { bid: employee.bid },
-          {
-            manager_id: null,
-            manager_name: 'Not Assigned',
-            manager_email: 'N/A',
-            manager_ph_no: 'N/A',
-            manager_assigned: false
-          }
-        );
-      }
     }
 
     res.redirect(`/admin/employee/${e_id}`);
   } catch (error) {
-    console.error('Error updating employee:', error);
-    res.status(500).json({ message: 'Error updating employee: ' + error.message });
+    res.status(500).json({ message: `Error updating employee: ${error.message}` });
   }
 }
 
@@ -196,6 +173,7 @@ async function syncEmployeeBranchData(req, res) {
     const branches = await Branch.find();
     const employees = await Employee.find();
 
+    // Reset all branches
     await Branch.updateMany({}, {
       manager_id: null,
       manager_name: 'Not Assigned',
@@ -204,24 +182,7 @@ async function syncEmployeeBranchData(req, res) {
       manager_assigned: false
     });
 
-    for (const branch of branches) {
-      if (branch.manager_assigned && branch.manager_id) {
-        const managerExists = employees.some(emp => emp._id.toString() === branch.manager_id.toString());
-        if (!managerExists) {
-          await Branch.findOneAndUpdate(
-            { bid: branch.bid },
-            {
-              manager_id: null,
-              manager_name: 'Not Assigned',
-              manager_email: 'N/A',
-              manager_ph_no: 'N/A',
-              manager_assigned: false
-            }
-          );
-        }
-      }
-    }
-
+    // Reassign active Sales Managers to their branches
     for (const employee of employees) {
       if (employee.role === 'Sales Manager' && employee.bid && employee.status === 'active') {
         const branch = await Branch.findOne({ bid: employee.bid });
@@ -242,8 +203,7 @@ async function syncEmployeeBranchData(req, res) {
 
     res.status(200).send('Employee and branch data synced successfully');
   } catch (error) {
-    console.error('Error syncing employee and branch data:', error);
-    res.status(500).send('Error syncing data: ' + error.message);
+    res.status(500).send(`Error syncing data: ${error.message}`);
   }
 }
 
