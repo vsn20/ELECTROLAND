@@ -56,6 +56,34 @@ async function renderAddOrderForm(req, res) {
   }
 }
 
+async function getProductsByCompany(req, res) {
+  try {
+    const companyId = req.params.companyId;
+    console.log(`Fetching products for companyId: ${companyId}`);
+
+    const products = await Product.find({ 
+      Com_id: companyId, 
+      Status: { $ne: new RegExp('^Rejected$', 'i') }
+    }).lean();
+
+    console.log("Products fetched:", products.map(p => ({
+      prod_id: p.prod_id,
+      Prod_name: p.Prod_name,
+      Com_id: p.Com_id,
+      Status: p.Status
+    })));
+
+    if (products.length === 0) {
+      console.log(`No non-rejected products found for companyId: ${companyId}`);
+    }
+
+    res.json(products);
+  } catch (error) {
+    console.error("Error fetching products by company:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
 const orders_display = async (req, res) => {
   try {
     console.log("Session user:", req.user);
@@ -349,5 +377,6 @@ module.exports = {
   order_update,
   addorder_post,
   renderAddOrderForm,
+  getProductsByCompany,
   updateDeliveryDate
 };
