@@ -27,7 +27,6 @@
       gap: 25px;
       padding: 0 20px !important;
       max-width: 100%;
-      padding: 0 20px;
     }
 
     .content-area {
@@ -278,6 +277,7 @@
               <th>Company</th>
               <th>Product</th>
               <th>Status</th>
+              <th>Delivery Date</th>
             </tr>
           </thead>
           <tbody>
@@ -288,6 +288,7 @@
                 <td data-label="Company"><%= order.company_name %></td>
                 <td data-label="Product"><%= order.product_name %></td>
                 <td data-label="Status"><%= order.status %></td>
+                <td data-label="Delivery Date"><%= order.delivery_date ? new Date(order.delivery_date).toLocaleDateString() : 'Not Set' %></td>
               </tr>
             <% }) %>
           </tbody>
