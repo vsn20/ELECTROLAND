@@ -9,10 +9,8 @@ const { v4: uuidv4 } = require('uuid');
 async function renderAddOrderForm(req, res) {
   try {
     console.log("Session user:", req.user);
-
     const allEmployees = await Employee.find().lean();
     console.log("Available employee e_ids:", allEmployees.map(e => e.e_id));
-
     const employee = await Employee.findOne({ e_id: req.user.emp_id }).lean();
 
     if (!employee) {
@@ -58,13 +56,39 @@ async function renderAddOrderForm(req, res) {
   }
 }
 
+async function getProductsByCompany(req, res) {
+  try {
+    const companyId = req.params.companyId;
+    console.log(`Fetching products for companyId: ${companyId}`);
+
+    const products = await Product.find({ 
+      Com_id: companyId, 
+      Status: { $ne: new RegExp('^Rejected$', 'i') }
+    }).lean();
+
+    console.log("Products fetched:", products.map(p => ({
+      prod_id: p.prod_id,
+      Prod_name: p.Prod_name,
+      Com_id: p.Com_id,
+      Status: p.Status
+    })));
+
+    if (products.length === 0) {
+      console.log(`No non-rejected products found for companyId: ${companyId}`);
+    }
+
+    res.json(products);
+  } catch (error) {
+    console.error("Error fetching products by company:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
 const orders_display = async (req, res) => {
   try {
     console.log("Session user:", req.user);
-
     const allEmployees = await Employee.find().lean();
     console.log("Available employee e_ids:", allEmployees.map(e => e.e_id));
-
     const employee = await Employee.findOne({ e_id: req.user.emp_id }).lean();
 
     if (!employee) {
@@ -113,7 +137,6 @@ const orders_display = async (req, res) => {
 const order_details = async (req, res) => {
   try {
     console.log("Session user:", req.user);
-
     const employee = await Employee.findOne({ e_id: req.user.emp_id }).lean();
 
     if (!employee) {
@@ -163,7 +186,6 @@ const order_details = async (req, res) => {
 const order_edit = async (req, res) => {
   try {
     console.log("Session user:", req.user);
-
     const employee = await Employee.findOne({ e_id: req.user.emp_id }).lean();
 
     if (!employee) {
@@ -213,7 +235,6 @@ const order_edit = async (req, res) => {
 const order_update = async (req, res) => {
   try {
     console.log("Session user:", req.user);
-
     const employee = await Employee.findOne({ e_id: req.user.emp_id }).lean();
 
     if (!employee) {
@@ -227,7 +248,7 @@ const order_update = async (req, res) => {
     }
 
     if (!employee.bid) {
-      console.log("Employee has no bid assigned  assigned:", { e_id: employee.e_id, _id: employee._id.toString() });
+      console.log("Employee has no bid assigned:", { e_id: employee.e_id, _id: employee._id.toString() });
       return res.status(403).json({ success: false, message: `No branch assigned to this employee (e_id: ${employee.e_id}).` });
     }
 
@@ -237,7 +258,7 @@ const order_update = async (req, res) => {
     }).lean();
 
     if (!branch) {
-      consola.log("No active branch found for bid:", employee.bid);
+      console.log("No active branch found for bid:", employee.bid);
       return res.status(403).json({ success: false, message: `No active branch found for bid: ${employee.bid} (e_id: ${employee.e_id}).` });
     }
 
@@ -260,9 +281,7 @@ const order_update = async (req, res) => {
 const addorder_post = async (req, res) => {
   try {
     const { branch_name, company_id, product_id, quantity, ordered_date } = req.body;
-
     console.log("Session user:", req.user);
-
     const employee = await Employee.findOne({ e_id: req.user.emp_id }).lean();
 
     if (!employee) {
@@ -320,11 +339,44 @@ const addorder_post = async (req, res) => {
   }
 };
 
+// New function for company to update delivery date
+const updateDeliveryDate = async (req, res) => {
+  try {
+    const { order_id, delivery_date } = req.body;
+    console.log("Company session user:", req.user);
+
+    // Find the company
+    const company = await Company.findOne({ c_id: req.user.c_id }).lean();
+    if (!company) {
+      console.log("Company not found for c_id:", req.user.c_id);
+      return res.status(403).json({ success: false, message: `No company found for c_id: ${req.user.c_id}.` });
+    }
+
+    // Update the order's delivery date
+    const order = await Order.findOneAndUpdate(
+      { order_id, company_id: company.c_id },
+      { delivery_date: new Date(delivery_date) },
+      { new: true }
+    );
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found or not accessible' });
+    }
+
+    res.json({ success: true, redirect: '/company/orders' });
+  } catch (error) {
+    console.error("Error updating delivery date:", error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+};
+
 module.exports = {
   orders_display,
   order_details,
   order_edit,
   order_update,
   addorder_post,
-  renderAddOrderForm
+  renderAddOrderForm,
+  getProductsByCompany,
+  updateDeliveryDate
 };

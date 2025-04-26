@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Orders - ElectroLand</title>
+  <link rel="stylesheet" href="/styles.css">
   <style>
     * {
       margin: 0;
@@ -22,54 +23,47 @@
       display: flex;
       flex: 1;
       gap: 25px;
-      padding: 0 20px;
+      padding: 0 20px !important;
       max-width: 100%;
     }
     .content-area {
       background: #ffffff;
       border-radius: 15px;
-      padding: 25px;
+      padding: 20px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       flex: 1;
+      overflow-x: auto;
     }
     .content-area h1 {
       color: #2d3436;
       margin-bottom: 20px;
+      font-size: 1.5rem;
     }
-    .header-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .add-btn {
-      padding: 10px 20px;
-      background: #2d3436;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .add-btn:hover {
-      background: #636e72;
+    .table-wrapper {
+      overflow-x: auto;
     }
     table {
       width: 100%;
+      min-width: 600px;
       border-collapse: collapse;
       background: #ffffff;
       border-radius: 10px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    thead {
+      background: #333333;
     }
     th, td {
-      padding: 15px;
+      padding: 12px;
       text-align: left;
+      font-size: 0.9rem;
       border-bottom: 1px solid #e6e9f0;
     }
     th {
-      background: #333333;
       color: white;
+      border-bottom: 2px solid #ffffff;
+    }
+    tr:last-child td {
+      border-bottom: none;
     }
     tr:nth-child(even) {
       background: #f8f9fd;
@@ -77,92 +71,77 @@
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
-        padding: 0 10px;
+        padding: 0 10px !important;
       }
       .content-area {
         padding: 15px;
       }
-      .header-container {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .content-area h1 {
-        font-size: 1.5rem;
-      }
       table {
         display: block;
-        overflow-x: auto;
+        min-width: 0;
       }
-      thead, tbody, tr, th, td {
-        display: block;
-        width: 100%;
+      thead {
+        display: none;
       }
-      th, td {
+      tr {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 15px;
+        border: 1px solid #e6e9f0;
+        border-radius: 5px;
         padding: 10px;
-        font-size: 0.9rem;
-      }
-      th {
-        text-align: center;
       }
       td {
-        border-bottom: none;
-        padding-left: 50%;
-        position: relative;
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px dashed #e6e9f0;
       }
-      td::before {
+      td:before {
         content: attr(data-label);
-        position: absolute;
-        left: 10px;
-        width: 45%;
-        padding-right: 10px;
         font-weight: bold;
-        text-align: left;
+        color: #2d3436;
+        min-width: 100px;
       }
     }
   </style>
 </head>
 <body>
   <%- include('../../partials/navbar') %>
-
   <div class="container">
     <%- include('../../partials/admin_sidebar') %>
-
-    <div class="content-area" id="content">
-      <div class="header-container">
-        <h1>Orders</h1>
-      </div>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Order ID</th>
-            <th>Branch</th>
-            <th>Company</th>
-            <th>Product</th>
-            <th>Quantity</th>
-            <th>Status</th>
-            <th>Order Date</th>
-            <th>Delivery Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% orders.forEach(order => { %>
+    <div class="content-area">
+      <h1>All Orders</h1>
+      <div class="table-wrapper">
+        <table>
+          <thead>
             <tr>
-              <td data-label="Order ID"><%= order.order_id %></td>
-              <td data-label="Branch"><%= order.branch_name %></td>
-              <td data-label="Company"><%= order.company_name %></td>
-              <td data-label="Product"><%= order.product_name %></td>
-              <td data-label="Quantity"><%= order.quantity %></td>
-              <td data-label="Status"><%= order.status %></td>
-              <td data-label="Order Date"><%= order.ordered_date.toISOString().split('T')[0] %></td>
-              <td data-label="Delivery Date"><%= order.delivery_date ? order.delivery_date.toISOString().split('T')[0] : '-' %></td>
+              <th>Order ID</th>
+              <th>Branch</th>
+              <th>Company</th>
+              <th>Product</th>
+              <th>Status</th>
+              <th>Delivery Date</th>
             </tr>
-          <% }) %>
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            <% orders.forEach(order => { %>
+              <tr>
+                <td data-label="Order ID"><%= order.order_id %></td>
+                <td data-label="Branch"><%= order.branch_name %></td>
+                <td data-label="Company"><%= order.company_name %></td>
+                <td data-label="Product"><%= order.product_name %></td>
+                <td data-label="Status"><%= order.status %></td>
+                <td data-label="Delivery Date">
+                  <%= order.delivery_date ? new Date(order.delivery_date).toLocaleDateString() : 'Not Set' %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-
   <%- include('../../partials/footer') %>
 </body>
 </html>

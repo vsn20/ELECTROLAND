@@ -159,6 +159,12 @@
           const response = await fetch(`/salesmanager/products-by-company/${companyId}`);
           const products = await response.json();
 
+          console.log("Products received from API:", products.map(p => ({
+            prod_id: p.prod_id,
+            Prod_name: p.Prod_name,
+            Status: p.Status
+          })));
+
           products.forEach(product => {
             const option = document.createElement('option');
             option.value = product.prod_id;

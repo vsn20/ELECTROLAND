@@ -12,120 +12,100 @@
       box-sizing: border-box;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
     body {
       background: #f5f6fa;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
-
     .container {
       margin-top: 90px;
       display: flex;
       flex: 1;
       gap: 25px;
-      padding: 0 20px;
+      padding: 0 20px !important;
+      max-width: 100%;
     }
-
     .content-area {
       background: #ffffff;
       border-radius: 15px;
-      padding: 25px;
+      padding: 20px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       flex: 1;
     }
-
     .content-area h1 {
       color: #2d3436;
       margin-bottom: 20px;
+      font-size: 1.5rem;
     }
-
-    .edit-button {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #2d3436;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      margin-top: 20px;
+    .detail-row {
+      margin-bottom: 15px;
+      font-size: 0.9rem;
     }
-
-    .edit-button:hover {
-      background-color: #FFD700;
+    .detail-row label {
+      font-weight: bold;
       color: #2d3436;
+      display: inline-block;
+      width: 150px;
     }
-
-    input[readonly], select[readonly], textarea[readonly] {
-      background-color: #e9ecef;
-      cursor: not-allowed;
-    }
-
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
-        padding: 0 20px;
+        padding: 0 10px !important;
       }
-
       .content-area {
-        min-height: auto;
+        padding: 15px;
+      }
+      .detail-row label {
+        width: 100px;
       }
     }
   </style>
 </head>
 <body>
   <%- include('../../partials/navbar') %>
-
   <div class="container">
     <%- include('../../partials/salesmanager_sidebar') %>
-
-    <div class="content-area" id="content">
-      <div class="form-container">
-        <h2>Order Details</h2>
-        <form>
-          <fieldset>
-            <legend>Order Information</legend>
-            <div class="field-group">
-              <div>
-                <label for="order_id">Order ID</label>
-                <input type="text" id="order_id" value="<%= order.order_id %>" readonly>
-              </div>
-              <div>
-                <label for="branch_name">Branch</label>
-                <input type="text" id="branch_name" value="<%= order.branch_name %>" readonly>
-              </div>
-              <div>
-                <label for="company_name">Company</label>
-                <input type="text" id="company_name" value="<%= order.company_name %>" readonly>
-              </div>
-              <div>
-                <label for="product_name">Product</label>
-                <input type="text" id="product_name" value="<%= order.product_name %>" readonly>
-              </div>
-              <div>
-                <label for="status">Status</label>
-                <input type="text" id="status" value="<%= order.status %>" readonly>
-              </div>
-              <div>
-                <label for="quantity">Quantity</label>
-                <input type="number" id="quantity" value="<%= order.quantity %>" readonly>
-              </div>
-              <div>
-                <label for="ordered_date">Ordered Date</label>
-                <input type="text" id="ordered_date" value="<%= order.ordered_date %>" readonly>
-              </div>
-              <div>
-                <label for="expected_delivery_date">Expected Delivery Date</label>
-                <input type="text" id="expected_delivery_date" value="<%= ['shipped', 'accepted'].includes(order.status) ? order.expected_delivery_date : 'N/A' %>" readonly>
-              </div>
-            </div>
-          </fieldset>
-        </form>
-        <a href="/salesmanager/orders/edit/<%= order.order_id %>" class="edit-button">Edit Order</a>
+    <div class="content-area">
+      <h1>Order Details</h1>
+      <div class="detail-row">
+        <label>Order ID:</label>
+        <span><%= order.order_id %></span>
+      </div>
+      <div class="detail-row">
+        <label>Branch:</label>
+        <span><%= order.branch_name %></span>
+      </div>
+      <div class="detail-row">
+        <label>Company:</label>
+        <span><%= order.company_name %></span>
+      </div>
+      <div class="detail-row">
+        <label>Product:</label>
+        <span><%= order.product_name %></span>
+      </div>
+      <div class="detail-row">
+        <label>Quantity:</label>
+        <span><%= order.quantity %></span>
+      </div>
+      <div class="detail-row">
+        <label>Ordered Date:</label>
+        <span><%= new Date(order.ordered_date).toLocaleDateString() %></span>
+      </div>
+      <div class="detail-row">
+        <label>Delivery Date:</label>
+        <span><%= order.delivery_date ? new Date(order.delivery_date).toLocaleDateString() : 'Not Set' %></span>
+      </div>
+      <div class="detail-row">
+        <label>Status:</label>
+        <span><%= order.status %></span>
+      </div>
+      <div class="detail-row">
+        <label>Installation Type:</label>
+        <span><%= order.installation_type %></span>
       </div>
     </div>
   </div>
-
   <%- include('../../partials/footer') %>
 </body>
 </html>
