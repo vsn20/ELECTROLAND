@@ -1,122 +1,480 @@
-// controllers/employeeController.js
-const employeeData = [
-    {
-      e_id: "emp001",
-      f_name: "Naman",
-      last_name: "Sai",
-      role: "salesman",
-      bid: "Not Assigned",
-      status: "active",
-      email: "owner@gmail.com",
-      phone_no: "N/A",
-      acno: "123",
-      ifsc: "1234",
-      bankname: "hdfc",
-      base_salary: "1234",
-      address: "N/A",
-      createdBy: "naman",
-      reason_for_exit: "N/A",
-    },
-    {
-      e_id: "emp002",
-      f_name: "Priya",
-      last_name: "Sharma",
-      role: "salesman",
-      bid: "Branch A",
-      status: "active",
-      email: "priya.sharma@gmail.com",
-      phone_no: "9876543210",
-      acno: "456",
-      ifsc: "7890",
-      bankname: "icici",
-      base_salary: "5000",
-      address: "123 Main St",
-      createdBy: "admin",
-      reason_for_exit: "N/A",
-    },
-    {
-      e_id: "emp003",
-      f_name: "Ravi",
-      last_name: "Kumar",
-      role: "salesman",
-      bid: "Branch B",
-      status: "inactive",
-      email: "ravi.kumar@gmail.com",
-      phone_no: "9123456789",
-      acno: "789",
-      ifsc: "1234",
-      bankname: "sbi",
-      base_salary: "4000",
-      address: "456 Park Ave",
-      createdBy: "hr",
-      reason_for_exit: "Personal Reasons",
-    },
-    {
-      e_id: "emp004",
-      f_name: "Sneha",
-      last_name: "Patel",
-      role: "salesman",
-      bid: "Branch A",
-      status: "active",
-      email: "sneha.patel@gmail.com",
-      phone_no: "9988776655",
-      acno: "101",
-      ifsc: "5678",
-      bankname: "hdfc",
-      base_salary: "3500",
-      address: "789 Hill Rd",
-      createdBy: "naman",
-      reason_for_exit: "N/A",
-    },
-    {
-      e_id: "emp005",
-      f_name: "Amit",
-      last_name: "Singh",
-      role: "salesman",
-      bid: "Branch C",
-      status: "active",
-      email: "amit.singh@gmail.com",
-      phone_no: "9456789123",
-      acno: "202",
-      ifsc: "9012",
-      bankname: "axis",
-      base_salary: "3000",
-      address: "321 Oak St",
-      createdBy: "hr",
-      reason_for_exit: "N/A",
-    },
-  ];
-  
-  async function employeeDisplay(req, res) {
-    try {
-      const activeEmployees = employeeData;
-      res.render("salesmanager/employee_features/employee_display", {
-        employeeData: activeEmployees,
-        activePage: "employee",
-        activeRoute: "employees",
+const Employee = require('../../models/employees');
+const Branch = require('../../models/branches');
+
+async function employeeDisplay(req, res) {
+  try {
+    if (!req.user || !req.user.emp_id || req.user.type.toLowerCase().replace(/\s/g, '') !== 'salesmanager') {
+      return res.status(403).render('salesmanager/employee_features/employee_display', {
+        error: 'Unauthorized access',
+        salesManager: null,
+        employeeData: [],
+        activePage: 'employee',
+        activeRoute: 'employees',
+        message: null
       });
-    } catch (error) {
-      console.error("Error rendering employees:", error);
-      res.status(500).send("Internal Server Error");
     }
+
+    const salesManager = await Employee.findOne({ e_id: req.user.emp_id }).lean();
+
+    if (!salesManager || salesManager.role.toLowerCase() !== 'sales manager') {
+      return res.status(403).render('salesmanager/employee_features/employee_display', {
+        error: 'Only sales managers can access this page',
+        salesManager: null,
+        employeeData: [],
+        activePage: 'employee',
+        activeRoute: 'employees',
+        message: null
+      });
+    }
+
+    if (!salesManager.bid || salesManager.bid === 'Not Assigned') {
+      return res.status(403).render('salesmanager/employee_features/employee_display', {
+        error: 'Sales Manager must be assigned to a valid branch',
+        salesManager: null,
+        employeeData: [],
+        activePage: 'employee',
+        activeRoute: 'employees',
+        message: null
+      });
+    }
+
+    const branch = await Branch.findOne({ bid: salesManager.bid, active: 'active' }).lean();
+    if (!branch) {
+      return res.status(403).render('salesmanager/employee_features/employee_display', {
+        error: 'Branch not found or inactive',
+        salesManager: null,
+        employeeData: [],
+        activePage: 'employee',
+        activeRoute: 'employees',
+        message: null
+      });
+    }
+
+    const activeEmployees = await Employee.find({
+      role: { $regex: '^Salesman$', $options: 'i' },
+      bid: salesManager.bid.trim(),
+      status: 'active',
+      $and: [
+        { bid: { $ne: null } },
+        { bid: { $ne: 'Not Assigned' } },
+        { bid: { $exists: true } }
+      ]
+    }).lean();
+
+    res.render('salesmanager/employee_features/employee_display', {
+      error: null,
+      salesManager: salesManager,
+      employeeData: activeEmployees || [],
+      activePage: 'employee',
+      activeRoute: 'employees',
+      message: req.query.message || null
+    });
+  } catch (error) {
+    res.status(500).render('salesmanager/employee_features/employee_display', {
+      error: 'Internal Server Error',
+      salesManager: null,
+      employeeData: [],
+      activePage: 'employee',
+      activeRoute: 'employees',
+      message: null
+    });
   }
-  
-  async function employeeDetail(req, res) {
-    try {
-      const e_id = req.params.e_id;
-      const employee = employeeData.find(emp => emp.e_id === e_id);
-      if (!employee) {
-        return res.status(404).send("Employee not found");
+}
+
+async function employeeDetail(req, res) {
+  try {
+    if (!req.user || !req.user.emp_id || req.user.type.toLowerCase().replace(/\s/g, '') !== 'salesmanager') {
+      return res.status(403).render('salesmanager/employee_features/employee_details', {
+        error: 'Unauthorized access',
+        employee: null,
+        activePage: 'employee',
+        activeRoute: 'employees'
+      });
+    }
+
+    const salesManager = await Employee.findOne({ e_id: req.user.emp_id }).lean();
+
+    if (!salesManager || salesManager.role.toLowerCase() !== 'sales manager') {
+      return res.status(403).render('salesmanager/employee_features/employee_details', {
+        error: 'Only sales managers can access this page',
+        employee: null,
+        activePage: 'employee',
+        activeRoute: 'employees'
+      });
+    }
+
+    if (!salesManager.bid || salesManager.bid === 'Not Assigned') {
+      return res.status(403).render('salesmanager/employee_features/employee_details', {
+        error: 'Sales Manager must be assigned to a valid branch',
+        employee: null,
+        activePage: 'employee',
+        activeRoute: 'employees'
+      });
+    }
+
+    const branch = await Branch.findOne({ bid: salesManager.bid, active: 'active' }).lean();
+    if (!branch) {
+      return res.status(403).render('salesmanager/employee_features/employee_details', {
+        error: 'Branch not found or inactive',
+        employee: null,
+        activePage: 'employee',
+        activeRoute: 'employees'
+      });
+    }
+
+    const e_id = req.params.e_id;
+    const employee = await Employee.findOne({
+      e_id,
+      bid: salesManager.bid.trim(),
+      role: { $regex: '^Salesman$', $options: 'i' },
+      $and: [
+        { bid: { $ne: null } },
+        { bid: { $ne: 'Not Assigned' } },
+        { bid: { $exists: true } }
+      ]
+    }).lean();
+
+    if (!employee) {
+      return res.status(404).render('salesmanager/employee_features/employee_details', {
+        error: 'Employee not found, not a Salesman, or not in your branch',
+        employee: null,
+        activePage: 'employee',
+        activeRoute: 'employees'
+      });
+    }
+
+    res.render('salesmanager/employee_features/employee_details', {
+      error: null,
+      employee,
+      activePage: 'employee',
+      activeRoute: 'employees'
+    });
+  } catch (error) {
+    res.status(500).render('salesmanager/employee_features/employee_details', {
+      error: 'Internal Server Error',
+      employee: null,
+      activePage: 'employee',
+      activeRoute: 'employees'
+    });
+  }
+}
+
+async function fireEmployee(req, res) {
+  try {
+    if (!req.user || !req.user.emp_id || req.user.type.toLowerCase().replace(/\s/g, '') !== 'salesmanager') {
+      return res.status(403).json({ error: 'Unauthorized access' });
+    }
+
+    const salesManager = await Employee.findOne({ e_id: req.user.emp_id }).lean();
+
+    if (!salesManager || salesManager.role.toLowerCase() !== 'sales manager') {
+      return res.status(403).json({ error: 'Only sales managers can access this page' });
+    }
+
+    if (!salesManager.bid || salesManager.bid === 'Not Assigned') {
+      return res.status(403).json({ error: 'Sales Manager must be assigned to a valid branch' });
+    }
+
+    const branch = await Branch.findOne({ bid: salesManager.bid, active: 'active' }).lean();
+    if (!branch) {
+      return res.status(403).json({ error: 'Branch not found or inactive' });
+    }
+
+    const e_id = req.params.e_id;
+    const employee = await Employee.findOne({
+      e_id,
+      bid: salesManager.bid.trim(),
+      role: { $regex: '^Salesman$', $options: 'i' },
+      status: 'active',
+      $and: [
+        { bid: { $ne: null } },
+        { bid: { $ne: 'Not Assigned' } },
+        { bid: { $exists: true } }
+      ]
+    });
+
+    if (!employee) {
+      return res.status(404).json({ error: 'Employee not found, not a Salesman, not active, or not in your branch' });
+    }
+
+    employee.status = 'fired';
+    employee.fired_date = new Date();
+    await employee.save();
+
+    res.redirect('/salesmanager/employees?message=Employee fired successfully');
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+async function editSalesManager(req, res) {
+  try {
+    if (!req.user || !req.user.emp_id || req.user.type.toLowerCase().replace(/\s/g, '') !== 'salesmanager') {
+      return res.status(403).render('salesmanager/employee_features/edit_salesmanager', {
+        error: 'Unauthorized access',
+        salesManager: null,
+        activePage: 'employee',
+        activeRoute: 'employees'
+      });
+    }
+
+    const salesManager = await Employee.findOne({ e_id: req.user.emp_id }).lean();
+
+    if (!salesManager || salesManager.role.toLowerCase() !== 'sales manager') {
+      return res.status(403).render('salesmanager/employee_features/edit_salesmanager', {
+        error: 'Only sales managers can access this page',
+        salesManager: null,
+        activePage: 'employee',
+        activeRoute: 'employees'
+      });
+    }
+
+    res.render('salesmanager/employee_features/edit_salesmanager', {
+      error: null,
+      salesManager,
+      activePage: 'employee',
+      activeRoute: 'employees'
+    });
+  } catch (error) {
+    res.status(500).render('salesmanager/employee_features/edit_salesmanager', {
+      error: 'Internal Server Error',
+      salesManager: null,
+      activePage: 'employee',
+      activeRoute: 'employees'
+    });
+  }
+}
+
+async function updateSalesManager(req, res) {
+  try {
+    if (!req.user || !req.user.emp_id || req.user.type.toLowerCase().replace(/\s/g, '') !== 'salesmanager') {
+      return res.status(403).json({ error: 'Unauthorized access' });
+    }
+
+    const salesManager = await Employee.findOne({ e_id: req.user.emp_id });
+
+    if (!salesManager || salesManager.role.toLowerCase() !== 'sales manager') {
+      return res.status(403).json({ error: 'Only sales managers can access this page' });
+    }
+
+    // Update fields based on the Employee schema
+    salesManager.f_name = req.body.f_name || salesManager.f_name;
+    salesManager.last_name = req.body.last_name || salesManager.last_name;
+    salesManager.email = req.body.email || salesManager.email;
+    salesManager.phone_no = req.body.phone_no || salesManager.phone_no;
+    salesManager.address = req.body.address || salesManager.address;
+    salesManager.acno = req.body.acno || salesManager.acno;
+    salesManager.ifsc = req.body.ifsc || salesManager.ifsc;
+    salesManager.bankname = req.body.bankname || salesManager.bankname;
+    salesManager.base_salary = req.body.base_salary || salesManager.base_salary;
+
+    // Validate required fields
+    if (!salesManager.f_name || !salesManager.last_name || !salesManager.email || 
+        !salesManager.acno || !salesManager.ifsc || !salesManager.bankname || !salesManager.base_salary) {
+      return res.status(400).json({ error: 'All required fields must be filled' });
+    }
+
+    // Validate email format
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(salesManager.email)) {
+      return res.status(400).json({ error: 'Invalid email format' });
+    }
+
+    // Validate phone number (if provided)
+    if (salesManager.phone_no) {
+      const phonePattern = /^[0-9]{10}$/;
+      if (!phonePattern.test(salesManager.phone_no)) {
+        return res.status(400).json({ error: 'Phone number must be exactly 10 digits' });
       }
-      res.render("salesmanager/employee_features/employee_details", {
-        employee: employee,
-        activePage: "employee",
-        activeRoute: "employees",
-      });
-    } catch (error) {
-      console.error("Error rendering employee details:", error);
-      res.status(500).send("Internal Server Error");
     }
+
+    // Ensure email uniqueness
+    if (req.body.email && req.body.email !== salesManager.email) {
+      const emailExists = await Employee.findOne({ email: req.body.email, e_id: { $ne: salesManager.e_id } });
+      if (emailExists) {
+        return res.status(400).json({ error: 'Email already in use by another employee' });
+      }
+    }
+
+    // Validate base_salary is non-negative
+    if (salesManager.base_salary < 0) {
+      return res.status(400).json({ error: 'Monthly salary cannot be negative' });
+    }
+
+    await salesManager.save();
+
+    // Update Branch with new manager details
+    await Branch.updateOne(
+      { bid: salesManager.bid },
+      {
+        manager_name: `${salesManager.f_name} ${salesManager.last_name}`,
+        manager_email: salesManager.email,
+        manager_ph_no: salesManager.phone_no
+      }
+    );
+
+    res.redirect('/salesmanager/employees?message=Profile updated successfully');
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-  
-  module.exports = { employeeDisplay, employeeDetail };
+}
+
+async function renderAddEmployeeForm(req, res) {
+  try {
+    if (!req.user || !req.user.emp_id || req.user.type.toLowerCase().replace(/\s/g, '') !== 'salesmanager') {
+      return res.status(403).render('salesmanager/employee_features/add_employee', {
+        error: 'Unauthorized access',
+        salesManager: null,
+        activePage: 'employee',
+        activeRoute: 'employees'
+      });
+    }
+
+    const salesManager = await Employee.findOne({ e_id: req.user.emp_id }).lean();
+
+    if (!salesManager || salesManager.role.toLowerCase() !== 'sales manager') {
+      return res.status(403).render('salesmanager/employee_features/add_employee', {
+        error: 'Only sales managers can access this page',
+        salesManager: null,
+        activePage: 'employee',
+        activeRoute: 'employees'
+      });
+    }
+
+    if (!salesManager.bid || salesManager.bid === 'Not Assigned') {
+      return res.status(403).render('salesmanager/employee_features/add_employee', {
+        error: 'Sales Manager must be assigned to a valid branch',
+        salesManager: null,
+        activePage: 'employee',
+        activeRoute: 'employees'
+      });
+    }
+
+    const branch = await Branch.findOne({ bid: salesManager.bid, active: 'active' }).lean();
+    if (!branch) {
+      return res.status(403).render('salesmanager/employee_features/add_employee', {
+        error: 'Branch not found or inactive',
+        salesManager: null,
+        activePage: 'employee',
+        activeRoute: 'employees'
+      });
+    }
+
+    res.render('salesmanager/employee_features/add_employee', {
+      error: null,
+      salesManager: salesManager,
+      activePage: 'employee',
+      activeRoute: 'employees'
+    });
+  } catch (error) {
+    res.status(500).render('salesmanager/employee_features/add_employee', {
+      error: 'Internal Server Error',
+      salesManager: null,
+      activePage: 'employee',
+      activeRoute: 'employees'
+    });
+  }
+}
+
+async function addEmployee(req, res) {
+  try {
+    if (!req.user || !req.user.emp_id || req.user.type.toLowerCase().replace(/\s/g, '') !== 'salesmanager') {
+      return res.status(403).json({ error: 'Unauthorized access' });
+    }
+
+    const salesManager = await Employee.findOne({ e_id: req.user.emp_id }).lean();
+
+    if (!salesManager || salesManager.role.toLowerCase() !== 'sales manager') {
+      return res.status(403).json({ error: 'Only sales managers can access this page' });
+    }
+
+    if (!salesManager.bid || salesManager.bid === 'Not Assigned') {
+      return res.status(403).json({ error: 'Sales Manager must be assigned to a valid branch' });
+    }
+
+    const branch = await Branch.findOne({ bid: salesManager.bid, active: 'active' }).lean();
+    if (!branch) {
+      return res.status(403).json({ error: 'Branch not found or inactive' });
+    }
+
+    const {
+      f_name,
+      last_name,
+      email,
+      phone_no,
+      acno,
+      ifsc,
+      bankname,
+      base_salary,
+      address
+    } = req.body;
+
+    // Validate required fields
+    if (!f_name || !last_name || !email || !acno || !ifsc || !bankname || !base_salary) {
+      return res.status(400).json({ error: 'All required fields must be filled' });
+    }
+
+    // Validate email format
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      return res.status(400).json({ error: 'Invalid email format' });
+    }
+
+    // Validate phone number (if provided)
+    if (phone_no) {
+      const phonePattern = /^[0-9]{10}$/;
+      if (!phonePattern.test(phone_no)) {
+        return res.status(400).json({ error: 'Phone number must be exactly 10 digits' });
+      }
+    }
+
+    // Ensure email uniqueness
+    const emailExists = await Employee.findOne({ email });
+    if (emailExists) {
+      return res.status(400).json({ error: 'Email already in use by another employee' });
+    }
+
+    // Validate base_salary is non-negative
+    if (base_salary < 0) {
+      return res.status(400).json({ error: 'Monthly salary cannot be negative' });
+    }
+
+    // Generate unique employee ID
+    const employeeCount = await Employee.countDocuments();
+    const e_id = `EMP${employeeCount + 1}`;
+
+    // Create new employee with fixed role and bid
+    const newEmployee = new Employee({
+      e_id,
+      f_name,
+      last_name,
+      role: 'Salesman',
+      status: 'active',
+      bid: salesManager.bid.trim(),
+      email,
+      phone_no: phone_no || null,
+      address: address || null,
+      acno,
+      ifsc,
+      bankname,
+      base_salary,
+      createdBy: salesManager.f_name + ' ' + salesManager.last_name,
+      hiredAt: new Date(),
+      resignation_date: null,
+      fired_date: null,
+      reason_for_exit: null
+    });
+
+    await newEmployee.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Employee added successfully',
+      redirect: '/salesmanager/employees'
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+module.exports = { employeeDisplay, employeeDetail, fireEmployee, editSalesManager, updateSalesManager, renderAddEmployeeForm, addEmployee };

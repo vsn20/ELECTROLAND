@@ -52,8 +52,13 @@ router.post("/messages/compose", compose_message);
 router.get("/messages/view", view_message);
 
 // Salesmanager employee
-const { employeeDisplay, employeeDetail } = require("../controllers/salesmanager/salesmanager_employee");
+const { employeeDisplay, employeeDetail, fireEmployee, editSalesManager, updateSalesManager, renderAddEmployeeForm, addEmployee } = require("../controllers/salesmanager/salesmanager_employee");
 router.get("/employees", employeeDisplay);
 router.get("/employee-details/:e_id", employeeDetail);
+router.post("/employee/fire/:e_id", fireEmployee);
+router.get("/edit-salesmanager", editSalesManager);
+router.post("/update-salesmanager", updateSalesManager);
+router.get("/add-employee", renderAddEmployeeForm);
+router.post("/add-employee", addEmployee);
 
 module.exports = router;

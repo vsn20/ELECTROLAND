@@ -42,6 +42,12 @@
       margin-bottom: 20px;
     }
 
+    .success-message {
+      color: #28a745;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -59,9 +65,43 @@
       color: white;
     }
 
+    tr {
+      cursor: pointer;
+    }
+
     tr:hover {
       background-color: #f1f1f1;
+    }
+
+    .edit-btn {
+      background-color: #007bff;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
       cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .edit-btn:hover {
+      background-color: #0056b3;
+    }
+
+    .add-employee-btn {
+      background-color: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    .add-employee-btn:hover {
+      background-color: #218838;
     }
 
     @media (max-width: 768px) {
@@ -80,6 +120,13 @@
 
     <div class="content-area" id="content">
       <h1>Employee List</h1>
+      <% if (message) { %>
+        <p class="success-message"><%= message %></p>
+      <% } %>
+      <% if (error) { %>
+        <p style="color: red;"><%= error %></p>
+      <% } %>
+      <a href="/salesmanager/add-employee" class="add-employee-btn">Add Employees</a>
       <table id="employeeTable">
         <thead>
           <tr>
@@ -87,20 +134,36 @@
             <th>First Name</th>
             <th>Last Name</th>
             <th>Status</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          <% if (employeeData && Array.isArray(employeeData)) { %>
+          <% if (salesManager) { %>
+            <tr>
+              <td><%= salesManager.e_id %></td>
+              <td><%= salesManager.f_name %></td>
+              <td><%= salesManager.last_name %></td>
+              <td><%= salesManager.status %></td>
+              <td>
+                <a href="/salesmanager/edit-salesmanager" class="edit-btn">Edit</a>
+              </td>
+            </tr>
+          <% } else { %>
+            <tr><td colspan="5">Sales Manager data not available</td></tr>
+          <% } %>
+
+          <% if (employeeData && Array.isArray(employeeData) && employeeData.length > 0) { %>
             <% employeeData.forEach(employee => { %>
-                <tr onclick="window.location.href='employee-details/<%= employee.e_id %>'">                
+              <tr onclick="window.location='/salesmanager/employee-details/<%= employee.e_id %>'">
                 <td><%= employee.e_id %></td>
                 <td><%= employee.f_name %></td>
                 <td><%= employee.last_name %></td>
                 <td><%= employee.status %></td>
+                <td></td>
               </tr>
             <% }) %>
           <% } else { %>
-            <tr><td colspan="4">No employee data available</td></tr>
+            <tr><td colspan="5">No salesmen available</td></tr>
           <% } %>
         </tbody>
       </table>
