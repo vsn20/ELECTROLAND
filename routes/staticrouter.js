@@ -7,6 +7,7 @@ const { newproducts_display}=require("../controllers/newproducts_display");
 const {topproducts_display}=require("../controllers/topproducts_display");
 
 const { branches_display } = require("../controllers/branches_display");
+const { sendOtp, resetPassword } = require("../controllers/forgotPassword");
 
 router.get("/",(req,res)=>res.render("home.ejs",{ activePage: 'home' }));
 
@@ -57,8 +58,13 @@ router.get('/companylogin', (req, res) => {
 
 router.get("/about-us",(req,res)=>res.render("aboutus.ejs",{ activePage: 'about-us' }));
 router.get("/signup",(req,res)=>res.render("signup.ejs",{ activePage: 'employee' }));
-router.get("/forgot-password",(req,res)=>res.render("forget_password.ejs",{ activePage: 'employee' }));
-router.get("/contact-us",(req,res)=>res.render("contactus.ejs",{ activePage: 'contact-us' }));
+
+
+router.get("/forgot-password", (req, res) => res.render("forget_password.ejs", { activePage: 'employee' }));
+router.post("/forgot-password/send-otp", sendOtp);
+router.post("/forgot-password/reset", resetPassword);
+router.get("/contact-us", (req, res) => res.render("contactus.ejs", { activePage: 'contact-us' }));
+
 
 router.get("/topproducts",topproducts_display);
 router.get("/ourproducts",products_display);

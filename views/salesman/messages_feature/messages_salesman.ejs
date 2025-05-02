@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -215,32 +216,39 @@
 
     <!-- Content Area -->
     <div class="content-area" id="content">
-        <div class="header-container">
-          <h1>Messages</h1>
+      <div class="header-container">
+        <h1>Messages</h1>
+        <div>
           <a href="/salesman/messages/compose" class="compose-btn">Compose</a>
+          <a href="/salesman/messages/sent" class="compose-btn">Sent Messages</a>
         </div>
+      </div>
 
-        <!-- Table to display messages -->
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>From</th>
-                <th>To</th>
-                <th>Message</th>
+      <!-- Table to display messages -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>From</th>
+              <th>To</th>
+              <th>Message</th>
+              <th>Timestamp</th>
+              <th>Message ID</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% messages.forEach(message => { %>
+              <tr onclick="window.location='/salesman/messages/view?from=<%= encodeURIComponent(message.fromDisplay) %>&to=<%= encodeURIComponent(message.to) %>&msg=<%= encodeURIComponent(message.message) %>'">
+                <td data-label="From"><%= message.fromDisplay %></td>
+                <td data-label="To"><%= message.toDisplay %></td>
+                <td data-label="Message"><%= message.messagePreview %></td>
+                <td data-label="Timestamp"><%= message.formattedTimestamp %></td>
+                <td data-label="Message ID"><%= message._id %></td>
               </tr>
-            </thead>
-            <tbody>
-              <% messages.forEach(message => { %>
-                <tr onclick="window.location='/salesman/messages/view?from=<%= encodeURIComponent(message.from) %>&to=<%= encodeURIComponent(message.to) %>&msg=<%= encodeURIComponent(message.messages) %>'">
-                  <td data-label="From"><%= message.from %></td>
-                  <td data-label="To"><%= message.to %></td>
-                  <td data-label="Message"><%= message.messages %></td>
-                </tr>
-              <% }) %>
-            </tbody>
-          </table>
-        </div>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 

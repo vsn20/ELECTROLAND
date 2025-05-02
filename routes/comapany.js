@@ -10,8 +10,9 @@ const {
   updateOrderStatus,
   updateDeliveryDate
 } = require("../controllers/company/orders_display");
-const { company_messages_display, render_compose_message_form, compose_message, view_message } = require("../controllers/company/company_messages_display");
+
 const { sales_display, salesdetaildisplay } = require("../controllers/company/sale");
+const { company_messages_display, render_compose_message_form, compose_message, view_message, view_sent_messages } = require("../controllers/company/company_messages_display");
 
 router.get("/home", (req, res) => res.render("company/home", {
   activePage: 'company',
@@ -43,10 +44,13 @@ router.post('/orders/update-delivery', updateDeliveryDate);
 
 // Update delivery date
 router.post('/orders/update-delivery', updateDeliveryDate);
+
 router.get("/messages", company_messages_display);
 router.get("/messages/compose", render_compose_message_form);
 router.post("/messages/compose", compose_message);
 router.get("/messages/view", view_message);
+router.get("/messages/sent", view_sent_messages);
+
 
 router.get("/sales", sales_display);
 router.get("/sales/:salesid", salesdetaildisplay);

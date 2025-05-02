@@ -11,14 +11,12 @@
       box-sizing: border-box;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
     body {
       background: #f5f6fa;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
-
     .container {
       margin-top: 90px;
       display: flex;
@@ -27,7 +25,6 @@
       padding: 0 20px !important;
       max-width: 100%;
     }
-
     .content-area {
       background: #ffffff;
       border-radius: 15px;
@@ -36,13 +33,11 @@
       flex: 1;
       overflow-x: auto;
     }
-
     .content-area h1 {
       color: #2d3436;
       margin-bottom: 20px;
       font-size: 1.5rem;
     }
-
     .header-container {
       display: flex;
       justify-content: space-between;
@@ -50,7 +45,6 @@
       margin-bottom: 20px;
       flex-wrap: wrap;
     }
-
     .compose-btn {
       background: #333333;
       color: white;
@@ -62,24 +56,20 @@
       white-space: nowrap;
       transition: background-color 0.3s;
       font-size: 0.9rem;
+      margin-left: 10px;
     }
-
     .compose-btn:hover {
       background: #555555;
     }
-
-    /* Table styling */
     .table-wrapper {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
-      -ms-overflow-style: none; /* Hide scrollbar in IE/Edge */
-      scrollbar-width: none; /* Hide scrollbar in Firefox */
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
-
     .table-wrapper::-webkit-scrollbar {
-      display: none; /* Hide scrollbar in Webkit browsers */
+      display: none;
     }
-
     table {
       width: 100%;
       min-width: 600px;
@@ -88,7 +78,6 @@
       border-radius: 10px;
       border-spacing: 0;
     }
-
     th {
       background: #333333;
       color: white;
@@ -97,68 +86,55 @@
       font-size: 0.9rem;
       border-bottom: 2px solid #ffffff;
     }
-
     td {
       padding: 12px;
       text-align: left;
       font-size: 0.9rem;
       border-bottom: 1px solid #e6e9f0;
     }
-
     tr:last-child td {
       border-bottom: none;
     }
-
     tr:nth-child(even) {
       background: #f8f9fd;
     }
-
     tr {
       cursor: pointer;
     }
-
     tr:hover {
       background: #e9ecef;
     }
-
-    /* Responsive adjustments */
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
         padding: 0 10px !important;
       }
-
       .content-area {
         padding: 15px;
       }
-
       .content-area h1 {
         font-size: 1.2rem;
       }
-
       .header-container {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
       }
-
       .compose-btn {
         margin-top: 5px;
         width: 100%;
         text-align: center;
         padding: 8px;
         font-size: 0.85rem;
+        margin-left: 0;
       }
-
       table {
         display: block;
         min-width: 0;
       }
-
       thead {
         display: none;
       }
-
       tr {
         display: flex;
         flex-direction: column;
@@ -169,7 +145,6 @@
         background: #fff;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
-
       td {
         display: flex;
         justify-content: space-between;
@@ -177,11 +152,9 @@
         font-size: 0.85rem;
         border-bottom: 1px dashed #e6e9f0;
       }
-
       td:last-child {
         border-bottom: none;
       }
-
       td:before {
         content: attr(data-label);
         font-weight: bold;
@@ -190,17 +163,14 @@
         min-width: 100px;
       }
     }
-
     @media (min-width: 769px) and (max-width: 1024px) {
       .content-area h1 {
         font-size: 1.3rem;
       }
-
       th, td {
         padding: 10px;
         font-size: 0.85rem;
       }
-
       .compose-btn {
         padding: 8px 15px;
         font-size: 0.85rem;
@@ -216,32 +186,39 @@
 
     <!-- Content Area -->
     <div class="content-area" id="content">
-        <div class="header-container">
-          <h1>Messages</h1>
+      <div class="header-container">
+        <h1>Messages</h1>
+        <div>
           <a href="/company/messages/compose" class="compose-btn">Compose</a>
+          <a href="/company/messages/sent" class="compose-btn">Sent Messages</a>
         </div>
+      </div>
 
-        <!-- Table to display messages -->
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>From</th>
-                <th>To</th>
-                <th>Message</th>
+      <!-- Table to display messages -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>From</th>
+              <th>To</th>
+              <th>Message</th>
+              <th>Timestamp</th>
+              <th>Message ID</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% messages.forEach(message => { %>
+              <tr onclick="window.location='/company/messages/view?from=<%= encodeURIComponent(message.fromDisplay) %>&to=<%= encodeURIComponent(message.toDisplay) %>&msg=<%= encodeURIComponent(message.message) %>'">
+                <td data-label="From"><%= message.fromDisplay %></td>
+                <td data-label="To"><%= message.toDisplay %></td>
+                <td data-label="Message"><%= message.messagePreview %></td>
+                <td data-label="Timestamp"><%= message.formattedTimestamp %></td>
+                <td data-label="Message ID"><%= message._id %></td>
               </tr>
-            </thead>
-            <tbody>
-              <% messages.forEach(message => { %>
-                <tr onclick="window.location='/company/messages/view?from=<%= encodeURIComponent(message.from) %>&to=<%= encodeURIComponent(message.to) %>&msg=<%= encodeURIComponent(message.messages) %>'">
-                  <td data-label="From"><%= message.from %></td>
-                  <td data-label="To"><%= message.to %></td>
-                  <td data-label="Message"><%= message.messages %></td>
-                </tr>
-              <% }) %>
-            </tbody>
-          </table>
-        </div>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 

@@ -20,6 +20,8 @@ router.get("/review",review_display);
 router.get("/review/totaldetails/:saleid",review_datadetails);
 
 //blogs
-const{blogs}=require("../controllers/customer/blogs")
-router.get("/blogs",blogs);
+const { blogs, view_message } = require("../controllers/customer/blogs");
+router.get("/blogs", blogs);
+router.get("/blogs/view", view_message); 
+
 module.exports = router;
