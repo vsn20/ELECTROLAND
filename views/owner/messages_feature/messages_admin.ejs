@@ -11,48 +11,45 @@
       box-sizing: border-box;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
     body {
       background: #f5f6fa;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
-
     .container {
       margin-top: 90px;
       display: flex;
       flex: 1;
-      gap: 25px; /* Standardized gap */
-      padding: 0 20px !important; /* Standardized padding with !important to prevent override */
-      max-width: 100%; /* Ensure it doesn’t exceed viewport */
+      gap: 25px;
+      padding: 0 20px !important;
+      max-width: 100%;
     }
-
     .content-area {
       background: #ffffff;
       border-radius: 15px;
-      padding: 20px; /* Standardized padding */
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* Standardized shadow */
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       flex: 1;
-      overflow-x: auto; /* Horizontal scroll if needed */
+      overflow-x: auto;
     }
-
     .content-area h1 {
       color: #2d3436;
-      margin-bottom: 20px; /* Standardized margin */
-      font-size: 1.5rem; /* Standardized font size */
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      transition: color 0.3s;
     }
-
-    /* Header container styling */
+    .content-area h1:hover {
+      color: #555555;
+    }
     .header-container {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px; /* Standardized margin */
-      flex-wrap: wrap; /* Allow wrapping on small screens */
+      margin-bottom: 20px;
+      flex-wrap: wrap;
     }
-
-    .compose-btn {
+    .btn {
       background: #333333;
       color: white;
       padding: 10px 20px;
@@ -63,106 +60,92 @@
       white-space: nowrap;
       transition: background-color 0.3s;
       font-size: 0.9rem;
+      margin-left: 10px;
     }
-
-    .compose-btn:hover {
+    .btn:hover {
       background: #555555;
     }
-
-    /* Table styling */
     .table-wrapper {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
-      -ms-overflow-style: none; /* Hide scrollbar in IE/Edge */
-      scrollbar-width: none; /* Hide scrollbar in Firefox */
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
-
     .table-wrapper::-webkit-scrollbar {
-      display: none; /* Hide scrollbar in Webkit browsers */
+      display: none;
     }
-
     table {
       width: 100%;
-      min-width: 600px; /* Standardized min-width */
+      min-width: 600px;
       border-collapse: collapse;
       background: #ffffff;
       border-radius: 10px;
       border-spacing: 0;
     }
-
     thead {
       background: #333333;
     }
-
     th {
       color: white;
       padding: 12px;
       text-align: left;
       font-size: 0.9rem;
       border-bottom: 2px solid #ffffff;
+      transition: background-color 0.3s, color 0.3s;
     }
-
+    th:hover {
+      background-color: #555555;
+      color: #e0e0e0;
+    }
     td {
       padding: 12px;
       text-align: left;
       font-size: 0.9rem;
       border-bottom: 1px solid #e6e9f0;
     }
-
     tr:last-child td {
       border-bottom: none;
     }
-
     tr:nth-child(even) {
       background: #f8f9fd;
     }
-
     tr {
-      cursor: pointer; /* Indicate clickability */
+      cursor: pointer;
     }
-
     tr:hover {
-      background: #e9ecef; /* Hover effect */
+      background: #e9ecef;
     }
-
-    /* Responsive adjustments */
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
-        padding: 0 10px !important; /* Consistent responsive padding */
+        padding: 0 10px !important;
       }
-
       .content-area {
         padding: 15px;
       }
-
       .content-area h1 {
         font-size: 1.2rem;
       }
-
       .header-container {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
       }
-
-      .compose-btn {
+      .btn {
         margin-top: 5px;
         width: 100%;
         text-align: center;
         padding: 8px;
         font-size: 0.85rem;
+        margin-left: 0;
       }
-
       table {
         display: block;
         min-width: 0;
       }
-
       thead {
         display: none;
       }
-
       tr {
         display: flex;
         flex-direction: column;
@@ -173,7 +156,6 @@
         background: #fff;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
-
       td {
         display: flex;
         justify-content: space-between;
@@ -181,11 +163,9 @@
         font-size: 0.85rem;
         border-bottom: 1px dashed #e6e9f0;
       }
-
       td:last-child {
         border-bottom: none;
       }
-
       td:before {
         content: attr(data-label);
         font-weight: bold;
@@ -194,12 +174,10 @@
         min-width: 100px;
       }
     }
-
     @media (min-width: 769px) and (max-width: 1024px) {
       .content-area h1 {
         font-size: 1.3rem;
       }
-
       th, td {
         padding: 10px;
         font-size: 0.85rem;
@@ -209,41 +187,83 @@
 </head>
 <body>
   <%- include('../../partials/navbar') %>
-
   <div class="container">
     <%- include('../../partials/admin_sidebar') %>
-
-    <!-- Content Area -->
     <div class="content-area" id="content">
-        <div class="header-container">
-          <h1>Messages</h1>
-          <a href="/admin/messages/compose" class="compose-btn">Compose</a>
+      <div class="header-container">
+        <h1><%= isSentMessages ? 'Sent Messages' : 'Messages' %></h1>
+        <div>
+          <a href="/admin/messages/compose" class="btn">Compose</a>
+          <a href="<%= isSentMessages ? '/admin/messages' : '/admin/sent-messages' %>" class="btn"><%= isSentMessages ? 'Received Messages' : 'Sent Messages' %></a>
         </div>
-
-        <!-- Table to display messages -->
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>From</th>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <% if (isSentMessages) { %>
                 <th>To</th>
-                <th>Message</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% messages.forEach(message => { %>
-                <tr onclick="window.location='/admin/messages/view?from=<%= encodeURIComponent(message.from) %>&to=<%= encodeURIComponent(message.to) %>&msg=<%= encodeURIComponent(message.messages) %>'">
+              <% } else { %>
+                <th>From</th>
+              <% } %>
+              <th>Category</th>
+              <th>Message</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="messages-table-body">
+            <% messages.forEach(message => { %>
+              <tr onclick="window.location='/admin/messages/view?from=<%= encodeURIComponent(message.from) %>&to=<%= encodeURIComponent(message.to) %>&category=<%= encodeURIComponent(message.category) %>&msg=<%= encodeURIComponent(message.message) %>&timestamp=<%= encodeURIComponent(message.timestamp.toISOString()) %>'">
+                <% if (isSentMessages) { %>
+                  <% if (message.to === "all_salesman" && message.branch_id) { %>
+                    <td data-label="To"><%= `${message.to} (${message.branch_id})` %></td>
+                  <% } else if (message.category === "company" && message.c_id) { %>
+                    <td data-label="To"><%= `${message.c_id} - ${message.cname}` %></td>
+                  <% } else if (message.category === "sales_manager" && message.emp_id) { %>
+                    <td data-label="To"><%= `${message.emp_id} - ${message.employeeName}` %></td>
+                  <% } else { %>
+                    <td data-label="To"><%= message.to %></td>
+                  <% } %>
+                <% } else { %>
                   <td data-label="From"><%= message.from %></td>
-                  <td data-label="To"><%= message.to %></td>
-                  <td data-label="Message"><%= message.messages %></td>
-                </tr>
-              <% }) %>
-            </tbody>
-          </table>
-        </div>
+                <% } %>
+                <td data-label="Category"><%= message.category %></td>
+                <td data-label="Message"><%= message.message %></td>
+                <td data-label="Date"><%= message.timestamp.toLocaleString() %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-
   <%- include('../../partials/footer') %>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    socket.on('newMessage', (message) => {
+      const tbody = document.getElementById('messages-table-body');
+      const tr = document.createElement('tr');
+      tr.setAttribute('onclick', `window.location='/admin/messages/view?from=${encodeURIComponent(message.from)}&to=${encodeURIComponent(message.to)}&category=${encodeURIComponent(message.category)}&msg=${encodeURIComponent(message.message)}&timestamp=${encodeURIComponent(new Date(message.timestamp).toISOString())}'`);
+      const isSentMessages = <%= isSentMessages ? 'true' : 'false' %>;
+      let toContent = message.to;
+      if (isSentMessages) {
+        if (message.to === "all_salesman" && message.branch_id) {
+          toContent = `${message.to} (${message.branch_id})`;
+        } else if (message.category === "company" && message.c_id) {
+          toContent = `${message.c_id} - ${message.cname || "Unknown"}`;
+        } else if (message.category === "sales_manager" && message.emp_id) {
+          toContent = `${message.emp_id} - ${message.employeeName || "Unknown"}`;
+        }
+      }
+      tr.innerHTML = `
+        ${isSentMessages ? `<td data-label="To">${toContent}</td>` : `<td data-label="From">${message.from}</td>`}
+        <td data-label="Category">${message.category}</td>
+        <td data-label="Message">${message.message}</td>
+        <td data-label="Date">${new Date(message.timestamp).toLocaleString()}</td>
+      `;
+      tbody.insertBefore(tr, tbody.firstChild);
+    });
+  </script>
 </body>
 </html>

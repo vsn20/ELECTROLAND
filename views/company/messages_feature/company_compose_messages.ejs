@@ -11,14 +11,12 @@
       box-sizing: border-box;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
     body {
       background: #f5f6fa;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
-
     .container {
       margin-top: 90px;
       display: flex;
@@ -27,7 +25,6 @@
       padding: 0 20px !important;
       max-width: 100%;
     }
-
     .content-area {
       background: #ffffff;
       border-radius: 15px;
@@ -36,48 +33,52 @@
       flex: 1;
       overflow-x: auto;
     }
-
     .content-area h1 {
       color: #2d3436;
       margin-bottom: 20px;
       font-size: 1.5rem;
     }
-
     .form-row {
       display: flex;
       gap: 20px;
-      flex-wrap: wrap; /* Allow wrapping on smaller screens */
+      flex-wrap: wrap;
     }
-
     .form-row .form-group {
       flex: 1;
-      min-width: 0; /* Prevent overflow */
+      min-width: 200px;
     }
-
     .form-group {
       margin-bottom: 20px;
     }
-
     label {
       display: block;
       margin-bottom: 5px;
       color: #2d3436;
       font-weight: 500;
+      font-size: 0.9rem;
     }
-
     select, input, textarea {
       width: 100%;
       padding: 10px;
       border: 1px solid #e6e9f0;
       border-radius: 5px;
       font-size: 0.9rem;
+      background: #f8f9fa;
+      color: #2d3436;
+      transition: border-color 0.3s;
     }
-
+    select:focus, input:focus, textarea:focus {
+      border-color: #333333;
+      outline: none;
+    }
+    input[readonly] {
+      background: #e9ecef;
+      cursor: default;
+    }
     textarea {
       min-height: 150px;
       resize: vertical;
     }
-
     button {
       background: #333333;
       color: white;
@@ -88,63 +89,49 @@
       font-size: 0.9rem;
       transition: background-color 0.3s;
     }
-
     button:hover {
       background: #555555;
     }
-
-    .branch-fields {
+    #sales-manager-field {
       display: none;
     }
-
-    /* Responsive adjustments */
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
         padding: 0 10px !important;
       }
-
       .content-area {
         padding: 15px;
       }
-
       .content-area h1 {
         font-size: 1.2rem;
       }
-
       .form-row {
         flex-direction: column;
         gap: 10px;
       }
-
       .form-group {
-        width: 100%;
+        min-width: 100%;
       }
-
       select, input, textarea {
         font-size: 0.85rem;
       }
-
       button {
         width: 100%;
         padding: 8px;
         font-size: 0.85rem;
       }
     }
-
     @media (min-width: 769px) and (max-width: 1024px) {
       .content-area h1 {
         font-size: 1.3rem;
       }
-
       .form-row {
         gap: 15px;
       }
-
       select, input, textarea {
         font-size: 0.85rem;
       }
-
       button {
         padding: 8px 15px;
         font-size: 0.85rem;
@@ -165,28 +152,26 @@
         <div class="form-row">
           <div class="form-group">
             <label for="from">From:</label>
-            <input type="text" name="from" id="from" value="company" readonly>
+            <input type="text" name="from" id="from" value="<%= from %>" readonly>
           </div>
           <div class="form-group">
-            <label for="to">To:</label>
-            <select name="to" id="to" required>
-              <option value="all">All</option>
-              <option value="salesman">Salesman</option>
-              <option value="salesmanager">Sales Manager</option>
+            <label for="category">Recipient:</label>
+            <select name="category" id="category" required>
               <option value="admin">Admin</option>
-              <option value="customer">Customer</option>
+              <option value="specific_sales_manager">Specific Sales Manager</option>
+              <option value="all_sales_manager">All Sales Managers</option>
             </select>
           </div>
         </div>
 
-        <div class="form-row branch-fields" id="branch-row">
+        <div class="form-row" id="sales-manager-field">
           <div class="form-group">
-            <label for="branch_id">Branch ID:</label>
-            <input type="text" name="branch_id" id="branch_id" placeholder="Enter Branch ID">
-          </div>
-          <div class="form-group">
-            <label for="branch_name">Branch Name:</label>
-            <input type="text" name="branch_name" id="branch_name" placeholder="Enter Branch Name">
+            <label for="to">Sales Manager:</label>
+            <select name="to" id="to">
+              <% salesManagers.forEach(manager => { %>
+                <option value="<%= manager.e_id %>"><%= manager.e_id %> - <%= manager.f_name %> <%= manager.last_name %></option>
+              <% }) %>
+            </select>
           </div>
         </div>
 
@@ -203,24 +188,24 @@
   <%- include('../../partials/footer') %>
 
   <script>
+    const categorySelect = document.getElementById('category');
+    const salesManagerField = document.getElementById('sales-manager-field');
     const toSelect = document.getElementById('to');
-    const branchRow = document.getElementById('branch-row');
 
-    toSelect.addEventListener('change', function() {
-      if (this.value === 'all') {
-        branchRow.style.display = 'none';
-        document.getElementById('branch_id').removeAttribute('required');
-        document.getElementById('branch_name').removeAttribute('required');
+    categorySelect.addEventListener('change', function() {
+      if (this.value === 'specific_sales_manager') {
+        salesManagerField.style.display = 'flex';
+        toSelect.setAttribute('required', 'true');
       } else {
-        branchRow.style.display = 'flex';
-        document.getElementById('branch_id').setAttribute('required', 'true');
-        document.getElementById('branch_name').setAttribute('required', 'true');
+        salesManagerField.style.display = 'none';
+        toSelect.removeAttribute('required');
       }
     });
 
     // Initial check on page load
-    if (toSelect.value === 'all') {
-      branchRow.style.display = 'none';
+    if (categorySelect.value !== 'specific_sales_manager') {
+      salesManagerField.style.display = 'none';
+      toSelect.removeAttribute('required');
     }
   </script>
 </body>

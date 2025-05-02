@@ -81,8 +81,9 @@ router.get("/salaries", salary_display);
 const { orders_display } = require("../controllers/admin_orders_display");
 router.get("/orders", orders_display);
 
-const { admin_messages_display, render_compose_message_form, compose_message, view_message } = require("../controllers/admin_messages_display");
+const { admin_messages_display, admin_sent_messages, render_compose_message_form, compose_message, view_message } = require("../controllers/admin_messages_display");
 router.get("/messages", admin_messages_display);
+router.get("/sent-messages", admin_sent_messages);
 router.get("/messages/compose", render_compose_message_form);
 router.post("/messages/compose", compose_message);
 router.get("/messages/view", view_message);

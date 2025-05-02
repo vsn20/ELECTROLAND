@@ -35,10 +35,10 @@ router.post("/add-sale", addSale);
 router.get("/products-by-company/:companyId", getProductsByCompany);
 
 // Salesman messages
-const { salesman_messages_display, render_compose_message_form, compose_message, view_message } = require("../controllers/salesman/salesman_messages_display");
+const { salesman_messages_display, render_compose_message_form, compose_message, view_message, view_sent_messages } = require("../controllers/salesman/salesman_messages_display");
 router.get("/messages", salesman_messages_display);
 router.get("/messages/compose", render_compose_message_form);
 router.post("/messages/compose", compose_message);
-router.get("/messages/view", view_message);
+router.get("/messages/view", view_message); // New route for viewing message details
 
 module.exports = router;

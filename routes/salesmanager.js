@@ -87,24 +87,14 @@ router.get("/salaries", (req, res) => {
   salary_display(req, res);
 });
 
+// Salesmanager messages
 const { salesmanager_messages_display, render_compose_message_form, compose_message, view_message } = require("../controllers/salesmanager/salesmanager_messages_display");
-router.get("/messages", (req, res) => {
-  console.log('[Route] Accessing /salesmanager/messages');
-  salesmanager_messages_display(req, res);
-});
-router.get("/messages/compose", (req, res) => {
-  console.log('[Route] Accessing /salesmanager/messages/compose');
-  render_compose_message_form(req, res);
-});
-router.post("/messages/compose", (req, res) => {
-  console.log('[Route] Posting to /salesmanager/messages/compose');
-  compose_message(req, res);
-});
-router.get("/messages/view", (req, res) => {
-  console.log('[Route] Accessing /salesmanager/messages/view');
-  view_message(req, res);
-});
+router.get("/messages", salesmanager_messages_display);
+router.get("/messages/compose", render_compose_message_form);
+router.post("/messages/compose", compose_message);
+router.get("/messages/view", view_message);
 
+// Salesmanager employee
 const { employeeDisplay, employeeDetail, fireEmployee, editSalesManager, updateSalesManager, renderAddEmployeeForm, addEmployee } = require("../controllers/salesmanager/salesmanager_employee");
 router.get("/employees", (req, res) => {
   console.log('[Route] Accessing /salesmanager/employees');
