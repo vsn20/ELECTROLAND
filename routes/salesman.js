@@ -39,6 +39,7 @@ const { salesman_messages_display, render_compose_message_form, compose_message,
 router.get("/messages", salesman_messages_display);
 router.get("/messages/compose", render_compose_message_form);
 router.post("/messages/compose", compose_message);
-router.get("/messages/view", view_message); // New route for viewing message details
+router.get("/messages/view", view_message);
+router.get("/messages/sent", view_sent_messages); // New route for viewing message details
 
 module.exports = router;

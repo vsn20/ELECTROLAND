@@ -88,11 +88,12 @@ router.get("/salaries", (req, res) => {
 });
 
 // Salesmanager messages
-const { salesmanager_messages_display, render_compose_message_form, compose_message, view_message } = require("../controllers/salesmanager/salesmanager_messages_display");
+const { salesmanager_messages_display, render_compose_message_form, compose_message, view_sent_messages,view_message } = require("../controllers/salesmanager/salesmanager_messages_display");
 router.get("/messages", salesmanager_messages_display);
 router.get("/messages/compose", render_compose_message_form);
 router.post("/messages/compose", compose_message);
 router.get("/messages/view", view_message);
+router.get("/messages/sent",view_sent_messages)
 
 // Salesmanager employee
 const { employeeDisplay, employeeDetail, fireEmployee, editSalesManager, updateSalesManager, renderAddEmployeeForm, addEmployee } = require("../controllers/salesmanager/salesmanager_employee");
