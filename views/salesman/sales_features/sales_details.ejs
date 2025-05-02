@@ -191,7 +191,7 @@
         </div>
         <div class="form-group">
           <label>Sale Date</label>
-          <input type="text" value="<%= sale.sales_date %>" readonly>
+          <input type="text" value="<%= new Date(sale.sales_date).toISOString().split('T')[0] %>" readonly>
         </div>
       </div>
       <div class="form-row">
@@ -225,11 +225,11 @@
       <div class="form-row">
         <div class="form-group">
           <label>Purchased Price</label>
-          <input type="text" value="$<%= sale.purchased_price %>" readonly>
+          <input type="text" value="$<%= sale.purchased_price.toFixed(2) %>" readonly>
         </div>
         <div class="form-group">
           <label>Sold Price</label>
-          <input type="text" value="$<%= sale.sold_price %>" readonly>
+          <input type="text" value="$<%= sale.sold_price.toFixed(2) %>" readonly>
         </div>
         <div class="form-group">
           <label>Quantity</label>
@@ -239,11 +239,15 @@
       <div class="form-row">
         <div class="form-group">
           <label>Total Amount</label>
-          <input type="text" value="$<%= sale.amount %>" readonly>
+          <input type="text" value="$<%= sale.amount.toFixed(2) %>" readonly>
         </div>
         <div class="form-group">
           <label>Profit/Loss</label>
-          <input type="text" value="$<%= sale.profit_or_loss %>" readonly>
+          <input type="text" value="$<%= sale.profit_or_loss.toFixed(2) %>" readonly>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="<%= sale.phone_number || 'N/A' %>" readonly>
         </div>
       </div>
 

@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sale Details - ElectroLand</title>
-  <link rel="stylesheet" href="/styles.css">
   <style>
     * {
       margin: 0;
@@ -34,31 +33,92 @@
       padding: 25px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       flex: 1;
+      overflow-y: auto; /* Enable scrolling functionality */
+      height: calc(100vh - 90px); /* Match sidebar height */
     }
 
-    .content-area h1 {
+    /* Hide scrollbar visually in WebKit browsers (Chrome, Safari) */
+    .content-area::-webkit-scrollbar {
+      display: none; /* Completely hide the scrollbar */
+    }
+
+    /* Hide scrollbar in Firefox */
+    .content-area {
+      scrollbar-width: none; /* Firefox */
+    }
+
+    /* Hide scrollbar in IE/Edge */
+    .content-area {
+      -ms-overflow-style: none; /* IE and Edge */
+    }
+
+    h2 {
       color: #2d3436;
       margin-bottom: 20px;
+      font-size: 1.5rem;
     }
 
-    .edit-button {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #2d3436;
-      color: white;
-      text-decoration: none;
+    h3 {
+      color: #2d3436;
+      margin: 20px 0 10px;
+      font-size: 1.2rem;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: #2d3436;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #e6e9f0;
       border-radius: 5px;
-      margin-top: 20px;
-    }
-
-    .edit-button:hover {
-      background-color: #FFD700;
+      font-size: 0.9rem;
+      background: #f8f9fa;
       color: #2d3436;
     }
 
-    input[readonly], select[readonly], textarea[readonly] {
-      background-color: #e9ecef;
-      cursor: not-allowed;
+    .form-group input[readonly] {
+      background: #e9ecef;
+      cursor: default;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .form-row .form-group {
+      flex: 1 1 45%;
+      min-width: 200px;
+      max-width: 400px;
+    }
+
+    .back-link {
+      display: block;
+      margin-top: 15px;
+      color: #2d3436;
+      text-decoration: none;
+      text-align: center;
+      font-size: 0.9rem;
+      padding: 10px 20px;
+      background: #333333;
+      color: white;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .back-link:hover {
+      background: #555555;
     }
 
     @media (max-width: 768px) {
@@ -69,6 +129,67 @@
 
       .content-area {
         min-height: auto;
+        padding: 15px;
+        overflow-y: auto; /* Enable scrolling on mobile */
+      }
+
+      .content-area::-webkit-scrollbar {
+        display: none; /* Hide scrollbar on mobile */
+      }
+
+      .content-area {
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+      }
+
+      h2 {
+        font-size: 1.2rem;
+      }
+
+      h3 {
+        font-size: 1rem;
+      }
+
+      .form-row {
+        flex-direction: column;
+      }
+
+      .form-row .form-group {
+        flex: 1 1 100%;
+        max-width: 100%;
+      }
+
+      .form-group input {
+        font-size: 0.85rem;
+      }
+
+      .back-link {
+        width: 100%;
+        padding: 10px;
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      h2 {
+        font-size: 1.3rem;
+      }
+
+      h3 {
+        font-size: 1.1rem;
+      }
+
+      .form-row .form-group {
+        flex: 1 1 45%;
+      }
+
+      .form-group input {
+        font-size: 0.85rem;
+      }
+
+      .back-link {
+        padding: 8px 16px;
+        font-size: 0.85rem;
       }
     }
   </style>
@@ -80,56 +201,81 @@
     <%- include('../../partials/salesmanager_sidebar') %>
 
     <div class="content-area" id="content">
-      <div class="form-container">
-        <h2>Sale Details</h2>
-        <form>
-          <fieldset>
-            <legend>Sale Information</legend>
-            <div class="field-group">
-              <div>
-                <label for="sales_id">Sale ID</label>
-                <input type="text" id="sales_id" value="<%= sale.sales_id %>" readonly>
-              </div>
-              <div>
-                <label for="branch_name">Branch</label>
-                <input type="text" id="branch_name" value="<%= sale.branch_name %>" readonly>
-              </div>
-              <div>
-                <label for="salesman_name">Salesman</label>
-                <input type="text" id="salesman_name" value="<%= sale.salesman_name %>" readonly>
-              </div>
-              <div>
-                <label for="customer_name">Customer</label>
-                <input type="text" id="customer_name" value="<%= sale.customer_name %>" readonly>
-              </div>
-              <div>
-                <label for="product_name">Product</label>
-                <input type="text" id="product_name" value="<%= sale.product_name %>" readonly>
-              </div>
-              <div>
-                <label for="quantity">Quantity</label>
-                <input type="number" id="quantity" value="<%= sale.quantity %>" readonly>
-              </div>
-              <div>
-                <label for="total_amount">Total Amount</label>
-                <input type="number" step="0.01" id="total_amount" value="<%= sale.total_amount %>" readonly>
-              </div>
-              <div>
-                <label for="saledate">Sale Date</label>
-                <input type="text" id="saledate" value="<%= sale.saledate %>" readonly>
-              </div>
-              <div>
-                <label for="price">Price</label>
-                <input type="number" step="0.01" id="price" value="<%= sale.price %>" readonly>
-              </div>
-              <div>
-                <label for="phone_number">Phone Number</label>
-                <input type="tel" id="phone_number" value="<%= sale.phone_number %>" readonly>
-              </div>
-            </div>
-          </fieldset>
-        </form>
+      <h2>Sale Details</h2>
+
+      <h3>Sale Information</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Sale ID</label>
+          <input type="text" value="<%= sale.sales_id %>" readonly>
+        </div>
+        <div class="form-group">
+          <label>Unique Code</label>
+          <input type="text" value="<%= sale.unique_code %>" readonly>
+        </div>
+        <div class="form-group">
+          <label>Sale Date</label>
+          <input type="text" value="<%= new Date(sale.saledate).toISOString().split('T')[0] %>" readonly>
+        </div>
       </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Salesman Name</label>
+          <input type="text" value="<%= sale.salesman_name %>" readonly>
+        </div>
+        <div class="form-group">
+          <label>Customer Name</label>
+          <input type="text" value="<%= sale.customer_name %>" readonly>
+        </div>
+        <div class="form-group">
+          <label>Branch Name</label>
+          <input type="text" value="<%= sale.branch_name %>" readonly>
+        </div>
+      </div>
+
+      <h3>Product Information</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Product Name</label>
+          <input type="text" value="<%= sale.product_name %>" readonly>
+        </div>
+        <div class="form-group">
+          <label>Model Number</label>
+          <input type="text" value="<%= sale.model_number %>" readonly>
+        </div>
+        <div class="form-group">
+          <label>Company Name</label>
+          <input type="text" value="<%= sale.company_name %>" readonly>
+        </div>
+      </div>
+
+      <h3>Transaction Details</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Purchased Price</label>
+          <input type="text" value="$<%= sale.purchased_price.toFixed(2) %>" readonly>
+        </div>
+        <div class="form-group">
+          <label>Sold Price</label>
+          <input type="text" value="$<%= sale.price.toFixed(2) %>" readonly>
+        </div>
+        <div class="form-group">
+          <label>Quantity</label>
+          <input type="text" value="<%= sale.quantity %>" readonly>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Profit/Loss</label>
+          <input type="text" value="$<%= sale.profit_or_loss.toFixed(2) %>" readonly>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" value="<%= sale.phone_number || 'N/A' %>" readonly>
+        </div>
+      </div>
+
+      <a href="/salesmanager/sales" class="back-link">Back to Sales</a>
     </div>
   </div>
 

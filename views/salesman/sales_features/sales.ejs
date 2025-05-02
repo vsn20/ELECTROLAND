@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sales - Central Branch - ElectroLand</title>
+  <title>Sales - <%= branchName %> - ElectroLand</title>
   <style>
     * {
       margin: 0;
@@ -126,74 +126,6 @@
       cursor: pointer;
     }
 
-    .form-container {
-      display: none;
-      margin-top: 20px;
-    }
-
-    h3 {
-      color: #2d3436;
-      margin: 20px 0 10px;
-      font-size: 1.2rem;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      color: #2d3436;
-      font-weight: 500;
-      font-size: 0.9rem;
-    }
-
-    .form-group input {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #e6e9f0;
-      border-radius: 5px;
-      font-size: 0.9rem;
-      background: #f8f9fa;
-      color: #2d3436;
-      transition: border-color 0.3s;
-    }
-
-    .form-group input:focus {
-      border-color: #333;
-      outline: none;
-    }
-
-    .form-row {
-      display: flex;
-      gap: 15px; /* Standardized gap */
-      flex-wrap: wrap; /* Allow wrapping on small screens */
-    }
-
-    .form-row .form-group {
-      flex: 1 1 45%; /* Two columns by default */
-      min-width: 200px; /* Consistent min-width */
-      max-width: 400px; /* Consistent max-width */
-    }
-
-    .button {
-      padding: 10px 20px;
-      background-color: #333333;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      transition: background-color 0.3s;
-      width: 100%;
-      margin-top: 20px;
-    }
-
-    .button:hover {
-      background-color: #555555;
-    }
-
     /* Responsive adjustments */
     @media (max-width: 768px) {
       .container {
@@ -267,28 +199,6 @@
         margin-right: 10px;
         min-width: 100px;
       }
-
-      h3 {
-        font-size: 1rem;
-      }
-
-      .form-row {
-        flex-direction: column;
-      }
-
-      .form-row .form-group {
-        flex: 1 1 100%; /* Stack fields on smaller screens */
-        max-width: 100%; /* Full width on mobile */
-      }
-
-      .form-group input {
-        font-size: 0.85rem;
-      }
-
-      .button {
-        padding: 10px;
-        font-size: 0.85rem;
-      }
     }
 
     @media (min-width: 769px) and (max-width: 1024px) {
@@ -301,19 +211,7 @@
         font-size: 0.85rem;
       }
 
-      h3 {
-        font-size: 1.1rem;
-      }
-
-      .form-row .form-group {
-        flex: 1 1 45%;
-      }
-
-      .form-group input {
-        font-size: 0.85rem;
-      }
-
-      .button, .add-button {
+      .add-button {
         padding: 8px 16px;
         font-size: 0.85rem;
       }
@@ -326,8 +224,8 @@
     <%- include('../../partials/salesman_sidebar') %>
     <div class="content-area" id="content">
       <div class="header-container">
-        <h1>Sales - Central Branch</h1>
-        <button class="add-button" onclick="toggleForm()">Add Sale</button>
+        <h1>Sales - <%= branchName %></h1>
+        <a href="/salesman/add-sale" class="add-button">Add Sale</a>
       </div>
       <div id="successMessage" class="success-message">Sale added successfully!</div>
       <div id="tableWrapper" class="table-wrapper">
@@ -344,114 +242,24 @@
             <% salers.forEach(sale => { %>
               <tr onclick="window.location='/salesman/sales/<%= sale.sales_id %>'">
                 <td data-label="Sale ID"><%= sale.sales_id %></td>
-                <td data-label="Price"><%= sale.amount %></td>
-                <td data-label="Profit"><%= sale.profit_or_loss %></td>
-                <td data-label="Sale Date"><%= sale.sales_date %></td>
+                <td data-label="Price">$<%= sale.total_amount.toFixed(2) %></td>
+                <td data-label="Profit">$<%= sale.profit_or_loss.toFixed(2) %></td>
+                <td data-label="Sale Date"><%= new Date(sale.saledate).toISOString().split('T')[0] %></td>
               </tr>
             <% }) %>
           </tbody>
         </table>
-      </div>
-
-      <!-- Add Sale Form -->
-      <div id="addSaleForm" class="form-container">
-        <form id="saleForm" onsubmit="handleSubmit(event)">
-          <h3>Sale Information</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Sale ID</label>
-              <input type="text" name="sales_id" required>
-            </div>
-            <div class="form-group">
-              <label>Salesman Name</label>
-              <input type="text" name="salesman_name" required>
-            </div>
-            <div class="form-group">
-              <label>Customer Name</label>
-              <input type="text" name="customer_name" required>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Sale Date</label>
-              <input type="date" name="sales_date" required>
-            </div>
-            <div class="form-group">
-              <label>Unique Code</label>
-              <input type="text" name="unique_code" required>
-            </div>
-          </div>
-
-          <h3>Product Information</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Product Name</label>
-              <input type="text" name="product_name" required>
-            </div>
-            <div class="form-group">
-              <label>Model Number</label>
-              <input type="text" name="model_number" required>
-            </div>
-            <div class="form-group">
-              <label>Company Name</label>
-              <input type="text" name="company_name" required>
-            </div>
-          </div>
-
-          <h3>Transaction Details</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Purchased Price</label>
-              <input type="number" name="purchased_price" step="0.01" required>
-            </div>
-            <div class="form-group">
-              <label>Sold Price</label>
-              <input type="number" name="sold_price" step="0.01" required>
-            </div>
-            <div class="form-group">
-              <label>Quantity</label>
-              <input type="number" name="quantity" required>
-            </div>
-          </div>
-
-          <button type="submit" class="button">Add Sale</button>
-        </form>
       </div>
     </div>
   </div>
   <%- include('../../partials/footer') %>
 
   <script>
-    function toggleForm() {
-      const form = document.getElementById('addSaleForm');
-      const table = document.getElementById('tableWrapper');
+    // Show success message if redirected with success query
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'true') {
       const successMessage = document.getElementById('successMessage');
-      
-      // Hide table and success message, show form
-      table.style.display = 'none';
-      successMessage.style.display = 'none';
-      form.style.display = 'block';
-    }
-
-    function handleSubmit(event) {
-      event.preventDefault();
-      const form = document.getElementById('saleForm');
-      const table = document.getElementById('tableWrapper');
-      const successMessage = document.getElementById('successMessage');
-      
-      // Log form data (for debugging, no backend action)
-      const formData = new FormData(form);
-      console.log("Form Data:", Object.fromEntries(formData));
-
-      // Hide form, show table and success message
-      form.style.display = 'none';
-      table.style.display = 'block';
       successMessage.style.display = 'block';
-
-      // Reset form
-      form.reset();
-
-      // Hide success message after 3 seconds
       setTimeout(() => {
         successMessage.style.display = 'none';
       }, 3000);

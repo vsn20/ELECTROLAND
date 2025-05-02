@@ -261,11 +261,11 @@
       <div class="form-row">
         <div class="form-group">
           <label>Branch ID</label>
-          <input type="text" value="B001" readonly>
+          <input type="text" value="<%= branchid %>" readonly>
         </div>
         <div class="form-group">
           <label>Branch Name</label>
-          <input type="text" value="Hyderabad Branch" readonly>
+          <input type="text" value="<%= branchname %>" readonly>
         </div>
       </div>
 
@@ -286,8 +286,8 @@
                 <td data-label="Sale ID"><%= sale.sales_id %></td>
                 <td data-label="Salesman"><%= sale.salesman_name %></td>
                 <td data-label="Customer"><%= sale.customer_name %></td>
-                <td data-label="Total Amount"><%= sale.total_amount %></td>
-                <td data-label="Sale Date"><%= sale.saledate %></td>
+                <td data-label="Total Amount">$<%= sale.total_amount.toFixed(2) %></td>
+                <td data-label="Sale Date"><%= new Date(sale.saledate).toISOString().split('T')[0] %></td>
               </tr>
             <% }) %>
           </tbody>

@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sale Details - ElectroLand</title>
   <style>
-    /* Structural CSS */
     * {
       margin: 0;
       padding: 0;
@@ -24,32 +23,32 @@
       margin-top: 90px;
       display: flex;
       flex: 1;
-      gap: 25px; /* Standardized gap */
-      padding: 0 20px !important; /* Standardized padding with !important to prevent override */
-      max-width: 100%; /* Ensure it doesn’t exceed viewport */
+      gap: 25px;
+      padding: 0 20px !important;
+      max-width: 100%;
     }
 
     .content-area {
       background: #ffffff;
       border-radius: 15px;
-      padding: 20px; /* Standardized padding */
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* Standardized shadow */
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       flex: 1;
-      overflow-x: auto; /* Horizontal scroll if needed */
-      overflow-y: auto; /* Vertical scroll for overflow content */
-      height: calc(100vh - 90px); /* Match sidebar height exactly */
+      overflow-x: auto;
+      overflow-y: auto;
+      height: calc(100vh - 90px);
     }
 
     h2 {
       color: #2d3436;
-      margin-bottom: 20px; /* Standardized margin */
-      font-size: 1.5rem; /* Standardized font size */
+      margin-bottom: 20px;
+      font-size: 1.5rem;
     }
 
     h3 {
       color: #2d3436;
       margin: 20px 0 10px;
-      font-size: 1.2rem; /* Consistent with section titles */
+      font-size: 1.2rem;
     }
 
     .form-group {
@@ -59,19 +58,19 @@
     .form-group label {
       display: block;
       margin-bottom: 5px;
-      color: #2d3436; /* Updated to match other labels */
-      font-weight: 500; /* Consistent with other forms */
+      color: #2d3436;
+      font-weight: 500;
     }
 
     .form-group input {
       width: 100%;
-      padding: 8px; /* Standardized padding */
-      border: 1px solid #e6e9f0; /* Consistent border color */
+      padding: 8px;
+      border: 1px solid #e6e9f0;
       border-radius: 5px;
-      font-size: 0.9rem; /* Standardized font size */
-      background: #f8f9fa; /* Kept original background */
+      font-size: 0.9rem;
+      background: #f8f9fa;
       color: #2d3436;
-      transition: border-color 0.3s; /* Added for consistency */
+      transition: border-color 0.3s;
     }
 
     .form-group input:focus {
@@ -81,24 +80,24 @@
 
     .form-row {
       display: flex;
-      gap: 15px; /* Standardized gap */
+      gap: 15px;
       flex-wrap: wrap;
     }
 
     .form-row .form-group {
-      flex: 1 1 45%; /* Two columns by default, consistent with previous forms */
-      min-width: 200px; /* Consistent min-width */
-      max-width: 400px; /* Kept original max-width */
+      flex: 1 1 45%;
+      min-width: 200px;
+      max-width: 400px;
     }
 
     .button {
       display: inline-block;
-      padding: 10px 20px; /* Standardized button padding */
-      background-color: #333333; /* Consistent button color */
+      padding: 10px 20px;
+      background-color: #333333;
       color: white;
       border: none;
       border-radius: 5px;
-      font-size: 0.9rem; /* Standardized font size */
+      font-size: 0.9rem;
       cursor: pointer;
       transition: background-color 0.3s;
       width: 100%;
@@ -106,32 +105,31 @@
     }
 
     .button:hover {
-      background-color: #555555; /* Consistent hover color */
+      background-color: #555555;
     }
 
     .back-link {
       display: block;
-      margin-top: 15px; /* Adjusted for consistency */
-      color: #2d3436; /* Updated to match other links */
+      margin-top: 15px;
+      color: #2d3436;
       text-decoration: none;
-      font-size: 0.9rem; /* Standardized font size */
-      text-align: center; /* Added for better presentation */
+      font-size: 0.9rem;
+      text-align: center;
     }
 
     .back-link:hover {
       text-decoration: underline;
     }
 
-    /* Responsive adjustments */
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
-        padding: 0 10px !important; /* Consistent responsive padding */
+        padding: 0 10px !important;
       }
 
       .content-area {
         padding: 15px;
-        height: auto; /* Switch to auto height on smaller screens */
+        height: auto;
       }
 
       h2 {
@@ -147,7 +145,7 @@
       }
 
       .form-row .form-group {
-        flex: 1 1 100%; /* Stack fields on smaller screens */
+        flex: 1 1 100%;
       }
 
       .button {
@@ -173,7 +171,6 @@
   <div class="container">
     <%- include('../../partials/admin_sidebar') %>
 
-    <!-- Content Area -->
     <div class="content-area" id="content">
       <h2>Sale Details</h2>
 
@@ -189,7 +186,7 @@
         </div>
         <div class="form-group">
           <label>Sale Date</label>
-          <input type="text" value="<%= sale.sales_date %>" readonly>
+          <input type="text" value="<%= new Date(sale.sales_date).toISOString().split('T')[0] %>" readonly>
         </div>
       </div>
       <div class="form-row">
@@ -227,26 +224,26 @@
       <div class="form-row">
         <div class="form-group">
           <label>Purchased Price</label>
-          <input type="text" value="$<%= sale.purchased_price %>" readonly>
+          <input type="text" value="$<%= typeof sale.purchased_price === 'number' ? sale.purchased_price.toFixed(2) : '0.00' %>" readonly>
         </div>
         <div class="form-group">
           <label>Sold Price</label>
-          <input type="text" value="$<%= sale.sold_price %>" readonly>
+          <input type="text" value="$<%= typeof sale.sold_price === 'number' ? sale.sold_price.toFixed(2) : '0.00' %>" readonly>
         </div>
         <div class="form-group">
           <label>Quantity</label>
-          <input type="text" value="<%= sale.quantity %>" readonly>
+          <input type="text" value="<%= sale.quantity || 'N/A' %>" readonly>
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label>Total Amount</label>
-          <input type="text" value="$<%= sale.amount %>" readonly>
+          <input type="text" value="$<%= typeof sale.amount === 'number' ? sale.amount.toFixed(2) : '0.00' %>" readonly>
         </div>
         <div class="form-group">
           <label>Profit/Loss</label>
-          <input type="text" value="$<%= sale.profit_or_loss %>" readonly>
+          <input type="text" value="$<%= typeof sale.profit_or_loss === 'number' ? sale.profit_or_loss.toFixed(2) : '0.00' %>" readonly>
         </div>
       </div>
 

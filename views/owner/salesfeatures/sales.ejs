@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sales - ElectroLand</title>
   <style>
-    /* General Styling */
     * {
       margin: 0;
       padding: 0;
@@ -37,7 +36,18 @@
       overflow-x: auto;
     }
 
-    /* Table Styling */
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      color: #2d3436;
+      font-size: 1.5rem;
+    }
+
     .table-wrapper {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
@@ -84,11 +94,10 @@
       cursor: pointer;
     }
 
-    /* Responsive Adjustments */
     @media (max-width: 768px) {
       .container {
-        margin-top: 60px; /* Slightly reduced for mobile */
-        flex-direction: column; /* Stack sidebar and content */
+        margin-top: 60px;
+        flex-direction: column;
         padding: 0 10px;
         gap: 15px;
       }
@@ -97,12 +106,16 @@
         padding: 15px;
       }
 
+      h1 {
+        font-size: 1.2rem;
+      }
+
       thead {
-        display: none; /* Hide header for mobile */
+        display: none;
       }
 
       tr {
-        display: block; /* Switch to block for card-like layout */
+        display: block;
         border: 1px solid #ccc;
         border-radius: 5px;
         margin-bottom: 10px;
@@ -112,21 +125,21 @@
 
       td {
         display: flex;
-        justify-content: space-between; /* Label on left, value on right */
+        justify-content: space-between;
         align-items: center;
         padding: 8px;
         border: 1px solid #e0e0e0;
         border-radius: 5px;
         background: #f8f9fd;
         margin: 5px 0;
-        text-align: left; /* Left-align for readability */
+        text-align: left;
       }
 
       td:before {
         content: attr(data-label);
         font-weight: bold;
         color: #2d3436;
-        min-width: 100px; /* Fixed width for consistency */
+        min-width: 100px;
       }
 
       tr:hover {
@@ -140,9 +153,13 @@
         padding: 0 15px;
       }
 
+      h1 {
+        font-size: 1.3rem;
+      }
+
       th, td {
         padding: 10px;
-        font-size: 0.95rem; /* Slight reduction for tablets */
+        font-size: 0.95rem;
       }
 
       .content-area {
@@ -157,7 +174,7 @@
       }
 
       th, td {
-        font-size: 0.9rem; /* Smaller text for tiny screens */
+        font-size: 0.9rem;
       }
 
       td {
@@ -165,7 +182,7 @@
       }
 
       td:before {
-        min-width: 80px; /* Adjusted for small screens */
+        min-width: 80px;
       }
 
       .content-area {
@@ -180,10 +197,10 @@
   <div class="container">
     <%- include('../../partials/admin_sidebar') %>
 
-    <!-- Content Area -->
     <div class="content-area" id="content">
       <div class="header-container">
-        <h1>Sales</h1></div>
+        <h1>Sales</h1>
+      </div>
       <div class="table-wrapper">
         <table>
           <thead>
@@ -200,9 +217,9 @@
               <tr onclick="window.location='/admin/sales/<%= sale.sales_id %>'">
                 <td data-label="Sale ID"><%= sale.sales_id %></td>
                 <td data-label="Branch Name"><%= sale.branch_name %></td>
-                <td data-label="Price"><%= sale.amount %></td>
-                <td data-label="Profit"><%= sale.profit_or_loss %></td>
-                <td data-label="Sale Date"><%= sale.sales_date %></td>
+                <td data-label="Price">$<%= typeof sale.amount === 'number' ? sale.amount.toFixed(2) : '0.00' %></td>
+                <td data-label="Profit">$<%= typeof sale.profit_or_loss === 'number' ? sale.profit_or_loss.toFixed(2) : '0.00' %></td>
+                <td data-label="Sale Date"><%= new Date(sale.sales_date).toISOString().split('T')[0] %></td>
               </tr>
             <% }) %>
           </tbody>

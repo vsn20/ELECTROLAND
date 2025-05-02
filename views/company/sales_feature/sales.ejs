@@ -37,6 +37,18 @@
       overflow-x: auto;
     }
 
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      color: #2d3436;
+      font-size: 1.5rem;
+    }
+
     /* Table Styling */
     .table-wrapper {
       overflow-x: auto;
@@ -45,7 +57,7 @@
 
     table {
       width: 100%;
-      min-width: 1000px; /* Increased to accommodate more columns */
+      min-width: 600px; /* Kept the same as it fits the remaining columns */
       border-collapse: separate;
       border-spacing: 0;
       background: #ffffff;
@@ -97,6 +109,10 @@
         padding: 15px;
       }
 
+      h1 {
+        font-size: 1.2rem;
+      }
+
       thead {
         display: none;
       }
@@ -138,6 +154,10 @@
       .container {
         gap: 20px;
         padding: 0 15px;
+      }
+
+      h1 {
+        font-size: 1.3rem;
       }
 
       th, td {
@@ -192,22 +212,16 @@
               <th>Sale ID</th>
               <th>Branch Name</th>
               <th>Product Name</th>
-              <th>Company Name</th>
-              <th>Quantity</th>
-              <th>Amount</th>
-              <th>Unique Code</th>
+              <th>Model No</th>
             </tr>
           </thead>
           <tbody>
-            <%salers.forEach(sale => { %>
+            <% salers.forEach(sale => { %>
               <tr onclick="window.location='/company/sales/<%= sale.sales_id %>'">
                 <td data-label="Sale ID"><%= sale.sales_id %></td>
                 <td data-label="Branch Name"><%= sale.branch_name %></td>
                 <td data-label="Product Name"><%= sale.product_name %></td>
-                <td data-label="Company Name"><%= sale.company_name %></td>
-                <td data-label="Quantity"><%= sale.quantity %></td>
-                <td data-label="Amount">$<%= sale.amount %></td>
-                <td data-label="Unique Code"><%= sale.unique_code %></td>
+                <td data-label="Model No"><%= sale.model_number || 'N/A' %></td>
               </tr>
             <% }) %>
           </tbody>
