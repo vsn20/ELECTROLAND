@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sales - ElectroLand</title>
   <style>
-    /* General Styling */
     * {
       margin: 0;
       padding: 0;
@@ -34,7 +33,23 @@
       padding: 20px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       flex: 1;
-      overflow-x: auto;
+      height: calc(100vh - 90px); /* Match sidebar height */
+      overflow-y: auto; /* Enable vertical scrolling if content overflows */
+    }
+
+    /* Hide scrollbar visually in WebKit browsers (Chrome, Safari) */
+    .content-area::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Hide scrollbar in Firefox */
+    .content-area {
+      scrollbar-width: none;
+    }
+
+    /* Hide scrollbar in IE/Edge */
+    .content-area {
+      -ms-overflow-style: none;
     }
 
     .header-container {
@@ -49,7 +64,6 @@
       font-size: 1.5rem;
     }
 
-    /* Table Styling */
     .table-wrapper {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
@@ -57,7 +71,7 @@
 
     table {
       width: 100%;
-      min-width: 600px; /* Kept the same as it fits the remaining columns */
+      min-width: 600px;
       border-collapse: separate;
       border-spacing: 0;
       background: #ffffff;
@@ -96,7 +110,6 @@
       cursor: pointer;
     }
 
-    /* Responsive Adjustments */
     @media (max-width: 768px) {
       .container {
         margin-top: 60px;
@@ -107,6 +120,7 @@
 
       .content-area {
         padding: 15px;
+        height: auto; /* Allow content area to expand on mobile */
       }
 
       h1 {
@@ -200,7 +214,6 @@
   <div class="container">
     <%- include('../../partials/company_sidebar') %>
 
-    <!-- Content Area -->
     <div class="content-area" id="content">
       <div class="header-container">
         <h1>Sales</h1>

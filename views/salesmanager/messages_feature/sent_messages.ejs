@@ -31,7 +31,8 @@
       padding: 20px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       flex: 1;
-      overflow-x: auto;
+      overflow-y: auto; /* Enable vertical scrolling */
+      height: calc(100vh - 90px); /* Match sidebar height */
     }
     .content-area h1 {
       color: #2d3436;
@@ -112,6 +113,8 @@
       }
       .content-area {
         padding: 15px;
+        height: auto; /* Adjust height for mobile */
+        overflow-y: auto; /* Still allow scrolling if content overflows */
       }
       .content-area h1 {
         font-size: 1.2rem;

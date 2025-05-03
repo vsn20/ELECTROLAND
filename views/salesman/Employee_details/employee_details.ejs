@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Employee Details - ElectroLand</title>
-  <link rel="stylesheet" href="/styles.css"> <!-- Assuming the form-container stylesheet is at public/styles.css -->
+  <link rel="stylesheet" href="/styles.css">
   <style>
     * {
       margin: 0;
@@ -25,18 +25,18 @@
       margin-top: 90px;
       display: flex;
       flex: 1;
-      gap: 25px; /* Matching salary display */
-      padding: 0 20px; /* Matching salary display */
+      gap: 25px;
+      padding: 0 20px;
     }
 
     .content-area {
       background: #ffffff;
       border-radius: 12px;
-      padding: 25px; /* Matching salary display */
-      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.06); /* Matching salary display */
+      padding: 25px;
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.06);
       flex: 1;
       overflow-x: auto;
-      border: 1px solid #ebedf0; /* Matching salary display */
+      border: 1px solid #ebedf0;
     }
 
     .content-area h1 {
@@ -55,11 +55,57 @@
       gap: 15px;
     }
 
-    /* Responsive adjustments to match salary display */
+    .edit-button, .submit-button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .edit-button:hover, .submit-button:hover {
+      background-color: #45a049;
+    }
+
+    .submit-button {
+      background-color: #008CBA;
+    }
+
+    .submit-button:hover {
+      background-color: #007bb5;
+    }
+
+    .success-message {
+      background-color: #dff0d8;
+      color: #3c763d;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    .error-message {
+      background-color: #f2dede;
+      color: #a94442;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    .field-error {
+      color: #a94442;
+      font-size: 0.9rem;
+      margin-top: 5px;
+      display: none;
+    }
+
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
-        padding: 0 10px; /* Matching salary display */
+        padding: 0 10px;
       }
 
       .content-area {
@@ -99,92 +145,156 @@
     <%- include('../../partials/salesman_sidebar') %>
 
     <div class="content-area">
+      <% if (successMessage) { %>
+        <div class="success-message"><%= successMessage %></div>
+      <% } %>
+      <% if (errorMessage) { %>
+        <div class="error-message"><%= errorMessage %></div>
+      <% } %>
       <div class="header-container">
         <h1>Employee Details</h1>
+        <button id="editButton" class="edit-button">Edit</button>
       </div>
 
-      <div class="form-container">
-        <!-- Personal Details Section -->
-        <fieldset>
-          <legend>Personal Details</legend>
-          <div class="field-group">
-            <div>
-              <label for="salesmanId">Salesman ID</label>
-              <input type="text" id="salesmanId" value="<%= salesman.salesmanId %>" readonly>
+      <form id="employeeForm" action="/salesman/employees/update" method="POST">
+        <div class="form-container">
+          <!-- Personal Details Section -->
+          <fieldset>
+            <legend>Personal Details</legend>
+            <div class="field-group">
+              <div>
+                <label for="salesmanId">Salesman ID</label>
+                <input type="text" id="salesmanId" name="salesmanId" value="<%= salesman.salesmanId %>" readonly>
+              </div>
+              <div>
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" name="firstName" value="<%= salesman.firstName %>" readonly required>
+                <div class="field-error" id="firstNameError">First Name is required</div>
+              </div>
+              <div>
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="lastName" value="<%= salesman.lastName %>" readonly required>
+                <div class="field-error" id="lastNameError">Last Name is required</div>
+              </div>
+              <div>
+                <label for="role">Role</label>
+                <select id="role" name="role" disabled>
+                  <option><%= salesman.role %></option>
+                </select>
+              </div>
+              <div>
+                <label for="status">Status</label>
+                <select id="status" name="status" disabled>
+                  <option value="active" <%= salesman.status === 'Active' ? 'selected' : '' %>>Active</option>
+                  <option value="resigned" <%= salesman.status === 'Resigned' ? 'selected' : '' %>>Resigned</option>
+                </select>
+              </div>
+              <div>
+                <label for="branch">Branch Name</label>
+                <input type="text" id="branch" name="branch" value="<%= salesman.branch %>" readonly>
+              </div>
+              <div>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value="<%= salesman.email %>" readonly required>
+                <div class="field-error" id="emailError">Email is required</div>
+              </div>
+              <div>
+                <label for="phoneNumber">Phone Number</label>
+                <input type="text" id="phoneNumber" name="phoneNumber" value="<%= salesman.phoneNumber %>" readonly>
+              </div>
             </div>
-            <div>
-              <label for="firstName">First Name</label>
-              <input type="text" id="firstName" value="<%= salesman.firstName %>" readonly>
-            </div>
-            <div>
-              <label for="lastName">Last Name</label>
-              <input type="text" id="lastName" value="<%= salesman.lastName %>" readonly>
-            </div>
-            <div>
-              <label for="role">Role</label>
-              <select id="role" disabled>
-                <option><%= salesman.role %></option>
-              </select>
-            </div>
-            <div>
-              <label for="status">Status</label>
-              <select id="status" disabled>
-                <option><%= salesman.status %></option>
-              </select>
-            </div>
-            <div>
-              <label for="branch">Branch Name</label>
-              <select id="branch" disabled>
-                <option><%= salesman.branch %></option>
-              </select>
-            </div>
-            <div>
-              <label for="email">Email</label>
-              <input type="email" id="email" value="<%= salesman.email %>" readonly>
-            </div>
-            <div>
-              <label for="phoneNumber">Phone Number</label>
-              <input type="text" id="phoneNumber" value="<%= salesman.phoneNumber %>" readonly>
-            </div>
-          </div>
-        </fieldset>
+          </fieldset>
 
-        <!-- Account and Salaries Section -->
-        <fieldset>
-          <legend>Account and Salaries</legend>
-          <div class="field-group">
-            <div>
-              <label for="registrationDate">Registration Date</label>
-              <input type="text" id="registrationDate" value="<%= salesman.formattedRegistrationDate %>" readonly>
+          <!-- Account and Salaries Section -->
+          <fieldset>
+            <legend>Account and Salaries</legend>
+            <div class="field-group">
+              <div>
+                <label for="registrationDate">Registration Date</label>
+                <input type="text" id="registrationDate" name="registrationDate" value="<%= salesman.formattedRegistrationDate %>" readonly>
+              </div>
+              <div>
+                <label for="accountNumber">Account Number</label>
+                <input type="text" id="accountNumber" name="accountNumber" value="<%= salesman.accountNumber %>" readonly required>
+                <div class="field-error" id="accountNumberError">Account Number is required</div>
+              </div>
+              <div>
+                <label for="ifscCode">IFSC Code</label>
+                <input type="text" id="ifscCode" name="ifscCode" value="<%= salesman.ifscCode %>" readonly required>
+                <div class="field-error" id="ifscCodeError">IFSC Code is required</div>
+              </div>
+              <div>
+                <label for="bank">Bank</label>
+                <input type="text" id="bank" name="bank" value="<%= salesman.bank %>" readonly required>
+                <div class="field-error" id="bankError">Bank is required</div>
+              </div>
+              <div>
+                <label for="hireDate">Hire Date</label>
+                <input type="text" id="hireDate" name="hireDate" value="<%= salesman.formattedHireDate %>" readonly>
+              </div>
+              <div>
+                <label for="monthlySalary">Monthly Salary</label>
+                <input type="text" id="monthlySalary" name="monthlySalary" value="$<%= salesman.monthlySalary %>" readonly>
+              </div>
+              <div style="flex: 1 1 100%;">
+                <label for="address">Address</label>
+                <textarea id="address" name="address" readonly><%= salesman.address %></textarea>
+              </div>
             </div>
-            <div>
-              <label for="accountNumber">Account Number</label>
-              <input type="text" id="accountNumber" value="<%= salesman.accountNumber %>" readonly>
-            </div>
-            <div>
-              <label for="ifscCode">IFSC Code</label>
-              <input type="text" id="ifscCode" value="<%= salesman.ifscCode %>" readonly>
-            </div>
-            <div>
-              <label for="bank">Bank</label>
-              <input type="text" id="bank" value="<%= salesman.bank %>" readonly>
-            </div>
-            <div>
-              <label for="hireDate">Hire Date</label>
-              <input type="text" id="hireDate" value="<%= salesman.formattedHireDate %>" readonly>
-            </div>
-            <div>
-              <label for="monthlySalary">Monthly Salary</label>
-              <input type="text" id="monthlySalary" value="$<%= salesman.monthlySalary %>" readonly>
-            </div>
-            <div style="flex: 1 1 100%;">
-              <label for="address">Address</label>
-              <textarea id="address" readonly><%= salesman.address %></textarea>
-            </div>
-          </div>
-        </fieldset>
+          </fieldset>
+        </div>
+      </form>
 
-      </div>
+      <script>
+        const editButton = document.getElementById('editButton');
+        const employeeForm = document.getElementById('employeeForm');
+        const inputs = employeeForm.querySelectorAll('input:not([id="salesmanId"]):not([id="registrationDate"]):not([id="hireDate"]):not([id="monthlySalary"]):not([id="branch"]), select, textarea');
+
+        editButton.addEventListener('click', () => {
+          inputs.forEach(input => {
+            if (input.tagName === 'SELECT') {
+              input.disabled = false;
+            } else {
+              input.readOnly = false;
+            }
+          });
+
+          editButton.style.display = 'none';
+          const submitButton = document.createElement('button');
+          submitButton.type = 'submit';
+          submitButton.className = 'submit-button';
+          submitButton.textContent = 'Submit';
+          employeeForm.appendChild(submitButton);
+        });
+
+        employeeForm.addEventListener('submit', (e) => {
+          let isValid = true;
+          const requiredFields = [
+            { id: 'firstName', errorId: 'firstNameError' },
+            { id: 'lastName', errorId: 'lastNameError' },
+            { id: 'email', errorId: 'emailError' },
+            { id: 'accountNumber', errorId: 'accountNumberError' },
+            { id: 'ifscCode', errorId: 'ifscCodeError' },
+            { id: 'bank', errorId: 'bankError' }
+          ];
+
+          requiredFields.forEach(field => {
+            const input = document.getElementById(field.id);
+            const error = document.getElementById(field.errorId);
+            if (input.value.trim() === '') {
+              error.style.display = 'block';
+              isValid = false;
+            } else {
+              error.style.display = 'none';
+            }
+          });
+
+          if (!isValid) {
+            e.preventDefault();
+            alert('Please fill in all required fields.');
+          }
+        });
+      </script>
     </div>
   </div>
 

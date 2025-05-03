@@ -14,9 +14,11 @@ const productSchema = new mongoose.Schema({
   miniselling: { type: String, default: "1" },
   warrantyperiod: { type: String, required: true },
   installation: { type: String, required: true, enum: ['Required', 'Not Required'] },
-  installationType: { type: String, enum: ['Paid', 'Free'] }, // Removed required: true
-  installationcharge: { type: String }, // Removed required: true
-  prod_photos: [String]
+  installationType: { type: String, enum: ['Paid', 'Free'] },
+  installationcharge: { type: String },
+  prod_photos: [String],
+  createdAt: { type: Date, default: Date.now },
+  approvedAt: { type: Date }
 });
 
 module.exports = mongoose.model("Product", productSchema);

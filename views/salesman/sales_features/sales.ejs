@@ -35,6 +35,23 @@
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* Standardized shadow */
       flex: 1;
       overflow-x: auto; /* Horizontal scroll if needed */
+      height: calc(100vh - 90px); /* Match sidebar height */
+      overflow-y: auto; /* Enable vertical scrolling if content overflows */
+    }
+
+    /* Hide scrollbar visually in WebKit browsers (Chrome, Safari) */
+    .content-area::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Hide scrollbar in Firefox */
+    .content-area {
+      scrollbar-width: none;
+    }
+
+    /* Hide scrollbar in IE/Edge */
+    .content-area {
+      -ms-overflow-style: none;
     }
 
     .header-container {
@@ -135,6 +152,7 @@
 
       .content-area {
         padding: 15px;
+        height: auto; /* Allow content area to expand on mobile */
       }
 
       .header-container {

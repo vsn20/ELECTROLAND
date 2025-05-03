@@ -3,12 +3,12 @@ const router = express.Router();
 const Company = require("../models/company");
 const { getProductsByCompany } = require("../controllers/salesmanager/products");
 
+// Salesman home
 router.get("/", (req, res) => res.render("salesman/home", {
     activePage: 'employee',
     activeRoute: ''
 }));
 
-// Salesman home
 router.get("/home", (req, res) => res.render("salesman/home", {
     activePage: 'employee',
     activeRoute: ''
@@ -23,8 +23,9 @@ const { salary_display } = require("../controllers/salesman/salary");
 router.get("/salaries", salary_display);
 
 // Salesman profile
-const { getSalesmanDetails } = require("../controllers/salesman/profile");
+const { getSalesmanDetails, updateSalesmanDetails } = require("../controllers/salesman/profile");
 router.get("/employees", getSalesmanDetails);
+router.post("/employees/update", updateSalesmanDetails);
 
 // Salesman sales
 const { sales_display, salesdetaildisplay, addSale, renderAddSaleForm } = require("../controllers/salesman/sales");
@@ -40,6 +41,6 @@ router.get("/messages", salesman_messages_display);
 router.get("/messages/compose", render_compose_message_form);
 router.post("/messages/compose", compose_message);
 router.get("/messages/view", view_message);
-router.get("/messages/sent", view_sent_messages); // New route for viewing message details
+router.get("/messages/sent", view_sent_messages);
 
 module.exports = router;

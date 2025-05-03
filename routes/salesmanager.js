@@ -87,16 +87,14 @@ router.get("/salaries", (req, res) => {
   salary_display(req, res);
 });
 
-// Salesmanager messages
-const { salesmanager_messages_display, render_compose_message_form, compose_message, view_sent_messages,view_message } = require("../controllers/salesmanager/salesmanager_messages_display");
+const { salesmanager_messages_display, render_compose_message_form, compose_message, view_sent_messages, view_message } = require("../controllers/salesmanager/salesmanager_messages_display");
 router.get("/messages", salesmanager_messages_display);
 router.get("/messages/compose", render_compose_message_form);
 router.post("/messages/compose", compose_message);
 router.get("/messages/view", view_message);
-router.get("/messages/sent",view_sent_messages)
+router.get("/messages/sent", view_sent_messages);
 
-// Salesmanager employee
-const { employeeDisplay, employeeDetail, fireEmployee, editSalesManager, updateSalesManager, renderAddEmployeeForm, addEmployee } = require("../controllers/salesmanager/salesmanager_employee");
+const { employeeDisplay, employeeDetail, fireEmployee, updateSalesmanSalary, editSalesManager, updateSalesManager, renderAddEmployeeForm, addEmployee } = require("../controllers/salesmanager/salesmanager_employee");
 router.get("/employees", (req, res) => {
   console.log('[Route] Accessing /salesmanager/employees');
   employeeDisplay(req, res);
@@ -108,6 +106,10 @@ router.get("/employee-details/:e_id", (req, res) => {
 router.post("/employee/fire/:e_id", (req, res) => {
   console.log('[Route] Posting to /salesmanager/employee/fire/:e_id');
   fireEmployee(req, res);
+});
+router.post("/employee/update-salary/:e_id", (req, res) => {
+  console.log('[Route] Posting to /salesmanager/employee/update-salary/:e_id');
+  updateSalesmanSalary(req, res);
 });
 router.get("/edit-salesmanager", (req, res) => {
   console.log('[Route] Accessing /salesmanager/edit-salesmanager');
