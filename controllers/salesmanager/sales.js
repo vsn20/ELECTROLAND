@@ -153,7 +153,7 @@ const addsale_post = async (req, res) => {
     const user = res.locals.user;
     const employee = await Employee.findOne({ e_id: user.emp_id });
     if (!employee) {
-      return res.status(404).send("Sales Manager not found");
+      return res.status(404).json({ success: false, message: "Sales Manager not found" });
     }
 
     const {
@@ -166,7 +166,11 @@ const addsale_post = async (req, res) => {
       sold_price,
       quantity,
       salesman_name,
-      phone_number
+      phone_number,
+      address,
+      installation,
+      installationType,
+      installationcharge
     } = req.body;
 
     const existingSale = await Sale.findOne({ unique_code });
@@ -177,7 +181,12 @@ const addsale_post = async (req, res) => {
       });
     }
 
-    const salesman = await Employee.findOne({ f_name: salesman_name.split(" ")[0], last_name: salesman_name.split(" ")[1], role: "Salesman", status: "active" });
+    const salesman = await Employee.findOne({ 
+      f_name: salesman_name.split(" ")[0], 
+      last_name: salesman_name.split(" ")[1], 
+      role: "Salesman", 
+      status: "active" 
+    });
     if (!salesman) {
       return res.status(404).json({ success: false, message: "Salesman not found" });
     }
@@ -191,6 +200,19 @@ const addsale_post = async (req, res) => {
     if (!product) {
       return res.status(404).json({ success: false, message: "Product not found" });
     }
+
+    // Validate installation field
+    if (!['Required', 'Not Required'].includes(installation)) {
+      return res.status(400).json({ success: false, message: "Invalid installation value" });
+    }
+
+    // Validate installationType if provided
+    if (installationType && !['Paid', 'Free'].includes(installationType)) {
+      return res.status(400).json({ success: false, message: "Invalid installation type" });
+    }
+
+    // Set installation_status based on installation
+    const installation_status = installation === 'Required' ? 'Pending' : null;
 
     const count = await Sale.countDocuments() + 1;
     const sales_id = `S${String(count).padStart(3, '0')}`;
@@ -212,7 +234,13 @@ const addsale_post = async (req, res) => {
       quantity: parseInt(quantity),
       amount,
       profit_or_loss,
-      phone_number
+      phone_number,
+      address,
+      installation,
+      installationType,
+      installationcharge,
+      installation_status
+      // rating and review are not included, so they default to null as per schema
     });
 
     await newSale.save();

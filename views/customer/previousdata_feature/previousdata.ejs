@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard - ElectroLand</title>
+  <title>Previous Purchases - ElectroLand</title>
   <style>
     /* Structural CSS */
     * {
@@ -51,22 +51,6 @@
       margin-bottom: 20px;
     }
 
-    /* Add button styling */
-    .add-button {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #333333;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      transition: background-color 0.3s;
-      font-size: 0.9rem;
-    }
-
-    .add-button:hover {
-      background-color: #555555;
-    }
-
     /* Table styling */
     .table-wrapper {
       overflow-x: auto;
@@ -75,7 +59,7 @@
 
     table {
       width: 100%;
-      min-width: 600px;
+      min-width: 800px;
       border-collapse: collapse;
       background: #ffffff;
       border-radius: 10px;
@@ -142,12 +126,6 @@
         align-items: flex-start;
       }
 
-      .add-button {
-        margin-top: 10px;
-        width: 100%;
-        text-align: center;
-      }
-
       .content-area h1 {
         font-size: 1.2rem;
       }
@@ -189,7 +167,7 @@
         font-weight: bold;
         color: #2d3436;
         margin-right: 10px;
-        min-width: 100px;
+        min-width: 120px;
       }
 
       .clickable-btn {
@@ -226,22 +204,30 @@
         <table>
           <thead>
             <tr>
-                <th>Sale ID</th>
-              <th>Prdouct ID</th>
+              <th>Sale ID</th>
+              <th>Product ID</th>
               <th>Product Name</th>
               <th>Company Name</th>
+              <th>Branch Name</th>
               <th>Purchase Date</th>
+              <th>Warranty Period</th>
+              <th>Installation</th>
+              <th>Installation Status</th>
             </tr>
           </thead>
           <tbody>
-            <% data.forEach(branch => { %>
+            <% data.forEach(sale => { %>
               <tr>
-                <td data-label="Sale ID"><button class="clickable-btn" data-bid="<%= branch.sale_id %>" style="text-decoration: none;"><%= branch.sale_id %></button></td>
-                <td data-label="Product ID"><button class="clickable-btn" data-bid="<%= branch.sale_id %>" style="text-decoration: none;"><%= branch.prod_id %></button></td>
-                <td data-label="Product Name"><button class="clickable-btn" data-bid="<%= branch.sale_id %>" style="text-decoration: none;"><%= branch.Prod_name %></button></td>
-                <td data-label="Company Name"><button class="clickable-btn" data-bid="<%= branch.sale_id %>" style="text-decoration: none;"><%= branch.com_name %></button></td>
-                <td data-label="Purchase Date"><button class="clickable-btn" data-bid="<%= branch.sale_id %>" style="text-decoration: none;"><%= branch.purchasedate %></button></td>
-                </tr>
+                <td data-label="Sale ID"><button class="clickable-btn" data-bid="<%= sale.sale_id %>"><%= sale.sale_id %></button></td>
+                <td data-label="Product ID"><%= sale.prod_id %></td>
+                <td data-label="Product Name"><%= sale.Prod_name %></td>
+                <td data-label="Company Name"><%= sale.com_name %></td>
+                <td data-label="Branch Name"><%= sale.branch_name %></td>
+                <td data-label="Purchase Date"><%= sale.purchasedate %></td>
+                <td data-label="Warranty Period"><%= sale.warrantyperiod %></td>
+                <td data-label="Installation"><%= sale.installation %></td>
+                <td data-label="Installation Status"><%= sale.installation_status %></td>
+              </tr>
             <% }) %>
           </tbody>
         </table>
