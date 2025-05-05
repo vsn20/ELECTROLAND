@@ -265,10 +265,6 @@
             <label>Customer Phone Number</label>
             <input type="tel" name="phone_number" required placeholder="+1234567890" pattern="\+?[1-9]\d{1,14}">
           </div>
-          <div class="form-group">
-            <label>Customer Address</label>
-            <input type="text" name="address" placeholder="Enter customer address">
-          </div>
         </div>
 
         <h3>Product Information</h3>
@@ -281,23 +277,9 @@
           </div>
           <div class="form-group">
             <label>Product</label>
-            <select name="product_id" id="productSelect" class="product-list" required onchange="updateProductDetails()">
+            <select name="product_id" id="productSelect" class="product-list" required onchange="updatePurchasedPrice()">
               <option value="" disabled selected>Select Product</option>
             </select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Installation</label>
-            <input type="text" name="installation" id="installation" readonly required>
-          </div>
-          <div class="form-group">
-            <label>Installation Type</label>
-            <input type="text" name="installationType" id="installationType" readonly>
-          </div>
-          <div class="form-group">
-            <label>Installation Charge</label>
-            <input type="text" name="installationcharge" id="installationCharge" readonly>
           </div>
         </div>
 
@@ -320,7 +302,7 @@
         <button type="submit" class="button">Add Sale</button>
       </form>
 
-      <a href="/.These changes ensure the addsale.ejs form includes the new fields (address, installation, installationType, installationcharge) while keeping rating and review as null by default (not included in the form). The installation-related fields are populated from the Product model and are readonly to reflect their source from the Product schema. The JavaScript logic has been updated to handle these new fields appropriately. Let me know if you need further adjustments!salesmanager/sales" class="back-link">Back to Sales</a>
+      <a href="/salesmanager/sales" class="back-link">Back to Sales</a>
     </div>
   </div>
 
@@ -337,7 +319,7 @@
           headers: {
             'Accept': 'application/json'
           },
-          credentials: 'include'
+          credentials: 'include' // Include cookies for session authentication
         });
         console.log('[fetchSalesmen] Response status:', response.status);
         if (!response.ok) {
@@ -408,16 +390,10 @@
       const companySelect = document.getElementById('companySelect');
       const productSelect = document.getElementById('productSelect');
       const purchasedPriceInput = document.getElementById('purchasedPrice');
-      const installationInput = document.getElementById('installation');
-      const installationTypeInput = document.getElementById('installationType');
-      const installationChargeInput = document.getElementById('installationCharge');
       const companyId = companySelect.value;
 
       productSelect.innerHTML = '<option value="" disabled selected>Select Product</option>';
       purchasedPriceInput.value = '';
-      installationInput.value = '';
-      installationTypeInput.value = '';
-      installationChargeInput.value = '';
       productsData = [];
 
       if (companyId) {
@@ -456,33 +432,21 @@
       }
     }
 
-    function updateProductDetails() {
+    function updatePurchasedPrice() {
       const productSelect = document.getElementById('productSelect');
       const purchasedPriceInput = document.getElementById('purchasedPrice');
-      const installationInput = document.getElementById('installation');
-      const installationTypeInput = document.getElementById('installationType');
-      const installationChargeInput = document.getElementById('installationCharge');
       const selectedProductId = productSelect.value;
 
       if (selectedProductId) {
         const selectedProduct = productsData.find(product => product.prod_id === selectedProductId);
         if (selectedProduct) {
-          console.log('[updateProductDetails] Selected product:', selectedProduct);
+          console.log('[updatePurchasedPrice] Selected product:', selectedProduct);
           purchasedPriceInput.value = selectedProduct.Retail_price || '';
-          installationInput.value = selectedProduct.installation || '';
-          installationTypeInput.value = selectedProduct.installationType || '';
-          installationChargeInput.value = selectedProduct.installationcharge || '';
         } else {
           purchasedPriceInput.value = '';
-          installationInput.value = '';
-          installationTypeInput.value = '';
-          installationChargeInput.value = '';
         }
       } else {
         purchasedPriceInput.value = '';
-        installationInput.value = '';
-        installationTypeInput.value = '';
-        installationChargeInput.value = '';
       }
     }
 
