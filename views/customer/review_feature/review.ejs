@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard - ElectroLand</title>
+  <title>Reviews - ElectroLand</title>
   <style>
     /* Structural CSS */
     * {
@@ -49,22 +49,6 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
-    }
-
-    /* Add button styling */
-    .add-button {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #333333;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      transition: background-color 0.3s;
-      font-size: 0.9rem;
-    }
-
-    .add-button:hover {
-      background-color: #555555;
     }
 
     /* Table styling */
@@ -140,12 +124,6 @@
       .header-container {
         flex-direction: column;
         align-items: flex-start;
-      }
-
-      .add-button {
-        margin-top: 10px;
-        width: 100%;
-        text-align: center;
       }
 
       .content-area h1 {
@@ -226,8 +204,8 @@
         <table>
           <thead>
             <tr>
-                <th>Sale ID</th>
-              <th>Prdouct ID</th>
+              <th>Sale ID</th>
+              <th>Product ID</th>
               <th>Product Name</th>
               <th>Company Name</th>
               <th>Purchase Date</th>
@@ -235,15 +213,15 @@
             </tr>
           </thead>
           <tbody>
-            <% data.forEach(branch => { %>
+            <% data.forEach(sale => { %>
               <tr>
-                <td data-label="Sale ID"><button class="clickable-btn" data-bid="<%= branch.sale_id %>" style="text-decoration: none;"><%= branch.sale_id %></button></td>
-                <td data-label="Product ID"><button class="clickable-btn" data-bid="<%= branch.sale_id %>" style="text-decoration: none;"><%= branch.prod_id %></button></td>
-                <td data-label="Product Name"><button class="clickable-btn" data-bid="<%= branch.sale_id %>" style="text-decoration: none;"><%= branch.Prod_name %></button></td>
-                <td data-label="Company Name"><button class="clickable-btn" data-bid="<%= branch.sale_id %>" style="text-decoration: none;"><%= branch.com_name %></button></td>
-                <td data-label="Purchase Date"><button class="clickable-btn" data-bid="<%= branch.sale_id %>" style="text-decoration: none;"><%= branch.purchasedate %></button></td>
-                <td data-label="Reviews"><button class="clickable-btn" data-bid="<%= branch.sale_id %>" style="text-decoration: none;">None</button></td>
-                </tr>
+                <td data-label="Sale ID"><button class="clickable-btn" data-bid="<%= sale.sale_id %>"><%= sale.sale_id %></button></td>
+                <td data-label="Product ID"><%= sale.prod_id %></td>
+                <td data-label="Product Name"><%= sale.Prod_name %></td>
+                <td data-label="Company Name"><%= sale.com_name %></td>
+                <td data-label="Purchase Date"><%= sale.purchasedate %></td>
+                <td data-label="Review"><%= sale.rating %></td>
+              </tr>
             <% }) %>
           </tbody>
         </table>

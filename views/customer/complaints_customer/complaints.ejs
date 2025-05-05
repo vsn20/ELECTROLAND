@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard - ElectroLand</title>
+  <title>Complaints - ElectroLand</title>
   <style>
     /* Structural CSS */
     * {
@@ -75,7 +75,7 @@
 
     table {
       width: 100%;
-      min-width: 600px;
+      min-width: 800px;
       border-collapse: collapse;
       background: #ffffff;
       border-radius: 10px;
@@ -219,32 +219,42 @@
     <!-- Content Area -->
     <div class="content-area" id="content">
       <div class="header-container">
-        <h1>Complaint Purchases</h1>
+        <h1>Complaints</h1>
+        <a href="/customer/complaints/add" class="add-button">Add Complaint</a>
       </div>
 
       <div class="table-wrapper">
         <table>
           <thead>
             <tr>
-                <th>Sale ID</th>
-              <th>Prdouct ID</th>
+              <th>Complaint ID</th>
+              <th>Sale ID</th>
+              <th>Product ID</th>
               <th>Product Name</th>
               <th>Company Name</th>
               <th>Purchase Date</th>
-              <th>Complaint</th>
+              <th>Complaint Date</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
-            <% data.forEach(branch => { %>
+            <% data.forEach(complaint => { %>
               <tr>
-                <td data-label="Sale ID"><button class="clickable-btn" data-bid="<%= branch.sale_id %>" style="text-decoration: none;"><%= branch.sale_id %></button></td>
-                <td data-label="Product ID"><button class="clickable-btn" data-bid="<%= branch.sale_id %>" style="text-decoration: none;"><%= branch.prod_id %></button></td>
-                <td data-label="Product Name"><button class="clickable-btn" data-bid="<%= branch.sale_id %>" style="text-decoration: none;"><%= branch.Prod_name %></button></td>
-                <td data-label="Company Name"><button class="clickable-btn" data-bid="<%= branch.sale_id %>" style="text-decoration: none;"><%= branch.com_name %></button></td>
-                <td data-label="Purchase Date"><button class="clickable-btn" data-bid="<%= branch.sale_id %>" style="text-decoration: none;"><%= branch.purchasedate %></button></td>
-                <td data-label="Complaint"><button class="clickable-btn" data-bid="<%= branch.sale_id %>" style="text-decoration: none;">None</button></td>
-                </tr>
+                <td data-label="Complaint ID"><button class="clickable-btn" data-bid="<%= complaint.complaint_id %>"><%= complaint.complaint_id %></button></td>
+                <td data-label="Sale ID"><%= complaint.sale_id %></td>
+                <td data-label="Product ID"><%= complaint.prod_id %></td>
+                <td data-label="Product Name"><%= complaint.Prod_name %></td>
+                <td data-label="Company Name"><%= complaint.com_name %></td>
+                <td data-label="Purchase Date"><%= complaint.purchasedate %></td>
+                <td data-label="Complaint Date"><%= complaint.complaint_date %></td>
+                <td data-label="Status"><%= complaint.status %></td>
+              </tr>
             <% }) %>
+            <% if (data.length === 0) { %>
+              <tr>
+                <td colspan="8" style="text-align: center;">No complaints found.</td>
+              </tr>
+            <% } %>
           </tbody>
         </table>
       </div>
@@ -257,7 +267,8 @@
     document.querySelectorAll('.clickable-btn').forEach(button => {
       button.addEventListener('click', () => {
         const bid = button.getAttribute('data-bid');
-        window.location.href = `/customer/complaints/totaldetails/${bid}`;
+        // Optionally, redirect to a complaint details page if needed
+        // window.location.href = `/customer/complaints/totaldetails/${bid}`;
       });
     });
   </script>
