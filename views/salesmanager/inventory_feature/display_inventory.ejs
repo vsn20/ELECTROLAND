@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard - ElectroLand</title>
+  <title>Inventory - ElectroLand</title>
   <style>
     /* Structural CSS */
     * {
@@ -24,36 +24,34 @@
       margin-top: 90px;
       display: flex;
       flex: 1;
-      gap: 25px; /* Standardized gap */
-      padding: 0 20px !important; /* Standardized padding with !important to prevent override */
-      max-width: 100%; /* Ensure it doesn’t exceed viewport */
+      gap: 25px;
+      padding: 0 20px !important;
+      max-width: 100%;
     }
 
     .content-area {
       background: #ffffff;
       border-radius: 15px;
-      padding: 20px; /* Standardized padding */
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* Standardized shadow */
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       flex: 1;
       overflow-x: auto;
     }
 
     .content-area h1 {
       color: #2d3436;
-      margin-bottom: 20px; /* Standardized margin */
-      font-size: 1.5rem; /* Standardized font size */
+      margin-bottom: 20px;
+      font-size: 1.5rem;
     }
 
-    /* Header container styling */
     .header-container {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px; /* Standardized margin */
-      flex-wrap: wrap; /* Allow wrapping on small screens */
+      margin-bottom: 20px;
+      flex-wrap: wrap;
     }
 
-    /* Add button styling (not used here but kept for consistency) */
     .add-button {
       display: inline-block;
       padding: 10px 20px;
@@ -70,18 +68,17 @@
       background-color: #555555;
     }
 
-    /* Branch fields styling */
     .form-row {
       display: flex;
-      gap: 15px; /* Standardized gap */
+      gap: 15px;
       flex-wrap: wrap;
-      margin-bottom: 20px; /* Space before table */
+      margin-bottom: 20px;
     }
 
     .form-group {
-      flex: 1 1 45%; /* Two columns by default */
-      min-width: 200px; /* Consistent min-width */
-      max-width: 400px; /* Consistent max-width */
+      flex: 1 1 45%;
+      min-width: 200px;
+      max-width: 400px;
     }
 
     .form-group label {
@@ -104,7 +101,7 @@
     }
 
     .form-group input[readonly] {
-      background: #e9ecef; /* Slightly darker for readonly */
+      background: #e9ecef;
       cursor: default;
     }
 
@@ -113,21 +110,20 @@
       outline: none;
     }
 
-    /* Table styling */
     .table-wrapper {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
-      -ms-overflow-style: none; /* Hide scrollbar in IE/Edge */
-      scrollbar-width: none; /* Hide scrollbar in Firefox */
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
 
     .table-wrapper::-webkit-scrollbar {
-      display: none; /* Hide scrollbar in Webkit browsers */
+      display: none;
     }
 
     table {
       width: 100%;
-      min-width: 600px; /* Standardized min-width */
+      min-width: 600px;
       border-collapse: collapse;
       background: #ffffff;
       border-radius: 10px;
@@ -161,11 +157,25 @@
       background: #f8f9fd;
     }
 
-    /* Responsive adjustments */
+    .no-data {
+      color: #888;
+      font-style: italic;
+      font-size: 0.9rem;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .success-message {
+      color: green;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
-        padding: 0 10px !important; /* Consistent responsive padding */
+        padding: 0 10px !important;
       }
 
       .content-area {
@@ -195,7 +205,7 @@
       }
 
       .form-group {
-        flex: 1 1 100%; /* Stack fields on smaller screens */
+        flex: 1 1 100%;
       }
 
       table {
@@ -265,8 +275,11 @@
     <div class="content-area" id="content">
       <div class="header-container">
         <h1>Inventory</h1>
-        <!-- Add button can be added here if needed, e.g., <a href="/admin/inventory/add" class="add-button">Add Stock</a> -->
       </div>
+
+      <% if (typeof successMessage !== 'undefined') { %>
+        <p class="success-message"><%= successMessage %></p>
+      <% } %>
 
       <!-- Branch Fields -->
       <div class="form-row">
@@ -281,28 +294,32 @@
       </div>
 
       <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Product ID</th>
-              <th>Product Name</th>
-              <th>Company Name</th>
-              <th>Model No</th>
-              <th>Quantity</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% stocks.forEach(s => { %>
+        <% if (hasStocks) { %>
+          <table>
+            <thead>
               <tr>
-                <td data-label="Product ID"><%= s.pid %></td>
-                <td data-label="Product Name"><%= s.pname %></td>
-                <td data-label="Company Name"><%= s.cname %></td>
-                <td data-label="Model No"><%= s.modelno %></td>
-                <td data-label="Quantity"><%= s.quantity %></td>
+                <th>Product ID</th>
+                <th>Product Name</th>
+                <th>Company Name</th>
+                <th>Model No</th>
+                <th>Quantity</th>
               </tr>
-            <% }) %>
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              <% stocks.forEach(s => { %>
+                <tr>
+                  <td data-label="Product ID"><%= s.product_id %></td>
+                  <td data-label="Product Name"><%= s.product_name %></td>
+                  <td data-label="Company Name"><%= s.company_name %></td>
+                  <td data-label="Model No"><%= s.model_no %></td>
+                  <td data-label="Quantity"><%= s.quantity %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <% } else { %>
+          <p class="no-data">No inventory records found for this branch.</p>
+        <% } %>
       </div>
     </div>
   </div>
