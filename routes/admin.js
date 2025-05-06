@@ -11,6 +11,7 @@ const {
 const Branch = require("../models/branches");
 const Employee = require("../models/employees");
 const { products_display, rejected_products_display, new_products_display, render_product_details, render_add_product_form, render_edit_product_form, update_product } = require("../controllers/admin_products_display");
+const { getAdminDashboardData } = require("../controllers/owner/dashboard");
 
 router.get("/employees", loademployeedata);
 router.get("/employee/:e_id", getEmployeeDetails);
@@ -46,7 +47,7 @@ router.get("/products/edit/:prod_id", render_edit_product_form);
 router.post("/products/edit/:prod_id", update_product);
 router.get("/products/:prod_id", render_product_details);
 
-router.get("/home", (req, res) => res.render("owner/homepage", { activePage: "employee", activeRoute: "" }));
+router.get("/home", getAdminDashboardData);
 
 const { company_display, render_add_company_form, add_company, render_edit_company_form, update_company } = require("../controllers/company_display");
 router.get("/company", company_display);

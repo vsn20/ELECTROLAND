@@ -3,6 +3,7 @@ const Company = require("../../models/company");
 const Product = require("../../models/products");
 const Employee = require("../../models/employees");
 const Branch = require("../../models/branches");
+const Inventory = require("../../models/inventory");
 
 async function sales_display(req, res) {
   try {
@@ -12,21 +13,17 @@ async function sales_display(req, res) {
       return res.status(404).send("Salesman not found");
     }
 
-    // Fetch branch name dynamically
     const branch = await Branch.findOne({ bid: employee.bid }).lean();
     const branchName = branch ? branch.b_name : "Unknown Branch";
 
-    // Fetch sales for this salesman (not all sales in the branch)
     const sales = await Sale.find({ salesman_id: employee.e_id }).lean();
 
-    // Manually populate company and product details
     const realsales = await Promise.all(
       sales.map(async (sale) => {
         let companyName = "Unknown Company";
         let productName = "Unknown Product";
         let modelNumber = "N/A";
 
-        // Handle company_id
         if (typeof sale.company_id === "string") {
           const company = await Company.findOne({ c_id: sale.company_id }).lean();
           if (company) {
@@ -39,7 +36,6 @@ async function sales_display(req, res) {
           }
         }
 
-        // Handle product_id
         if (typeof sale.product_id === "string") {
           const product = await Product.findOne({ prod_id: sale.product_id }).lean();
           if (product) {
@@ -60,7 +56,7 @@ async function sales_display(req, res) {
           product_name: productName,
           model_number: modelNumber,
           total_amount: sale.amount,
-          saledate: sale.sales_date,
+          saledate: sale.sales_date
         };
       })
     );
@@ -69,10 +65,10 @@ async function sales_display(req, res) {
       salers: realsales,
       branchName: branchName,
       activePage: 'employee',
-      activeRoute: 'sales',
+      activeRoute: 'sales'
     });
   } catch (error) {
-    console.error("error rendering sales", error);
+    console.error("Error rendering sales:", error);
     res.status(500).send("Internal server error");
   }
 }
@@ -92,16 +88,13 @@ async function salesdetaildisplay(req, res) {
       return res.status(404).send("Sale not found");
     }
 
-    // Fetch branch name dynamically
     const branch = await Branch.findOne({ bid: employee.bid }).lean();
     const branchName = branch ? branch.b_name : "Unknown Branch";
 
-    // Manually populate company and product details
     let companyName = "Unknown Company";
     let productName = "Unknown Product";
     let modelNumber = "N/A";
 
-    // Handle company_id
     if (typeof sale.company_id === "string") {
       const company = await Company.findOne({ c_id: sale.company_id }).lean();
       if (company) {
@@ -114,7 +107,6 @@ async function salesdetaildisplay(req, res) {
       }
     }
 
-    // Handle product_id
     if (typeof sale.product_id === "string") {
       const product = await Product.findOne({ prod_id: sale.product_id }).lean();
       if (product) {
@@ -139,14 +131,14 @@ async function salesdetaildisplay(req, res) {
         branch_name: branchName,
         total_amount: sale.amount,
         saledate: sale.sales_date,
-        price: sale.sold_price,
+        price: sale.sold_price
       },
       activePage: 'employee',
       activeRoute: 'sales',
       showForm: req.query.add === 'true'
     });
   } catch (error) {
-    console.error("error rendering sales details", error);
+    console.error("Error rendering sales details:", error);
     res.status(500).send("Internal server error");
   }
 }
@@ -159,7 +151,6 @@ async function renderAddSaleForm(req, res) {
       return res.status(404).send("Salesman not found");
     }
 
-    // Fetch branch name dynamically
     const branch = await Branch.findOne({ bid: employee.bid }).lean();
     const branchName = branch ? branch.b_name : "Unknown Branch";
 
@@ -169,10 +160,10 @@ async function renderAddSaleForm(req, res) {
       branchName: branchName,
       activePage: 'employee',
       activeRoute: 'sales',
-      error: req.query.error || null,
+      error: req.query.error || null
     });
   } catch (error) {
-    console.error("error rendering add sale form", error);
+    console.error("Error rendering add sale form:", error);
     res.status(500).send("Internal server error");
   }
 }
@@ -182,7 +173,7 @@ async function addSale(req, res) {
     const user = res.locals.user;
     const employee = await Employee.findOne({ e_id: user.emp_id });
     if (!employee) {
-      return res.status(404).send("Salesman not found");
+      return res.redirect(`/salesman/add-sale?error=Salesman not found`);
     }
 
     const {
@@ -197,31 +188,43 @@ async function addSale(req, res) {
       phone_number
     } = req.body;
 
-    // Check if unique_code already exists
+    // Validate unique_code
     const existingSale = await Sale.findOne({ unique_code });
     if (existingSale) {
       return res.redirect(`/salesman/add-sale?error=Unique code ${unique_code} already exists. Please use a different code.`);
     }
 
-    // Find the Company document by c_id
+    // Validate company
     const company = await Company.findOne({ c_id: company_id }).lean();
     if (!company) {
-      return res.status(404).send("Company not found");
+      return res.redirect(`/salesman/add-sale?error=Company not found`);
     }
 
-    // Find the Product document by prod_id
+    // Validate product
     const product = await Product.findOne({ prod_id: product_id }).lean();
     if (!product) {
-      return res.status(404).send("Product not found");
+      return res.redirect(`/salesman/add-sale?error=Product not found`);
     }
 
-    // Auto-generate sales_id
-    const count = await Sale.countDocuments() + 1;
-    const sales_id = `S${String(count).padStart(3, '0')}`; // e.g., S001, S002, etc.
+    // Validate inventory
+    const inventory = await Inventory.findOne({
+      branch_id: employee.bid,
+      product_id,
+      company_id
+    });
+    if (!inventory || inventory.quantity < parseInt(quantity)) {
+      return res.redirect(`/salesman/add-sale?error=Insufficient inventory for ${product.Prod_name} (Available: ${inventory ? inventory.quantity : 0})`);
+    }
 
+    // Generate sales_id
+    const count = await Sale.countDocuments() + 1;
+    const sales_id = `S${String(count).padStart(3, '0')}`;
+
+    // Calculate amount and profit/loss
     const amount = parseFloat(sold_price) * parseInt(quantity);
     const profit_or_loss = (parseFloat(sold_price) - parseFloat(purchased_price)) * parseInt(quantity);
 
+    // Create sale
     const newSale = new Sale({
       sales_id,
       branch_id: employee.bid,
@@ -229,7 +232,7 @@ async function addSale(req, res) {
       company_id: company.c_id,
       product_id: product.prod_id,
       customer_name,
-      sales_date,
+      sales_date: new Date(sales_date),
       unique_code,
       purchased_price: parseFloat(purchased_price),
       sold_price: parseFloat(sold_price),
@@ -239,11 +242,16 @@ async function addSale(req, res) {
       phone_number
     });
 
+    // Update inventory
+    inventory.quantity -= parseInt(quantity);
+    inventory.updatedAt = new Date();
+    await inventory.save();
+
     await newSale.save();
     res.redirect("/salesman/sales?success=true");
   } catch (error) {
-    console.error("error adding sale", error);
-    res.status(500).send("Internal server error");
+    console.error("Error adding sale:", error);
+    res.redirect(`/salesman/add-sale?error=Failed to add sale: ${error.message}`);
   }
 }
 

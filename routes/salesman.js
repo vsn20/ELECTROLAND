@@ -2,17 +2,12 @@ const express = require("express");
 const router = express.Router();
 const Company = require("../models/company");
 const { getProductsByCompany } = require("../controllers/salesmanager/products");
+const { getSalesmanDashboardData } = require("../controllers/salesman/dashboard");
 
 // Salesman home
-router.get("/", (req, res) => res.render("salesman/home", {
-    activePage: 'employee',
-    activeRoute: ''
-}));
+router.get("/", getSalesmanDashboardData);
 
-router.get("/home", (req, res) => res.render("salesman/home", {
-    activePage: 'employee',
-    activeRoute: ''
-}));
+router.get("/home", getSalesmanDashboardData);
 
 // Salesman inventory
 const { inventory_display } = require("../controllers/salesman/inventory_display");

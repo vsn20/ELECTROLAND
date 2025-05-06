@@ -4,28 +4,23 @@ const Product = require("../../models/products");
 const Order = require("../../models/orders");
 const Branch = require("../../models/branches");
 const Employee = require("../../models/employees");
+const Inventory = require("../../models/inventory");
 const { v4: uuidv4 } = require('uuid');
 
 async function renderAddOrderForm(req, res) {
   try {
-    console.log("Session user:", req.user);
     const allEmployees = await Employee.find().lean();
-    console.log("Available employee e_ids:", allEmployees.map(e => e.e_id));
     const employee = await Employee.findOne({ e_id: req.user.emp_id }).lean();
 
     if (!employee) {
-      console.log("Employee not found for emp_id:", req.user.emp_id);
       return res.status(403).send(`No employee found for emp_id: ${req.user.emp_id}. Verify your login credentials or contact the administrator.`);
     }
 
     if (employee.status !== "active") {
-      console.log("Employee found but not active:", { e_id: employee.e_id, status: employee.status });
       return res.status(403).send(`Employee (e_id: ${employee.e_id}) is not active (status: ${employee.status}). Contact the administrator to activate your account.`);
     }
-    console.log("Employee found:", { e_id: employee.e_id, _id: employee._id.toString(), bid: employee.bid, role: employee.role });
 
     if (!employee.bid) {
-      console.log("Employee has no bid assigned:", { e_id: employee.e_id, _id: employee._id.toString() });
       return res.status(403).send(`No branch assigned to this employee (e_id: ${employee.e_id}). Contact the administrator to assign a branch.`);
     }
 
@@ -35,12 +30,8 @@ async function renderAddOrderForm(req, res) {
     }).lean();
 
     if (!branch) {
-      console.log("No active branch found for bid:", employee.bid);
-      const allBranches = await Branch.find({ active: "active" }).lean();
-      console.log("All active branches:", allBranches.map(b => ({ bid: b.bid, b_name: b.b_name })));
       return res.status(403).send(`No active branch found for bid: ${employee.bid} (e_id: ${employee.e_id}). Contact the administrator to verify branch assignment.`);
     }
-    console.log("Branch found:", { bid: branch.bid, b_name: branch.b_name });
 
     const companies = await Company.find({ active: "active" }).lean();
     res.render("salesmanager/orders_feature/addorder", {
@@ -59,23 +50,10 @@ async function renderAddOrderForm(req, res) {
 async function getProductsByCompany(req, res) {
   try {
     const companyId = req.params.companyId;
-    console.log(`Fetching products for companyId: ${companyId}`);
-
     const products = await Product.find({ 
       Com_id: companyId, 
       Status: { $ne: new RegExp('^Rejected$', 'i') }
     }).lean();
-
-    console.log("Products fetched:", products.map(p => ({
-      prod_id: p.prod_id,
-      Prod_name: p.Prod_name,
-      Com_id: p.Com_id,
-      Status: p.Status
-    })));
-
-    if (products.length === 0) {
-      console.log(`No non-rejected products found for companyId: ${companyId}`);
-    }
 
     res.json(products);
   } catch (error) {
@@ -86,24 +64,18 @@ async function getProductsByCompany(req, res) {
 
 const orders_display = async (req, res) => {
   try {
-    console.log("Session user:", req.user);
     const allEmployees = await Employee.find().lean();
-    console.log("Available employee e_ids:", allEmployees.map(e => e.e_id));
     const employee = await Employee.findOne({ e_id: req.user.emp_id }).lean();
 
     if (!employee) {
-      console.log("Employee not found for emp_id:", req.user.emp_id);
       return res.status(403).send(`No employee found for emp_id: ${req.user.emp_id}. Verify your login credentials or contact the administrator.`);
     }
 
     if (employee.status !== "active") {
-      console.log("Employee found but not active:", { e_id: employee.e_id, status: employee.status });
       return res.status(403).send(`Employee (e_id: ${employee.e_id}) is not active (status: ${employee.status}). Contact the administrator to activate your account.`);
     }
-    console.log("Employee found:", { e_id: employee.e_id, _id: employee._id.toString(), bid: employee.bid, role: employee.role });
 
     if (!employee.bid) {
-      console.log("Employee has no bid assigned:", { e_id: employee.e_id, _id: employee._id.toString() });
       return res.status(403).send(`No branch assigned to this employee (e_id: ${employee.e_id}). Contact the administrator to assign a branch.`);
     }
 
@@ -113,12 +85,8 @@ const orders_display = async (req, res) => {
     }).lean();
 
     if (!branch) {
-      console.log("No active branch found for bid:", employee.bid);
-      const allBranches = await Branch.find({ active: "active" }).lean();
-      console.log("All active branches:", allBranches.map(b => ({ bid: b.bid, b_name: b.b_name })));
       return res.status(403).send(`No active branch found for bid: ${employee.bid} (e_id: ${employee.e_id}). Contact the administrator to verify branch assignment.`);
     }
-    console.log("Branch found:", { bid: branch.bid, b_name: branch.b_name });
 
     const orders = await Order.find({ branch_name: branch.b_name }).lean();
     res.render('salesmanager/orders_feature/ordersdisplay', {
@@ -136,21 +104,17 @@ const orders_display = async (req, res) => {
 
 const order_details = async (req, res) => {
   try {
-    console.log("Session user:", req.user);
     const employee = await Employee.findOne({ e_id: req.user.emp_id }).lean();
 
     if (!employee) {
-      console.log("Employee not found for emp_id:", req.user.emp_id);
       return res.status(403).send(`No employee found for emp_id: ${req.user.emp_id}. Verify your login credentials.`);
     }
 
     if (employee.status !== "active") {
-      console.log("Employee found but not active:", { e_id: employee.e_id, status: employee.status });
       return res.status(403).send(`Employee (e_id: ${employee.e_id}) is not active (status: ${employee.status}). Contact the administrator.`);
     }
 
     if (!employee.bid) {
-      console.log("Employee has no bid assigned:", { e_id: employee.e_id, _id: employee._id.toString() });
       return res.status(403).send(`No branch assigned to this employee (e_id: ${employee.e_id}).`);
     }
 
@@ -160,7 +124,6 @@ const order_details = async (req, res) => {
     }).lean();
 
     if (!branch) {
-      console.log("No active branch found for bid:", employee.bid);
       return res.status(403).send(`No active branch found for bid: ${employee.bid} (e_id: ${employee.e_id}).`);
     }
 
@@ -185,21 +148,17 @@ const order_details = async (req, res) => {
 
 const order_edit = async (req, res) => {
   try {
-    console.log("Session user:", req.user);
     const employee = await Employee.findOne({ e_id: req.user.emp_id }).lean();
 
     if (!employee) {
-      console.log("Employee not found for emp_id:", req.user.emp_id);
       return res.status(403).send(`No employee found for emp_id: ${req.user.emp_id}. Verify your login credentials.`);
     }
 
     if (employee.status !== "active") {
-      console.log("Employee found but not active:", { e_id: employee.e_id, status: employee.status });
       return res.status(403).send(`Employee (e_id: ${employee.e_id}) is not active (status: ${employee.status}). Contact the administrator.`);
     }
 
     if (!employee.bid) {
-      console.log("Employee has no bid assigned:", { e_id: employee.e_id, _id: employee._id.toString() });
       return res.status(403).send(`No branch assigned to this employee (e_id: ${employee.e_id}).`);
     }
 
@@ -209,7 +168,6 @@ const order_edit = async (req, res) => {
     }).lean();
 
     if (!branch) {
-      console.log("No active branch found for bid:", employee.bid);
       return res.status(403).send(`No active branch found for bid: ${employee.bid} (e_id: ${employee.e_id}).`);
     }
 
@@ -232,23 +190,61 @@ const order_edit = async (req, res) => {
   }
 };
 
+async function updateInventoryForOrder(order, branch) {
+  try {
+    const company = await Company.findOne({ c_id: order.company_id }).lean();
+    if (!company) {
+      return { success: false, message: `Company not found for c_id: ${order.company_id}` };
+    }
+
+    const product = await Product.findOne({ prod_id: order.product_id }).lean();
+    if (!product) {
+      return { success: false, message: `Product not found for prod_id: ${order.product_id}` };
+    }
+
+    let inventory = await Inventory.findOne({
+      branch_id: branch.bid,
+      product_id: order.product_id,
+      company_id: order.company_id
+    });
+
+    if (inventory) {
+      inventory.quantity += parseInt(order.quantity);
+      inventory.updatedAt = new Date();
+      await inventory.save();
+    } else {
+      inventory = new Inventory({
+        branch_id: branch.bid,
+        branch_name: branch.b_name,
+        product_id: order.product_id,
+        product_name: product.Prod_name,
+        company_id: order.company_id,
+        company_name: company.cname,
+        model_no: product.Model_no,
+        quantity: parseInt(order.quantity)
+      });
+      await inventory.save();
+    }
+
+    return { success: true };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+}
+
 const order_update = async (req, res) => {
   try {
-    console.log("Session user:", req.user);
     const employee = await Employee.findOne({ e_id: req.user.emp_id }).lean();
 
     if (!employee) {
-      console.log("Employee not found for emp_id:", req.user.emp_id);
       return res.status(403).json({ success: false, message: `No employee found for emp_id: ${req.user.emp_id}.` });
     }
 
     if (employee.status !== "active") {
-      console.log("Employee found but not active:", { e_id: employee.e_id, status: employee.status });
       return res.status(403).json({ success: false, message: `Employee (e_id: ${employee.e_id}) is not active (status: ${employee.status}).` });
     }
 
     if (!employee.bid) {
-      console.log("Employee has no bid assigned:", { e_id: employee.e_id, _id: employee._id.toString() });
       return res.status(403).json({ success: false, message: `No branch assigned to this employee (e_id: ${employee.e_id}).` });
     }
 
@@ -258,19 +254,25 @@ const order_update = async (req, res) => {
     }).lean();
 
     if (!branch) {
-      console.log("No active branch found for bid:", employee.bid);
       return res.status(403).json({ success: false, message: `No active branch found for bid: ${employee.bid} (e_id: ${employee.e_id}).` });
     }
 
     const { status } = req.body;
-    const order = await Order.findOneAndUpdate(
-      { order_id: req.params.id, branch_name: branch.b_name },
-      { status },
-      { new: true }
-    );
+    const order = await Order.findOne({ order_id: req.params.id, branch_name: branch.b_name });
     if (!order) {
       return res.status(404).json({ success: false, message: 'Order not found or not accessible' });
     }
+
+    if (status && status.toLowerCase() === "accepted" && order.status.toLowerCase() !== "accepted") {
+      const inventoryResult = await updateInventoryForOrder(order, branch);
+      if (!inventoryResult.success) {
+        return res.status(400).json({ success: false, message: `Failed to update inventory: ${inventoryResult.message}` });
+      }
+    }
+
+    order.status = status;
+    await order.save();
+
     res.json({ success: true, redirect: '/salesmanager/orders' });
   } catch (error) {
     console.error("Error updating order status:", error);
@@ -281,21 +283,17 @@ const order_update = async (req, res) => {
 const addorder_post = async (req, res) => {
   try {
     const { branch_name, company_id, product_id, quantity, ordered_date } = req.body;
-    console.log("Session user:", req.user);
     const employee = await Employee.findOne({ e_id: req.user.emp_id }).lean();
 
     if (!employee) {
-      console.log("Employee not found for emp_id:", req.user.emp_id);
       return res.status(403).json({ success: false, message: `No employee found for emp_id: ${req.user.emp_id}.` });
     }
 
     if (employee.status !== "active") {
-      console.log("Employee found but not active:", { e_id: employee.e_id, status: employee.status });
       return res.status(403).json({ success: false, message: `Employee (e_id: ${employee.e_id}) is not active (status: ${employee.status}).` });
     }
 
     if (!employee.bid) {
-      console.log("Employee has no bid assigned:", { e_id: employee.e_id, _id: employee._id.toString() });
       return res.status(403).json({ success: false, message: `No branch assigned to this employee (e_id: ${employee.e_id}).` });
     }
 
@@ -306,7 +304,6 @@ const addorder_post = async (req, res) => {
     }).lean();
 
     if (!branch) {
-      console.log("No active branch found for bid and branch_name:", { bid: employee.bid, branch_name });
       return res.status(403).json({ success: false, message: `No active branch found for bid: ${employee.bid}, branch_name: ${branch_name} (e_id: ${employee.e_id}).` });
     }
 
@@ -339,30 +336,39 @@ const addorder_post = async (req, res) => {
   }
 };
 
-// New function for company to update delivery date
 const updateDeliveryDate = async (req, res) => {
   try {
-    const { order_id, delivery_date } = req.body;
-    console.log("Company session user:", req.user);
-
-    // Find the company
+    const { order_id, delivery_date, status } = req.body;
     const company = await Company.findOne({ c_id: req.user.c_id }).lean();
     if (!company) {
-      console.log("Company not found for c_id:", req.user.c_id);
       return res.status(403).json({ success: false, message: `No company found for c_id: ${req.user.c_id}.` });
     }
 
-    // Update the order's delivery date
-    const order = await Order.findOneAndUpdate(
-      { order_id, company_id: company.c_id },
-      { delivery_date: new Date(delivery_date) },
-      { new: true }
-    );
-
+    const order = await Order.findOne({ order_id, company_id: company.c_id });
     if (!order) {
       return res.status(404).json({ success: false, message: 'Order not found or not accessible' });
     }
 
+    const branch = await Branch.findOne({ bid: order.branch_id, active: "active" }).lean();
+    if (!branch) {
+      return res.status(403).json({ success: false, message: `No active branch found for order: ${order_id}` });
+    }
+
+    if (status) {
+      if (status.toLowerCase() === "accepted" && order.status.toLowerCase() !== "accepted") {
+        const inventoryResult = await updateInventoryForOrder(order, branch);
+        if (!inventoryResult.success) {
+          return res.status(400).json({ success: false, message: `Failed to update inventory: ${inventoryResult.message}` });
+        }
+      }
+      order.status = status;
+    }
+
+    if (delivery_date) {
+      order.delivery_date = new Date(delivery_date);
+    }
+
+    await order.save();
     res.json({ success: true, redirect: '/company/orders' });
   } catch (error) {
     console.error("Error updating delivery date:", error);

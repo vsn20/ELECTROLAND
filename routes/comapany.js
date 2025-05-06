@@ -20,6 +20,7 @@ const { sales_display, salesdetaildisplay, updateInstallationStatus } = require(
 const { displayComplaints, updateComplaintStatus } = require("../controllers/company/complaint");
 const { company_messages_display, render_compose_message_form, compose_message, view_message, view_sent_messages } = require("../controllers/company/company_messages_display");
 const { getDashboardData } = require("../controllers/company/dashboard");
+
 router.get("/home", getDashboardData);
 router.get("/products", companyproducts_display);
 router.get("/products/details/:prod_id", getProductById);
@@ -42,9 +43,7 @@ router.get("/messages/sent", view_sent_messages);
 router.get("/sales", sales_display);
 router.get("/sales/:salesid", salesdetaildisplay);
 router.post("/sales/update-installation/:salesid", updateInstallationStatus);
-
 router.get("/complaints", displayComplaints);
 router.post("/complaints/update-status/:complaint_id", updateComplaintStatus);
-
 
 module.exports = router;
