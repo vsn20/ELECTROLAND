@@ -64,35 +64,6 @@ const SaleSchema = new mongoose.Schema({
     required: true,
     match: [/^\+?[1-9]\d{1,14}$/, "Please enter a valid phone number"]
   }, // Customer phone number
-  address: { 
-    type: String 
-  }, // Customer address
-  review: { 
-    type: String 
-  }, // Customer review
-  rating: { 
-    type: Number, 
-    min: 1, 
-    max: 5, 
-    default: null 
-  }, // Rating from 1 to 5
-  installation: { 
-    type: String, 
-    required: true, 
-    enum: ['Required', 'Not Required'] 
-  }, // Installation requirement
-  installationType: { 
-    type: String, 
-    enum: ['Paid', 'Free'] 
-  }, // Installation type
-  installationcharge: { 
-    type: String 
-  }, // Installation charge
-  installation_status: { 
-    type: String, 
-    enum: ['Pending', 'Completed', null], 
-    default: null 
-  }, // Installation status
   createdAt: { 
     type: Date, 
     default: Date.now 

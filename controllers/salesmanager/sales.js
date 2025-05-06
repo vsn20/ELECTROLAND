@@ -1,8 +1,10 @@
+const mongoose = require("mongoose");
 const Sale = require("../../models/sale");
 const Employee = require("../../models/employees");
 const Company = require("../../models/company");
 const Product = require("../../models/products");
 const Branch = require("../../models/branches");
+const Inventory = require("../../models/inventory");
 
 const renderAddSaleForm = async (req, res) => {
   try {
@@ -149,10 +151,16 @@ const sales_details = async (req, res) => {
 };
 
 const addsale_post = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
   try {
     const user = res.locals.user;
-    const employee = await Employee.findOne({ e_id: user.emp_id });
+    console.log("[AddSale] Session user:", user, "Request body:", req.body);
+
+    const employee = await Employee.findOne({ e_id: user.emp_id }).lean();
     if (!employee) {
+      console.log("[AddSale] Sales Manager not found:", user.emp_id);
+      await session.abortTransaction();
       return res.status(404).json({ success: false, message: "Sales Manager not found" });
     }
 
@@ -166,55 +174,87 @@ const addsale_post = async (req, res) => {
       sold_price,
       quantity,
       salesman_name,
-      phone_number,
-      address,
-      installation,
-      installationType,
-      installationcharge
+      phone_number
     } = req.body;
 
-    const existingSale = await Sale.findOne({ unique_code });
+    // Validate inputs
+    if (parseInt(quantity) <= 0) {
+      console.log("[AddSale] Invalid quantity:", quantity);
+      await session.abortTransaction();
+      return res.status(400).json({ success: false, message: "Quantity must be greater than 0" });
+    }
+
+    const existingSale = await Sale.findOne({ unique_code }).session(session);
     if (existingSale) {
+      console.log("[AddSale] Unique code already exists:", unique_code);
+      await session.abortTransaction();
       return res.status(400).json({
         success: false,
         message: `Unique code ${unique_code} already exists. Please use a different code.`,
       });
     }
 
-    const salesman = await Employee.findOne({ 
-      f_name: salesman_name.split(" ")[0], 
-      last_name: salesman_name.split(" ")[1], 
-      role: "Salesman", 
-      status: "active" 
-    });
+    const salesman = await Employee.findOne({
+      f_name: salesman_name.split(" ")[0],
+      last_name: salesman_name.split(" ")[1],
+      role: "Salesman",
+      status: "active"
+    }).lean();
     if (!salesman) {
+      console.log("[AddSale] Salesman not found:", salesman_name);
+      await session.abortTransaction();
       return res.status(404).json({ success: false, message: "Salesman not found" });
     }
 
-    const company = await Company.findOne({ c_id: company_id });
+    const company = await Company.findOne({ c_id: company_id }).lean();
     if (!company) {
+      console.log("[AddSale] Company not found:", company_id);
+      await session.abortTransaction();
       return res.status(404).json({ success: false, message: "Company not found" });
     }
 
-    const product = await Product.findOne({ prod_id: product_id });
+    const product = await Product.findOne({ prod_id: product_id }).lean();
     if (!product) {
+      console.log("[AddSale] Product not found:", product_id);
+      await session.abortTransaction();
       return res.status(404).json({ success: false, message: "Product not found" });
     }
 
-    // Validate installation field
-    if (!['Required', 'Not Required'].includes(installation)) {
-      return res.status(400).json({ success: false, message: "Invalid installation value" });
+    // Check inventory stock
+    const inventory = await Inventory.findOne({
+      branch_id: employee.bid,
+      product_id: product_id,
+      company_id: company_id
+    }).session(session);
+    if (!inventory || inventory.quantity < parseInt(quantity)) {
+      console.log("[AddSale] Insufficient stock:", {
+        branch_id: employee.bid,
+        product_id,
+        company_id,
+        available: inventory ? inventory.quantity : 0,
+        requested: quantity
+      });
+      await session.abortTransaction();
+      return res.status(400).json({
+        success: false,
+        message: `Insufficient stock for product '${product.Prod_name}' at branch. Available: ${inventory ? inventory.quantity : 0}, Requested: ${quantity}`
+      });
     }
 
-    // Validate installationType if provided
-    if (installationType && !['Paid', 'Free'].includes(installationType)) {
-      return res.status(400).json({ success: false, message: "Invalid installation type" });
-    }
+    // Deduct quantity from inventory
+    inventory.quantity -= parseInt(quantity);
+    inventory.updatedAt = new Date();
+    await inventory.save({ session });
+    console.log("[AddSale] Inventory updated:", {
+      inventory_id: inventory._id,
+      product_id,
+      company_id,
+      branch_id: employee.bid,
+      new_quantity: inventory.quantity
+    });
 
-    // Set installation_status based on installation
-    const installation_status = installation === 'Required' ? 'Pending' : null;
-
-    const count = await Sale.countDocuments() + 1;
+    // Create new sale
+    const count = await Sale.countDocuments().session(session) + 1;
     const sales_id = `S${String(count).padStart(3, '0')}`;
 
     const amount = parseFloat(sold_price) * parseInt(quantity);
@@ -234,20 +274,25 @@ const addsale_post = async (req, res) => {
       quantity: parseInt(quantity),
       amount,
       profit_or_loss,
-      phone_number,
-      address,
-      installation,
-      installationType,
-      installationcharge,
-      installation_status
-      // rating and review are not included, so they default to null as per schema
+      phone_number
     });
 
-    await newSale.save();
+    await newSale.save({ session });
+    console.log("[AddSale] Sale created:", {
+      sales_id,
+      unique_code: newSale.unique_code,
+      amount,
+      profit_or_loss
+    });
+
+    await session.commitTransaction();
     res.json({ success: true, redirect: '/salesmanager/sales' });
   } catch (error) {
-    console.error("error adding sale", error);
+    await session.abortTransaction();
+    console.error("[AddSale] Error:", error);
     res.status(500).json({ success: false, message: 'Error adding sale' });
+  } finally {
+    session.endSession();
   }
 };
 
