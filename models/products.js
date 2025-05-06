@@ -17,6 +17,7 @@ const productSchema = new mongoose.Schema({
   installationType: { type: String, enum: ['Paid', 'Free'] },
   installationcharge: { type: String },
   prod_photos: [String],
+  stockStatus: { type: String, enum: ['InStock', 'OutOfStock'], default: 'InStock', required: true },
   createdAt: { type: Date, default: Date.now },
   approvedAt: { type: Date }
 });

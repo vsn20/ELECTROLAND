@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Add Sale - ElectroLand</title>
+  <link rel="stylesheet" href="/styles.css">
   <style>
     * {
       margin: 0;
@@ -24,19 +25,15 @@
       display: flex;
       flex: 1;
       gap: 25px;
-      padding: 0 20px !important;
-      max-width: 100%;
+      padding: 0 20px;
     }
 
     .content-area {
       background: #ffffff;
       border-radius: 15px;
-      padding: 20px;
+      padding: 25px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       flex: 1;
-      overflow-x: auto;
-      overflow-y: auto;
-      height: calc(100vh - 90px);
     }
 
     h2 {
@@ -155,18 +152,18 @@
       margin-bottom: 20px;
       font-size: 0.9rem;
       text-align: center;
+      display: none;
     }
 
-    /* Responsive adjustments */
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
-        padding: 0 10px !important;
+        padding: 0 20px;
       }
 
       .content-area {
+        min-height: auto;
         padding: 15px;
-        height: auto;
       }
 
       h2 {
@@ -226,25 +223,29 @@
 </head>
 <body>
   <%- include('../../partials/navbar') %>
+
   <div class="container">
     <%- include('../../partials/salesman_sidebar') %>
+
     <div class="content-area" id="content">
       <h2>Add Sale</h2>
 
-      <% if (error) { %>
-        <div class="error-message"><%= error %></div>
-      <% } %>
+      <div id="error-message" class="error-message"></div>
 
-      <form id="saleForm" action="/salesman/add-sale" method="POST">
+      <form id="sale-form" action="/salesman/add-sale" method="POST">
         <h3>Sale Information</h3>
         <div class="form-row">
           <div class="form-group">
+            <label>Branch Name</label>
+            <input type="text" name="branch_name" value="<%= branchName %>" readonly>
+          </div>
+          <div class="form-group">
             <label>Salesman Name</label>
-            <input type="text" name="salesman_name" value="<%= user?.emp_id || 'Unknown Salesman' %>" readonly>
+            <input type="text" name="salesman_name" value="<%= user?.f_name + ' ' + user?.last_name || 'Unknown Salesman' %>" readonly>
           </div>
           <div class="form-group">
             <label>Customer Name</label>
-            <input type="text" name="customer_name" required>
+            <input type="text" name="customer_name" required placeholder="Enter customer name">
           </div>
         </div>
         <div class="form-row">
@@ -254,13 +255,17 @@
           </div>
           <div class="form-group">
             <label>Unique Code</label>
-            <input type="text" name="unique_code" required>
+            <input type="text" name="unique_code" required placeholder="Enter unique code">
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label>Customer Phone Number</label>
             <input type="tel" name="phone_number" required placeholder="+1234567890" pattern="\+?[1-9]\d{1,14}">
+          </div>
+          <div class="form-group">
+            <label>Customer Address</label>
+            <input type="text" name="address" placeholder="Enter customer address">
           </div>
         </div>
 
@@ -269,17 +274,28 @@
           <div class="form-group">
             <label>Company Name</label>
             <select name="company_id" id="companySelect" required onchange="fetchProducts()">
-              <option value="">Select Company</option>
-              <% companies.forEach(company => { %>
-                <option value="<%= company.c_id %>"><%= company.cname %></option>
-              <% }) %>
+              <option value="" disabled selected>Select Company</option>
             </select>
           </div>
           <div class="form-group">
             <label>Product</label>
-            <select name="product_id" id="productSelect" class="product-list" required onchange="updatePurchasedPrice()">
-              <option value="">Select Product</option>
+            <select name="product_id" id="productSelect" class="product-list" required onchange="updateProductDetails()">
+              <option value="" disabled selected>Select Product</option>
             </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Installation</label>
+            <input type="text" name="installation" id="installation" readonly required>
+          </div>
+          <div class="form-group">
+            <label>Installation Type</label>
+            <input type="text" name="installationType" id="installationType" readonly>
+          </div>
+          <div class="form-group">
+            <label>Installation Charge</label>
+            <input type="text" name="installationcharge" id="installationCharge" readonly>
           </div>
         </div>
 
@@ -291,11 +307,11 @@
           </div>
           <div class="form-group">
             <label>Sold Price</label>
-            <input type="number" name="sold_price" step="0.01" required>
+            <input type="number" name="sold_price" step="0.01" required placeholder="Enter sold price">
           </div>
           <div class="form-group">
             <label>Quantity</label>
-            <input type="number" name="quantity" required>
+            <input type="number" name="quantity" required placeholder="Enter quantity" min="1" value="1">
           </div>
         </div>
 
@@ -305,59 +321,174 @@
       <a href="/salesman/sales" class="back-link">Back to Sales</a>
     </div>
   </div>
+
   <%- include('../../partials/footer') %>
 
   <script>
     let productsData = [];
 
+    async function fetchCompanies() {
+      try {
+        console.log('[fetchCompanies] Fetching companies from /salesman/companies');
+        const response = await fetch('/salesman/companies', {
+          headers: {
+            'Accept': 'application/json'
+          },
+          credentials: 'include'
+        });
+        console.log('[fetchCompanies] Response status:', response.status);
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('[fetchCompanies] Error response body:', errorText);
+          throw new Error(`Failed to fetch companies: ${response.status} ${response.statusText} - ${errorText}`);
+        }
+        const companies = await response.json();
+        console.log('[fetchCompanies] Response data:', companies);
+        const companySelect = document.getElementById('companySelect');
+        companySelect.innerHTML = '<option value="" disabled selected>Select Company</option>';
+        companies.forEach(company => {
+          const option = document.createElement('option');
+          option.value = company.c_id;
+          option.textContent = company.cname;
+          companySelect.appendChild(option);
+        });
+        if (companies.length === 0) {
+          console.log('[fetchCompanies] No companies found');
+          document.getElementById('error-message').textContent = 'No active companies found.';
+          document.getElementById('error-message').style.display = 'block';
+        }
+      } catch (error) {
+        console.error('[fetchCompanies] Detailed error:', error.message);
+        document.getElementById('error-message').textContent = `Failed to load companies: ${error.message}. Please check your connection or contact support.`;
+        document.getElementById('error-message').style.display = 'block';
+      }
+    }
+
     async function fetchProducts() {
       const companySelect = document.getElementById('companySelect');
       const productSelect = document.getElementById('productSelect');
       const purchasedPriceInput = document.getElementById('purchasedPrice');
+      const installationInput = document.getElementById('installation');
+      const installationTypeInput = document.getElementById('installationType');
+      const installationChargeInput = document.getElementById('installationCharge');
       const companyId = companySelect.value;
 
-      // Clear previous products and purchased price
-      productSelect.innerHTML = '<option value="">Select Product</option>';
+      productSelect.innerHTML = '<option value="" disabled selected>Select Product</option>';
       purchasedPriceInput.value = '';
+      installationInput.value = '';
+      installationTypeInput.value = '';
+      installationChargeInput.value = '';
       productsData = [];
 
       if (companyId) {
         try {
-          const response = await fetch(`/salesman/products-by-company/${companyId}`);
+          console.log('[fetchProducts] Fetching products for companyId:', companyId);
+          const response = await fetch(`/salesman/products-by-company/${companyId}`, {
+            headers: {
+              'Accept': 'application/json'
+            },
+            credentials: 'include'
+          });
+          console.log('[fetchProducts] Response status:', response.status);
           if (!response.ok) {
-            throw new Error('Network response was not ok');
+            const errorText = await response.text();
+            console.log('[fetchProducts] Error response:', errorText);
+            throw new Error('Network response was not ok: ' + errorText);
           }
           productsData = await response.json();
-
+          console.log('[fetchProducts] Response data:', productsData);
           productsData.forEach(product => {
             const option = document.createElement('option');
             option.value = product.prod_id;
             option.textContent = `${product.Prod_name} (Model: ${product.Model_no})`;
             productSelect.appendChild(option);
           });
+          if (productsData.length === 0) {
+            console.log('[fetchProducts] No products found for companyId:', companyId);
+            document.getElementById('error-message').textContent = 'No products found for this company.';
+            document.getElementById('error-message').style.display = 'block';
+          }
         } catch (error) {
-          console.error('Error fetching products:', error);
-          alert('Failed to load products. Please try again.');
+          console.error('[fetchProducts] Error fetching products:', error);
+          document.getElementById('error-message').textContent = 'Failed to load products. Please try again.';
+          document.getElementById('error-message').style.display = 'block';
         }
       }
     }
 
-    function updatePurchasedPrice() {
+    function updateProductDetails() {
       const productSelect = document.getElementById('productSelect');
       const purchasedPriceInput = document.getElementById('purchasedPrice');
+      const installationInput = document.getElementById('installation');
+      const installationTypeInput = document.getElementById('installationType');
+      const installationChargeInput = document.getElementById('installationCharge');
       const selectedProductId = productSelect.value;
 
       if (selectedProductId) {
         const selectedProduct = productsData.find(product => product.prod_id === selectedProductId);
         if (selectedProduct) {
+          console.log('[updateProductDetails] Selected product:', selectedProduct);
           purchasedPriceInput.value = selectedProduct.Retail_price || '';
+          installationInput.value = selectedProduct.installation || '';
+          installationTypeInput.value = selectedProduct.installationType || '';
+          installationChargeInput.value = selectedProduct.installationcharge || '';
         } else {
           purchasedPriceInput.value = '';
+          installationInput.value = '';
+          installationTypeInput.value = '';
+          installationChargeInput.value = '';
         }
       } else {
         purchasedPriceInput.value = '';
+        installationInput.value = '';
+        installationTypeInput.value = '';
+        installationChargeInput.value = '';
       }
     }
+
+    const form = document.getElementById('sale-form');
+    form.addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const errorMessage = document.getElementById('error-message');
+      errorMessage.style.display = 'none';
+      errorMessage.textContent = '';
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData);
+      console.log('[sale-form] Submitting form data:', data);
+
+      try {
+        const response = await fetch('/salesman/add-sale', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+          credentials: 'include'
+        });
+
+        console.log('[sale-form] Response status:', response.status);
+        const result = await response.json();
+        console.log('[sale-form] Response data:', result);
+
+        if (result.success) {
+          window.location.href = result.redirect;
+        } else {
+          errorMessage.textContent = result.message || 'An error occurred while adding the sale.';
+          errorMessage.style.display = 'block';
+        }
+      } catch (error) {
+        console.error('[sale-form] Network error:', error);
+        errorMessage.textContent = 'Network error: ' + error.message;
+        errorMessage.style.display = 'block';
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('[DOMContentLoaded] Initializing form');
+      fetchCompanies();
+    });
   </script>
 </body>
 </html>

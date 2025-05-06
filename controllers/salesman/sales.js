@@ -12,21 +12,17 @@ async function sales_display(req, res) {
       return res.status(404).send("Salesman not found");
     }
 
-    // Fetch branch name dynamically
     const branch = await Branch.findOne({ bid: employee.bid }).lean();
     const branchName = branch ? branch.b_name : "Unknown Branch";
 
-    // Fetch sales for this salesman (not all sales in the branch)
     const sales = await Sale.find({ salesman_id: employee.e_id }).lean();
 
-    // Manually populate company and product details
     const realsales = await Promise.all(
       sales.map(async (sale) => {
         let companyName = "Unknown Company";
         let productName = "Unknown Product";
         let modelNumber = "N/A";
 
-        // Handle company_id
         if (typeof sale.company_id === "string") {
           const company = await Company.findOne({ c_id: sale.company_id }).lean();
           if (company) {
@@ -39,7 +35,6 @@ async function sales_display(req, res) {
           }
         }
 
-        // Handle product_id
         if (typeof sale.product_id === "string") {
           const product = await Product.findOne({ prod_id: sale.product_id }).lean();
           if (product) {
@@ -92,16 +87,13 @@ async function salesdetaildisplay(req, res) {
       return res.status(404).send("Sale not found");
     }
 
-    // Fetch branch name dynamically
     const branch = await Branch.findOne({ bid: employee.bid }).lean();
     const branchName = branch ? branch.b_name : "Unknown Branch";
 
-    // Manually populate company and product details
     let companyName = "Unknown Company";
     let productName = "Unknown Product";
     let modelNumber = "N/A";
 
-    // Handle company_id
     if (typeof sale.company_id === "string") {
       const company = await Company.findOne({ c_id: sale.company_id }).lean();
       if (company) {
@@ -114,7 +106,6 @@ async function salesdetaildisplay(req, res) {
       }
     }
 
-    // Handle product_id
     if (typeof sale.product_id === "string") {
       const product = await Product.findOne({ prod_id: sale.product_id }).lean();
       if (product) {
@@ -159,7 +150,6 @@ async function renderAddSaleForm(req, res) {
       return res.status(404).send("Salesman not found");
     }
 
-    // Fetch branch name dynamically
     const branch = await Branch.findOne({ bid: employee.bid }).lean();
     const branchName = branch ? branch.b_name : "Unknown Branch";
 
@@ -170,6 +160,7 @@ async function renderAddSaleForm(req, res) {
       activePage: 'employee',
       activeRoute: 'sales',
       error: req.query.error || null,
+      user: employee
     });
   } catch (error) {
     console.error("error rendering add sale form", error);
@@ -182,7 +173,7 @@ async function addSale(req, res) {
     const user = res.locals.user;
     const employee = await Employee.findOne({ e_id: user.emp_id });
     if (!employee) {
-      return res.status(404).send("Salesman not found");
+      return res.status(400).json({ success: false, message: "Salesman not found" });
     }
 
     const {
@@ -194,30 +185,33 @@ async function addSale(req, res) {
       purchased_price,
       sold_price,
       quantity,
-      phone_number
+      phone_number,
+      address,
+      installation,
+      installationType,
+      installationcharge
     } = req.body;
 
-    // Check if unique_code already exists
     const existingSale = await Sale.findOne({ unique_code });
     if (existingSale) {
-      return res.redirect(`/salesman/add-sale?error=Unique code ${unique_code} already exists. Please use a different code.`);
+      return res.status(400).json({
+        success: false,
+        message: `Unique code ${unique_code} already exists. Please use a different code.`
+      });
     }
 
-    // Find the Company document by c_id
     const company = await Company.findOne({ c_id: company_id }).lean();
     if (!company) {
-      return res.status(404).send("Company not found");
+      return res.status(404).json({ success: false, message: "Company not found" });
     }
 
-    // Find the Product document by prod_id
     const product = await Product.findOne({ prod_id: product_id }).lean();
     if (!product) {
-      return res.status(404).send("Product not found");
+      return res.status(404).json({ success: false, message: "Product not found" });
     }
 
-    // Auto-generate sales_id
     const count = await Sale.countDocuments() + 1;
-    const sales_id = `S${String(count).padStart(3, '0')}`; // e.g., S001, S002, etc.
+    const sales_id = `S${String(count).padStart(3, '0')}`;
 
     const amount = parseFloat(sold_price) * parseInt(quantity);
     const profit_or_loss = (parseFloat(sold_price) - parseFloat(purchased_price)) * parseInt(quantity);
@@ -236,15 +230,58 @@ async function addSale(req, res) {
       quantity: parseInt(quantity),
       amount,
       profit_or_loss,
-      phone_number
+      phone_number,
+      address,
+      installation,
+      installationType,
+      installationcharge
     });
 
     await newSale.save();
-    res.redirect("/salesman/sales?success=true");
+    res.status(200).json({
+      success: true,
+      redirect: "/salesman/sales?success=true"
+    });
   } catch (error) {
     console.error("error adding sale", error);
-    res.status(500).send("Internal server error");
+    res.status(500).json({
+      success: false,
+      message: "Internal server error while adding sale"
+    });
   }
 }
 
-module.exports = { sales_display, salesdetaildisplay, renderAddSaleForm, addSale };
+async function getCompanies(req, res) {
+  try {
+    console.log('[getCompanies] Fetching active companies');
+    const companies = await Company.find({ active: "active" }).lean();
+    console.log('[getCompanies] Found companies:', companies);
+    if (!companies || companies.length === 0) {
+      console.log('[getCompanies] No active companies found');
+      return res.status(404).json({ message: "No active companies found" });
+    }
+    res.json(companies);
+  } catch (error) {
+    console.error("Error fetching companies:", error);
+    res.status(500).json({ message: "Internal server error while fetching companies" });
+  }
+}
+
+async function getProductsByCompany(req, res) {
+  try {
+    const companyId = req.params.companyId;
+    console.log('[getProductsByCompany] Fetching products for companyId:', companyId);
+    const products = await Product.find({ c_id: companyId }).lean();
+    console.log('[getProductsByCompany] Found products:', products);
+    if (!products || products.length === 0) {
+      console.log('[getProductsByCompany] No products found for companyId:', companyId);
+      return res.status(404).json({ message: "No products found for this company" });
+    }
+    res.json(products);
+  } catch (error) {
+    console.error("Error fetching products by company:", error);
+    res.status(500).json({ message: "Internal server error while fetching products" });
+  }
+}
+
+module.exports = { sales_display, salesdetaildisplay, renderAddSaleForm, addSale, getCompanies, getProductsByCompany };

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Add Product - ElectroLand</title>
+  <title>Edit Product - ElectroLand</title>
   <style>
     * {
       margin: 0;
@@ -172,84 +172,82 @@
     <%- include('../partials/company_sidebar') %>
 
     <div class="content-area" id="content">
-      <h1>Add New Product</h1>
-      <form action="/company/products/add" method="POST" enctype="multipart/form-data">
+      <h1>Edit Product</h1>
+      <form action="/company/products/edit/<%= product.prod_id %>" method="POST" enctype="multipart/form-data">
         <div class="form-section">
           <legend class="section-title">Product Information</legend>
           <div class="field-group">
             <div>
               <label for="prod-name" class="field-label">Product Name</label>
-              <input type="text" id="prod-name" name="Prod_name" class="field-input" required>
+              <input type="text" id="prod-name" name="Prod_name" value="<%= product.Prod_name %>" class="field-input" required>
             </div>
             <div>
               <label for="com-id" class="field-label">Company ID</label>
-              <input type="text" id="com-id" name="Com_id" value="<%= companyId %>" class="field-input" disabled>
+              <input type="text" id="com-id" name="Com_id" value="<%= product.Com_id %>" class="field-input" disabled>
             </div>
             <div>
               <label for="model-no" class="field-label">Model Number</label>
-              <input type="text" id="model-no" name="Model_no" class="field-input" required>
+              <input type="text" id="model-no" name="Model_no" value="<%= product.Model_no %>" class="field-input" required>
             </div>
             <div>
               <label for="com-name" class="field-label">Company Name</label>
-              <input type="text" id="com-name" name="com_name" value="<%= companyName %>" class="field-input" disabled>
+              <input type="text" id="com-name" name="com_name" value="<%= product.com_name %>" class="field-input" disabled>
             </div>
             <div>
               <label for="prod-year" class="field-label">Production Year</label>
-              <input type="text" id="prod-year" name="prod_year" class="field-input" required>
+              <input type="text" id="prod-year" name="prod_year" value="<%= product.prod_year %>" class="field-input" required>
             </div>
             <div>
               <label for="stock" class="field-label">Stock</label>
-              <input type="text" id="stock" name="stock" class="field-input" required>
+              <input type="text" id="stock" name="stock" value="<%= product.stock %>" class="field-input" required>
             </div>
             <div>
               <label for="stock-status" class="field-label">Stock Status</label>
               <select id="stock-status" name="stockStatus" class="field-input" required>
-                <option value="">Select Stock Status</option>
-                <option value="InStock">In Stock</option>
-                <option value="OutOfStock">Out of Stock</option>
+                <option value="InStock" <%= product.stockStatus === 'InStock' ? 'selected' : '' %>>In Stock</option>
+                <option value="OutOfStock" <%= product.stockStatus === 'OutOfStock' ? 'selected' : '' %>>Out of Stock</option>
               </select>
             </div>
             <div>
               <label for="description" class="field-label">Description</label>
-              <input type="text" id="description" name="prod_description" class="field-input" required>
+              <input type="text" id="description" name="prod_description" value="<%= product.prod_description %>" class="field-input" required>
             </div>
             <div>
               <label for="company-selling-price" class="field-label">Company Selling Price</label>
-              <input type="text" id="company-selling-price" name="Retail_price" class="field-input" required>
+              <input type="text" id="company-selling-price" name="Retail_price" value="<%= product.Retail_price %>" class="field-input" required>
             </div>
             <div>
               <label for="warranty" class="field-label">Warranty Period</label>
-              <input type="text" id="warranty" name="warrantyperiod" class="field-input" required>
+              <input type="text" id="warranty" name="warrantyperiod" value="<%= product.warrantyperiod %>" class="field-input" required>
             </div>
             <div>
               <label for="installation" class="field-label">Installation</label>
               <select id="installation" name="installation" class="field-input" required>
-                <option value="">Select Installation</option>
-                <option value="Required">Required</option>
-                <option value="Not Required">Not Required</option>
+                <option value="Required" <%= product.installation === 'Required' ? 'selected' : '' %>>Required</option>
+                <option value="Not Required" <%= product.installation === 'Not Required' ? 'selected' : '' %>>Not Required</option>
               </select>
             </div>
             <div>
               <label for="installation-type" class="field-label">Installation Type</label>
-              <select id="installation-type" name="installationType" class="field-input" disabled>
-                <option value="">Select Type</option>
-                <option value="Paid">Paid</option>
-                <option value="Free">Free</option>
+              <select id="installation-type" name="installationType" class="field-input" <%= product.installation === 'Required' ? '' : 'disabled' %>>
+                <option value="Paid" <%= product.installationType === 'Paid' ? 'selected' : '' %>>Paid</option>
+                <option value="Free" <%= product.installationType === 'Free' ? 'selected' : '' %>>Free</option>
               </select>
             </div>
             <div>
               <label for="installation-charge" class="field-label">Installation Charge</label>
-              <input type="text" id="installation-charge" name="installationcharge" class="field-input" disabled>
+              <input type="text" id="installation-charge" name="installationcharge" value="<%= product.installationcharge || '' %>" class="field-input" <%= product.installationType === 'Paid' ? '' : 'disabled' %>>
             </div>
             <div>
               <label for="prod-photos" class="field-label">Product Photos</label>
-              <input type="file" id="prod-photos" name="prod_photos" class="field-input-file" multiple accept="image/*" required>
+              <input type="file" id="prod-photos" name="prod_photos" class="field-input-file" multiple accept="image/*">
+              <small>Current photos: <%= product.prod_photos.length %> (Leave empty to keep existing photos)</small>
             </div>
           </div>
         </div>
-        <button type="submit" class="submit-btn">Add Product</button>
+        <button type="submit" class="submit-btn">Update Product</button>
       </form>
-      <a href="/company/products" class="back-link">Back to Products</a>
+      <a href="/company/products/details/<%= product.prod_id %>" class="back-link">Back to Product Details</a>
     </div>
   </div>
 

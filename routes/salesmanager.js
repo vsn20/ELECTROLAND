@@ -75,9 +75,10 @@ router.post('/add-order', (req, res) => {
   addorder_post(req, res);
 });
 
-const { getProductsByCompany } = require("../controllers/salesmanager/products");
+const { getProductsByCompany } = require("../controllers/salesmanager/orders");
 router.get("/products-by-company/:companyId", (req, res) => {
   console.log('[Route] Accessing /salesmanager/products-by-company/:companyId');
+  console.log(`[Route] companyId received: ${req.params.companyId}, type: ${typeof req.params.companyId}`);
   getProductsByCompany(req, res);
 });
 

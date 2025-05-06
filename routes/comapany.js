@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { companyproducts_display } = require("../controllers/company/companyproducts_display");
-const { getProductById, renderAddProductForm, addProduct, getinventory } = require("../controllers/company/companyproducts_display");
+const { companyproducts_display, getProductById, renderAddProductForm, addProduct, renderEditProductForm, updateProduct, getinventory } = require("../controllers/company/companyproducts_display");
 const { 
   orders_display,
   ordersedit_display,
@@ -22,6 +21,8 @@ router.get("/products", companyproducts_display);
 router.get("/products/details/:prod_id", getProductById);
 router.get("/products/add", renderAddProductForm);
 router.post("/products/add", addProduct);
+router.get("/products/edit/:prod_id", renderEditProductForm);
+router.post("/products/edit/:prod_id", updateProduct);
 router.get("/stocks", getinventory);
 router.get("/stocks/:orderid", ordersedit_display);
 
@@ -42,15 +43,12 @@ router.post('/orders/update/:oid', updateOrderStatus);
 // Update delivery date
 router.post('/orders/update-delivery', updateDeliveryDate);
 
-// Update delivery date
-router.post('/orders/update-delivery', updateDeliveryDate);
-
+// Update delivery date (duplicate route removed)
 router.get("/messages", company_messages_display);
 router.get("/messages/compose", render_compose_message_form);
 router.post("/messages/compose", compose_message);
 router.get("/messages/view", view_message);
 router.get("/messages/sent", view_sent_messages);
-
 
 router.get("/sales", sales_display);
 router.get("/sales/:salesid", salesdetaildisplay);
