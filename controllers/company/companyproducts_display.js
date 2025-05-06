@@ -1,18 +1,13 @@
-const Product = require('../../models/products');
-const path = require('path');
+const Product = require("../../models/products");
+const { v4: uuidv4 } = require('uuid');
 
 async function companyproducts_display(req, res) {
   try {
-    const user = res.locals.user;
-    if (!user || user.type !== 'company') {
-      return res.status(403).send("Unauthorized: Company access required");
-    }
-    const companyId = user.c_id || "C002"; // Fallback for testing
-    const activeProducts = await Product.find({ Com_id: companyId }).lean();
+    const products = await Product.find({ Com_id: req.user.c_id }).lean();
     res.render("company/company_products", {
-      companyproductData: activeProducts,
-      activePage: 'company',
-      activeRoute: 'products'
+      activePage: "company",
+      activeRoute: "products",
+      companyproductData: products
     });
   } catch (error) {
     console.error("Error rendering products:", error);
@@ -22,19 +17,14 @@ async function companyproducts_display(req, res) {
 
 async function getProductById(req, res) {
   try {
-    const prod_id = req.params.prod_id;
-    const product = await Product.findOne({ prod_id }).lean();
+    const product = await Product.findOne({ prod_id: req.params.prod_id, Com_id: req.user.c_id }).lean();
     if (!product) {
-      return res.status(404).render("company/company_product_details", {
-        activePage: 'company',
-        activeRoute: 'product_details',
-        product: null
-      });
+      return res.status(404).send("Product not found");
     }
     res.render("company/company_product_details", {
-      activePage: 'company',
-      activeRoute: 'product_details',
-      product: product
+      activePage: "company",
+      activeRoute: "products",
+      product
     });
   } catch (error) {
     console.error("Error fetching product:", error);
@@ -43,99 +33,107 @@ async function getProductById(req, res) {
 }
 
 async function renderAddProductForm(req, res) {
-  try {
-    console.log("JWT User Data:", res.locals.user);
-    const user = res.locals.user;
-    if (!user || user.type !== 'company') {
-      return res.status(403).send("Unauthorized: Company access required");
-    }
-    const companyId = user.c_id || "C002"; // Fallback for testing
-    const companyName = user.cname || "DefaultCompany"; // Fallback for testing
-    res.render("company/add_product", {
-      activePage: 'company',
-      activeRoute: 'add_product',
-      companyId: companyId,
-      companyName: companyName
-    });
-  } catch (error) {
-    console.error("Error rendering add product form:", error.stack);
-    res.status(500).send("Internal Server Error: " + error.message);
-  }
+  res.render("company/add_product", {
+    activePage: "company",
+    activeRoute: "products",
+    companyId: req.user.c_id,
+    companyName: req.user.cname
+  });
 }
 
 async function addProduct(req, res) {
   try {
-    const { Prod_name, Model_no, prod_year, stock, prod_description, Retail_price, warrantyperiod, installation, installationType, installationcharge } = req.body;
-
-    // Auto-generate prod_id
-    const count = await Product.countDocuments() + 1;
-    const prod_id = `P${String(count).padStart(3, '0')}`;
-
-    // Get company details from JWT
-    const user = res.locals.user;
-    if (!user || user.type !== 'company') {
-      return res.status(403).send("Unauthorized: Company access required");
-    }
-    const Com_id = user.c_id || "C002"; // Fallback for testing
-    const com_name = user.cname || "DefaultCompany"; // Fallback for testing
-
-    // Handle file uploads
-    const prod_photos = req.files ? req.files.map(file => `/uploads/${file.filename}`) : [];
-
-    // Conditionally set installationType and installationcharge
-    const processedInstallationType = installation === 'Required' ? installationType || undefined : undefined;
-    const processedInstallationCharge = installation === 'Required' && installationType === 'Paid' ? installationcharge || undefined : undefined;
-
-    const newProduct = new Product({
-      prod_id,
+    const {
       Prod_name,
       Com_id,
       Model_no,
       com_name,
       prod_year,
       stock,
+      stockavailability,
+      prod_description,
+      Retail_price,
+      warrantyperiod,
+      installation,
+      installationType,
+      installationcharge
+    } = req.body;
+
+    const prod_photos = req.files ? req.files.map(file => `/uploads/${file.filename}`) : [];
+
+    const product = new Product({
+      prod_id: `PROD-${uuidv4().slice(0, 8)}`,
+      Prod_name,
+      Com_id,
+      Model_no,
+      com_name,
+      prod_year,
+      stock,
+      stockavailability,
       Status: 'Hold',
       prod_description,
       Retail_price,
       miniselling: "1",
       warrantyperiod,
       installation,
-      installationType: processedInstallationType,
-      installationcharge: processedInstallationCharge,
+      installationType: installation === 'Required' ? installationType : null,
+      installationcharge: installationType === 'Paid' ? installationcharge : null,
       prod_photos
     });
-    await newProduct.save();
+
+    await product.save();
     res.redirect("/company/products");
   } catch (error) {
-    console.error("Error adding product:", error.stack);
-    res.status(500).send("Internal Server Error: " + error.message);
+    console.error("Error adding product:", error);
+    res.status(500).send("Internal Server Error");
   }
 }
 
 async function getinventory(req, res) {
   try {
-    const user = res.locals.user;
-    if (!user || user.type !== 'company') {
-      return res.status(403).send("Unauthorized: Company access required");
-    }
-    const companyid = user.c_id || "C002"; // Fallback for testing
-    const products = await Product.find({ Com_id: companyid }).lean();
-    res.render("company/inventory_feature/display_inventory", {
-      companyid: companyid,
-      products: products,
-      activePage: 'company',
-      activeRoute: 'stocks'
+    const products = await Product.find({ Com_id: req.user.c_id }).lean();
+    res.render("company/inventory", {
+      activePage: "company",
+      activeRoute: "stocks",
+      products
     });
   } catch (error) {
-    console.error("Error fetching products for sales manager:", error);
+    console.error("Error rendering inventory:", error);
     res.status(500).send("Internal Server Error");
   }
 }
 
+async function updateStockAvailability(req, res) {
+  try {
+    const { stockavailability } = req.body;
+    const { prod_id } = req.params;
+
+    if (!['instock', 'outofstock'].includes(stockavailability)) {
+      return res.status(400).json({ success: false, message: "Invalid stock availability value" });
+    }
+
+    const product = await Product.findOneAndUpdate(
+      { prod_id, Com_id: req.user.c_id },
+      { stockavailability },
+      { new: true }
+    );
+
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found or not accessible" });
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error updating stock availability:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
 module.exports = {
-  getProductById,
   companyproducts_display,
+  getProductById,
   renderAddProductForm,
   addProduct,
-  getinventory
+  getinventory,
+  updateStockAvailability
 };

@@ -88,7 +88,7 @@
       background-color: #ffffff;
     }
 
-    .fire-button, .edit-button, .submit-button {
+    .fire-button, .edit-button, .submit-button, .cancel-button {
       display: inline-block;
       padding: 10px 20px;
       border: none;
@@ -123,6 +123,15 @@
 
     .submit-button:hover {
       background-color: #007bb5;
+    }
+
+    .cancel-button {
+      background-color: #6c757d;
+      margin-left: 10px;
+    }
+
+    .cancel-button:hover {
+      background-color: #5a6268;
     }
 
     .back-button {
@@ -205,6 +214,8 @@
             <legend>Additional Details</legend>
             <div class="field-group">
               <div><label for="createdBy">Created By</label><input type="text" id="createdBy" value="<%= employee.createdBy %>" readonly></div>
+              <div><label for="hiredAt">Hired At</label><input type="text" id="hiredAt" value="<%= employee.hiredAt %>" readonly></div>
+              <div><label for="fired_date">Fired Date</label><input type="text" id="fired_date" value="<%= employee.fired_date || 'N/A' %>" readonly></div>
               <div><label for="reason_for_exit">Reason for Exit</label><input type="text" id="reason_for_exit" value="<%= employee.reason_for_exit || 'N/A' %>" readonly></div>
             </div>
           </fieldset>
@@ -212,15 +223,22 @@
           <a href="/salesmanager/employees" class="back-button">Back to List</a>
           <% if (employee.status === 'active') { %>
             <button type="button" id="editButton" class="edit-button">Edit Salary</button>
-            <form action="/salesmanager/employee/fire/<%= employee.e_id %>" method="POST" style="display:inline;">
-              <button type="submit" class="fire-button" onclick="return confirm('Are you sure you want to mark this employee as resigned?')">Mark as Resigned</button>
-            </form>
+            <button type="button" id="fireButton" class="fire-button">Fire Employee</button>
+            <div id="fireForm" style="display:none;">
+              <form action="/salesmanager/employee/fire/<%= employee.e_id %>" method="POST">
+                <label for="reason_for_exit">Reason for Exit:</label>
+                <input type="text" id="reason_for_exit" name="reason_for_exit" required>
+                <button type="submit" class="submit-button" onclick="return confirm('Are you sure you want to fire this employee?')">Submit</button>
+                <button type="button" class="cancel-button" onclick="document.getElementById('fireForm').style.display='none';">Cancel</button>
+              </form>
+            </div>
           <% } %>
         </form>
       <% } %>
 
       <script>
         const editButton = document.getElementById('editButton');
+        const fireButton = document.getElementById('fireButton');
         const employeeForm = document.getElementById('employeeForm');
         const salaryInput = document.getElementById('base_salary');
 
@@ -234,6 +252,13 @@
             submitButton.className = 'submit-button';
             submitButton.textContent = 'Submit';
             employeeForm.appendChild(submitButton);
+          });
+        }
+
+        if (fireButton) {
+          fireButton.addEventListener('click', () => {
+            document.getElementById('fireForm').style.display = 'block';
+            fireButton.style.display = 'none';
           });
         }
 

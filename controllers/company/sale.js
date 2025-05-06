@@ -136,4 +136,47 @@ async function salesdetaildisplay(req, res) {
   }
 }
 
-module.exports = { sales_display, salesdetaildisplay };
+// Function to update installation status
+async function updateInstallationStatus(req, res) {
+  try {
+    const user = res.locals.user;
+    const salesId = req.params.salesid;
+    const { installation_status } = req.body;
+
+    // Validate installation status
+    const validStatuses = ['Pending', 'Completed', null];
+    if (!validStatuses.includes(installation_status || null)) {
+      console.log('[updateInstallationStatus] Invalid installation status:', installation_status);
+      return res.status(400).send("Invalid installation status");
+    }
+
+    // Fetch the company associated with the logged-in user
+    const company = await Company.findOne({ c_id: user.c_id }).lean();
+    if (!company) {
+      console.log('[updateInstallationStatus] Company not found for c_id:', user.c_id);
+      return res.status(404).send("Company not found");
+    }
+
+    // Update the sale's installation status
+    const sale = await Sale.findOneAndUpdate(
+      { sales_id: salesId, company_id: company.c_id },
+      { installation_status: installation_status || null },
+      { new: true }
+    );
+
+    if (!sale) {
+      console.log('[updateInstallationStatus] Sale not found for sales_id:', salesId);
+      return res.status(404).send("Sale not found");
+    }
+
+    console.log('[updateInstallationStatus] Updated sale:', sale);
+
+    // Redirect back to the sale details page
+    res.redirect(`/company/sales/${salesId}`);
+  } catch (error) {
+    console.error("[updateInstallationStatus] Error updating installation status:", error);
+    res.status(500).send("Internal server error");
+  }
+}
+
+module.exports = { sales_display, salesdetaildisplay, updateInstallationStatus };

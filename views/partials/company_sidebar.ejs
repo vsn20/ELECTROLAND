@@ -6,22 +6,16 @@
         padding: 30px 20px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         height: calc(100vh - 90px);
-        overflow-y: auto; /* Enable scrolling functionality */
+        overflow-y: auto;
     }
 
-    /* Hide scrollbar visually in WebKit browsers (Chrome, Safari) */
     .sidebar::-webkit-scrollbar {
-        display: none; /* Completely hide the scrollbar */
+        display: none;
     }
 
-    /* Hide scrollbar in Firefox */
     .sidebar {
-        scrollbar-width: none; /* Firefox */
-    }
-
-    /* Hide scrollbar in IE/Edge */
-    .sidebar {
-        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none;
+        -ms-overflow-style: none;
     }
 
     .dashboard-btn {
@@ -104,16 +98,16 @@
             height: auto;
             margin-bottom: 20px;
             border-radius: 15px;
-            overflow-y: auto; /* Enable scrolling on mobile */
+            overflow-y: auto;
         }
 
         .sidebar::-webkit-scrollbar {
-            display: none; /* Hide scrollbar on mobile */
+            display: none;
         }
 
         .sidebar {
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
     }
 </style>
@@ -129,16 +123,16 @@
             <span class="feature-icon">💰</span>
             <span class="feature-title">Products</span>
         </a>
-        <a href="/company/stocks" class="feature-item <%= activeRoute === 'stocks' ? 'active' : '' %>">
+        <a href="/company/complaints" class="feature-item <%= activeRoute === 'complaints' ? 'active' : '' %>">
             <span class="feature-icon">🏬</span>
-            <span class="feature-title">Inventory</span>
+            <span class="feature-title">Complaints</span>
         </a>
         <a href="/company/orders" class="feature-item <%= activeRoute === 'orders' ? 'active' : '' %>">
             <span class="feature-icon">👥</span>
             <span class="feature-title">Orders</span>
         </a>
         <a href="/company/messages" class="feature-item <%= activeRoute === 'messages' ? 'active' : '' %>">
-            <span class="feature-icon">✉️</span>
+            <span class="feature-icon">✉</span>
             <span class="feature-title">Messages</span>
         </a>
     </div>

@@ -24,7 +24,7 @@
       display: flex;
       flex: 1;
       gap: 25px;
-      padding: 0 20px !important; /* Standardized padding with !important to prevent override */
+      padding: 0 20px !important;
       max-width: 100%;
     }
 
@@ -34,14 +34,14 @@
       padding: 25px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       flex: 1;
-      height: calc(100vh - 90px); /* Match sidebar height */
-      overflow-y: auto; /* Enable scrolling */
-      -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
-      scrollbar-width: none; /* Hide scrollbar in Firefox */
+      height: calc(100vh - 90px);
+      overflow-y: auto;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
 
     .content-area::-webkit-scrollbar {
-      display: none; /* Hide scrollbar in Webkit browsers */
+      display: none;
     }
 
     .content-area h1 {
@@ -105,10 +105,19 @@
       cursor: not-allowed;
     }
 
-    .edit-btn {
-      display: block;
+    .field-select {
       width: 100%;
-      padding: 12px;
+      padding: 10px;
+      border: 1px solid #e6e9f0;
+      border-radius: 5px;
+      font-size: 1rem;
+      background: #ffffff;
+      cursor: pointer;
+    }
+
+    .update-btn {
+      display: inline-block;
+      padding: 10px 20px;
       background: #2d3436;
       color: white;
       border: none;
@@ -116,12 +125,11 @@
       font-size: 1rem;
       cursor: pointer;
       text-align: center;
-      text-decoration: none;
-      margin-top: 20px;
+      margin-top: 10px;
       transition: background 0.3s;
     }
 
-    .edit-btn:hover {
+    .update-btn:hover {
       background: #636e72;
     }
 
@@ -140,16 +148,21 @@
       color: #636e72;
     }
 
-    /* Responsive adjustments */
+    #error-message {
+      color: #e74c3c;
+      margin: 10px 0;
+      min-height: 20px;
+    }
+
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
-        padding: 0; /* Keep sidebar flush left */
+        padding: 0;
       }
 
       .content-area {
         padding: 15px;
-        height: auto; /* Expand naturally on mobile */
+        height: auto;
       }
 
       .field-group {
@@ -157,14 +170,14 @@
       }
 
       .content-area h1 {
-        font-size: 1.2rem; /* Adjusted for mobile */
+        font-size: 1.2rem;
       }
 
       .photos img {
         max-width: 120px;
       }
 
-      .edit-btn, .back-link {
+      .update-btn, .back-link {
         font-size: 1rem;
       }
     }
@@ -182,7 +195,6 @@
   <div class="container">
     <%- include('../partials/company_sidebar') %>
 
-    <!-- Content Area -->
     <div class="content-area" id="content">
       <% if (product) { %>
         <h1>Product Details</h1>
@@ -221,6 +233,17 @@
             <div>
               <label for="stock" class="field-label">Stock</label>
               <input type="text" id="stock" value="<%= product.stock %>" class="field-input" disabled>
+            </div>
+            <div>
+              <label for="stockavailability" class="field-label">Stock Availability</label>
+              <form id="stockavailability-form" action="/company/products/update-stockavailability/<%= product.prod_id %>" method="POST">
+                <select id="stockavailability" name="stockavailability" class="field-select">
+                  <option value="instock" <%= product.stockavailability === 'instock' ? 'selected' : '' %>>In Stock</option>
+                  <option value="outofstock" <%= product.stockavailability === 'outofstock' ? 'selected' : '' %>>Out of Stock</option>
+                </select>
+                <button type="submit" class="update-btn">Update Availability</button>
+              </form>
+              <div id="error-message"></div>
             </div>
             <div>
               <label for="status" class="field-label">Status</label>
@@ -268,5 +291,39 @@
   </div>
 
   <%- include('../partials/footer') %>
+
+  <script>
+    const form = document.getElementById('stockavailability-form');
+    const errorMessage = document.getElementById('error-message');
+
+    form.addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      errorMessage.textContent = '';
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData);
+
+      try {
+        const response = await fetch(`/company/products/update-stockavailability/<%= product.prod_id %>`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          window.location.reload(); // Refresh to show updated value
+        } else {
+          errorMessage.textContent = result.message || 'An error occurred while updating stock availability.';
+        }
+      } catch (error) {
+        errorMessage.textContent = 'Network error: ' + error.message;
+      }
+    });
+  </script>
 </body>
 </html>

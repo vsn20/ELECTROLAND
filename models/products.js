@@ -8,6 +8,12 @@ const productSchema = new mongoose.Schema({
   com_name: { type: String, required: true },
   prod_year: { type: String, required: true },
   stock: { type: String, required: true },
+  stockavailability: { 
+    type: String, 
+    enum: ['instock', 'outofstock'], 
+    default: 'instock', 
+    required: true 
+  },
   Status: { type: String, enum: ['Hold', 'Accepted', 'Rejected'], default: 'Hold' },
   prod_description: { type: String, required: true },
   Retail_price: { type: String, required: true },

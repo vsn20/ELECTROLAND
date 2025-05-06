@@ -59,7 +59,6 @@ async function render_product_details(req, res) {
     res.status(500).send("Internal Server Error");
   }
 }
-
 async function render_add_product_form(req, res) {
   try {
     res.send("Add product form page (not implemented in this minimal setup)");

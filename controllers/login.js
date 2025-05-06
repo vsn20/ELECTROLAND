@@ -7,20 +7,29 @@ async function handlelogin(req, res) {
 
   const user = await User.findOne({ user_id, password });
   if (!user) {
-      return res.render("employeelogin", {
-          activePage: "employee",
-          loginError: "Wrong credentials",
-          signupError: null,
-      });
+    return res.render("employeelogin", {
+      activePage: "employee",
+      loginError: "Wrong credentials",
+      signupError: null,
+    });
   }
 
   const employee = await Employee.findOne({ e_id: user.emp_id });
   if (!employee) {
-      return res.render("employeelogin", {
-          activePage: "employee",
-          loginError: "Employee not found",
-          signupError: null,
-      });
+    return res.render("employeelogin", {
+      activePage: "employee",
+      loginError: "Employee not found",
+      signupError: null,
+    });
+  }
+
+  // Check if the employee's status is active
+  if (employee.status === "resigned" || employee.status === "fired") {
+    return res.render("employeelogin", {
+      activePage: "employee",
+      loginError: "Invalid: Employee is resigned or fired",
+      signupError: null,
+    });
   }
 
   const token = setuser(user, employee); // Sets type based on employee.role
@@ -28,13 +37,14 @@ async function handlelogin(req, res) {
 
   const userType = employee.role.toLowerCase();
   if (userType === "owner") {
-      return res.redirect("admin/home");
+    return res.redirect("admin/home");
   } else if (userType === "sales manager") {
-      return res.redirect("salesmanager/home");
+    return res.redirect("salesmanager/home");
   } else if (userType === "salesman") {
-      return res.redirect("salesman/home");
+    return res.redirect("salesman/home");
   } else {
-      return res.status(403).send("Unauthorized role");
+    return res.status(403).send("Unauthorized role");
   }
 }
+
 module.exports = { handlelogin };

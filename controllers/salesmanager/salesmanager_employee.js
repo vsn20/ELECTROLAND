@@ -50,10 +50,9 @@ async function employeeDisplay(req, res) {
       });
     }
 
-    const activeEmployees = await Employee.find({
+    const employees = await Employee.find({
       role: { $regex: '^Salesman$', $options: 'i' },
       bid: salesManager.bid.trim(),
-      status: 'active',
       $and: [
         { bid: { $ne: null } },
         { bid: { $ne: 'Not Assigned' } },
@@ -64,7 +63,7 @@ async function employeeDisplay(req, res) {
     res.render('salesmanager/employee_features/employee_display', {
       error: null,
       salesManager: salesManager,
-      employeeData: activeEmployees || [],
+      employeeData: employees || [],
       activePage: 'employee',
       activeRoute: 'employees',
       message: req.query.message || null
@@ -204,11 +203,17 @@ async function fireEmployee(req, res) {
       return res.status(404).json({ error: 'Employee not found, not a Salesman, not active, or not in your branch' });
     }
 
-    employee.status = 'resigned';
-    employee.resignation_date = new Date();
+    const { reason_for_exit } = req.body;
+    if (!reason_for_exit) {
+      return res.status(400).json({ error: 'Reason for exit is required' });
+    }
+
+    employee.status = 'fired';
+    employee.fired_date = new Date();
+    employee.reason_for_exit = reason_for_exit;
     await employee.save();
 
-    res.redirect('/salesmanager/employees?message=Employee marked as resigned successfully');
+    res.redirect('/salesmanager/employees?message=Employee fired successfully');
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
   }

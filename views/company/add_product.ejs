@@ -183,7 +183,8 @@
             </div>
             <div>
               <label for="com-id" class="field-label">Company ID</label>
-              <input type="text" id="com-id" name="Com_id" value="<%= companyId %>" class="field-input" disabled>
+              <input type="text" id="com-id" value="<%= companyId %>" class="field-input" disabled>
+              <input type="hidden" name="Com_id" value="<%= companyId %>">
             </div>
             <div>
               <label for="model-no" class="field-label">Model Number</label>
@@ -191,7 +192,8 @@
             </div>
             <div>
               <label for="com-name" class="field-label">Company Name</label>
-              <input type="text" id="com-name" name="com_name" value="<%= companyName %>" class="field-input" disabled>
+              <input type="text" id="com-name" value="<%= companyName %>" class="field-input" disabled>
+              <input type="hidden" name="com_name" value="<%= companyName %>">
             </div>
             <div>
               <label for="prod-year" class="field-label">Production Year</label>
@@ -200,6 +202,13 @@
             <div>
               <label for="stock" class="field-label">Stock</label>
               <input type="text" id="stock" name="stock" class="field-input" required>
+            </div>
+            <div>
+              <label for="stockavailability" class="field-label">Stock Availability</label>
+              <select id="stockavailability" name="stockavailability" class="field-input" required>
+                <option value="instock">In Stock</option>
+                <option value="outofstock">Out of Stock</option>
+              </select>
             </div>
             <div>
               <label for="description" class="field-label">Description</label>
@@ -248,7 +257,6 @@
   <%- include('../partials/footer') %>
 
   <script>
-    // Dynamic field enabling/disabling
     document.getElementById('installation').addEventListener('change', function() {
       const installationType = document.getElementById('installation-type');
       const installationCharge = document.getElementById('installation-charge');
@@ -274,3 +282,5 @@
       }
     });
   </script>
+</body>
+</html>
