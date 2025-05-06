@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Salesman Dashboard - Salaries - ElectroLand</title>
+  <title>Admin Dashboard - ElectroLand</title>
   <style>
     * {
       margin: 0;
@@ -24,8 +24,8 @@
       margin-top: 90px;
       display: flex;
       flex: 1;
-      gap: 25px;
-      padding: 0 20px;
+      gap: 25px; /* Original gap preserved */
+      padding: 0 20px; /* Original padding preserved */
     }
 
     .content-area {
@@ -52,6 +52,23 @@
       margin-bottom: 25px;
       flex-wrap: wrap;
       gap: 15px;
+    }
+
+    .add-button {
+      display: inline-flex;
+      align-items: center;
+      padding: 10px 24px;
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-weight: 500;
+    }
+
+    .add-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
     }
 
     .salary-list {
@@ -87,7 +104,7 @@
 
     .salary-entry span.label {
       font-weight: 600;
-      min-width: 120px;
+      min-width: 100px;
       color: #34495e;
       display: inline-block;
     }
@@ -144,15 +161,11 @@
       box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
     }
 
-    .note {
-      color: #e74c3c;
-      font-style: italic;
-    }
-
+    /* Responsive adjustments */
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
-        padding: 0 10px;
+        padding: 0 10px; /* Original responsive padding preserved */
       }
 
       .content-area {
@@ -169,7 +182,7 @@
         gap: 15px;
       }
 
-      .generate-btn {
+      .add-button, .generate-btn {
         width: 100%;
         justify-content: center;
       }
@@ -211,41 +224,38 @@
   <div class="container">
     <%- include('../../partials/salesman_sidebar') %>
     
+    <!-- Content Area -->
     <div class="content-area" id="content">
       <div class="header-container">
-        <h1>Salary</h1>
-        <div class="date-range">
-          <h1><%= selectedMonthYear %> Salary</h1>
-        </div>
+        <h1>Salaries</h1>
+        <div class="date-range"><h1>Jan1-Jan31</h1></div>
         <div class="controls">
           <select class="month-year-select" id="month-year">
-            <% monthYearOptions.forEach(option => { %>
-              <option value="<%= option %>" <%= selectedMonthYear === option ? 'selected' : '' %>>
-                <%= option.replace('-', ' ') %>
-              </option>
-            <% }) %>
+            <option value="Jan-2025">Jan 2025</option>
+            <option value="Feb-2025">Feb 2025</option>
+            <option value="Mar-2025">Mar 2025</option>
+            <option value="Apr-2025">Apr 2025</option>
+            <option value="May-2025">May 2025</option>
+            <option value="Jun-2025">Jun 2025</option>
+            <option value="Jul-2025">Jul 2025</option>
+            <option value="Aug-2025">Aug 2025</option>
+            <option value="Sep-2025">Sep 2025</option>
+            <option value="Oct-2025">Oct 2025</option>
+            <option value="Nov-2025">Nov 2025</option>
+            <option value="Dec-2025">Dec 2025</option>
+            <option value="Jan-2024">Jan 2024</option>
+            <option value="Feb-2024">Feb 2024</option>
           </select>
-          <button class="generate-btn" onclick="filterSalaries()">Generate</button>
         </div>
       </div>
       <div class="salary-list">
-        <% if (salary.length === 0) { %>
+        <% salary.forEach(s => { %>
           <div class="salary-entry">
-            <div>No salary data found for <%= selectedMonthYear %>.</div>
+            <div><span class="label">Salary:</span> <%= s.salary %></div>
+            <div><span class="label">Commission:</span> <%= s.commission %></div>
+            <div><span class="label">Total:</span> <%= s.totalsalary %></div>
           </div>
-        <% } else { %>
-          <% salary.forEach(s => { %>
-            <div class="salary-entry">
-              <div><span class="label">Employee Name:</span> <%= s.employee_name %></div>
-              <div><span class="label">Base Salary:</span> $<%= s.salary %></div>
-              <div><span class="label">Commission (<%= selectedMonthYear %>):</span> $<%= s.commission %></div>
-              <div><span class="label">Total Salary:</span> $<%= s.totalsalary %></div>
-              <% if (s.note) { %>
-                <div><span class="label">Note:</span> <span class="note"><%= s.note %></span></div>
-              <% } %>
-            </div>
-          <% }) %>
-        <% } %>
+        <% }) %>
       </div>
     </div>
   </div>
@@ -253,11 +263,7 @@
   <%- include('../../partials/footer') %>
 
   <script>
-    function filterSalaries() {
-      const monthYear = document.getElementById('month-year').value;
-      console.log('[filterSalaries] Redirecting to:', `/salesman/salaries?monthYear=${monthYear}`);
-      window.location.href = `/salesman/salaries?monthYear=${monthYear}`;
-    }
+    // Add any necessary script logic here if needed
   </script>
 </body>
 </html>

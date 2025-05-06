@@ -223,10 +223,6 @@
               <input type="text" id="stock" value="<%= product.stock %>" class="field-input" disabled>
             </div>
             <div>
-              <label for="stock-status" class="field-label">Stock Status</label>
-              <input type="text" id="stock-status" value="<%= product.stockStatus || 'N/A' %>" class="field-input" disabled>
-            </div>
-            <div>
               <label for="status" class="field-label">Status</label>
               <input type="text" id="status" value="<%= product.Status %>" class="field-input" disabled>
             </div>
@@ -256,15 +252,14 @@
             </div>
             <div>
               <label for="installation-type" class="field-label">Installation Type</label>
-              <input type="text" id="installation-type" value="<%= product.installationType || 'N/A' %>" class="field-input" disabled>
+              <input type="text" id="installation-type" value="<%= product.installationType %>" class="field-input" disabled>
             </div>
             <div>
               <label for="installation-charge" class="field-label">Installation Charge</label>
-              <input type="text" id="installation-charge" value="<%= product.installationcharge || 'N/A' %>" class="field-input" disabled>
+              <input type="text" id="installation-charge" value="<%= product.installationcharge %>" class="field-input" disabled>
             </div>
           </div>
         </div>
-        <a href="/company/products/edit/<%= product.prod_id %>" class="edit-btn">Edit Product</a>
         <a href="/company/products" class="back-link">Back to Products</a>
       <% } else { %>
         <p>Product not found.</p>

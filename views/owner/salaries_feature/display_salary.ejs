@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Owner Dashboard - Salaries - ElectroLand</title>
+  <title>Admin Dashboard - ElectroLand</title>
   <style>
+    /* Structural CSS */
     * {
       margin: 0;
       padding: 0;
@@ -23,33 +24,35 @@
       margin-top: 90px;
       display: flex;
       flex: 1;
-      gap: 25px;
-      padding: 0 20px;
+      gap: 25px; /* Standardized gap to match previous codes */
+      padding: 0 20px; /* Standardized padding to prevent sidebar shift */
     }
 
     .content-area {
       background: #ffffff;
       border-radius: 15px;
       padding: 20px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* Standardized shadow */
       flex: 1;
       overflow-x: auto;
     }
 
     .content-area h1 {
       color: #2d3436;
-      margin-bottom: 20px;
+      margin-bottom: 20px; /* Standardized margin */
       font-size: 1.5rem;
     }
 
+    /* Header container styling */
     .header-container {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
+      margin-bottom: 20px; /* Standardized margin */
+      flex-wrap: wrap; /* Kept for flexibility */
     }
 
+    /* Add button styling */
     .add-button {
       display: inline-block;
       padding: 10px 20px;
@@ -66,20 +69,21 @@
       background-color: #555555;
     }
 
+    /* Table styling */
     .table-wrapper {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
-      -ms-overflow-style: none;
-      scrollbar-width: none;
+      -ms-overflow-style: none; /* Hide scrollbar in IE/Edge */
+      scrollbar-width: none; /* Hide scrollbar in Firefox */
     }
 
     .table-wrapper::-webkit-scrollbar {
-      display: none;
+      display: none; /* Hide scrollbar in Webkit browsers */
     }
 
     table {
       width: 100%;
-      min-width: 600px;
+      min-width: 600px; /* Standardized min-width to match previous codes */
       border-collapse: collapse;
       background: #ffffff;
       border-radius: 10px;
@@ -113,6 +117,7 @@
       background: #f8f9fd;
     }
 
+    /* Page-specific styles for salaries */
     .date-range {
       font-size: 1.2em;
       color: #1a1a1a;
@@ -149,15 +154,11 @@
       background-color: #555555;
     }
 
-    .note {
-      color: #e74c3c;
-      font-style: italic;
-    }
-
+    /* Responsive adjustments */
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
-        padding: 0 10px;
+        padding: 0 10px; /* Consistent with previous responsive padding */
       }
 
       .content-area {
@@ -258,21 +259,29 @@
   <div class="container">
     <%- include('../../partials/admin_sidebar') %>
     
+    <!-- Content Area -->
     <div class="content-area" id="content">
       <div class="header-container">
         <h1>Salaries</h1>
-        <div class="date-range">
-          <h1><%= selectedMonthYear %> Salaries</h1>
-        </div>
+        <div class="date-range"><h1>Jan1-Jan31</h1></div>
         <div class="controls">
           <select class="month-year-select" id="month-year">
-            <% monthYearOptions.forEach(option => { %>
-              <option value="<%= option %>" <%= selectedMonthYear === option ? 'selected' : '' %>>
-                <%= option.replace('-', ' ') %>
-              </option>
-            <% }) %>
+            <option value="Jan-2025">Jan 2025</option>
+            <option value="Feb-2025">Feb 2025</option>
+            <option value="Mar-2025">Mar 2025</option>
+            <option value="Apr-2025">Apr 2025</option>
+            <option value="May-2025">May 2025</option>
+            <option value="Jun-2025">Jun 2025</option>
+            <option value="Jul-2025">Jul 2025</option>
+            <option value="Aug-2025">Aug 2025</option>
+            <option value="Sep-2025">Sep 2025</option>
+            <option value="Oct-2025">Oct 2025</option>
+            <option value="Nov-2025">Nov 2025</option>
+            <option value="Dec-2025">Dec 2025</option>
+            <option value="Jan-2024">Jan 2024</option>
+            <option value="Feb-2024">Feb 2024</option>
           </select>
-          <button class="generate-btn" onclick="filterSalaries()">Generate</button>
+          <button class="generate-btn">Generate February Salary</button>
         </div>
       </div>
       <div class="table-wrapper">
@@ -285,27 +294,19 @@
               <th>Salary</th>
               <th>Commission</th>
               <th>Total</th>
-              <th>Note</th>
             </tr>
           </thead>
           <tbody>
-            <% if (salary.length === 0) { %>
+            <% salary.forEach(s => { %>
               <tr>
-                <td colspan="7">No salaries found for <%= selectedMonthYear %>.</td>
+                <td data-label="Employee ID"><%= s.eid %></td>
+                <td data-label="Employee Name"><%= s.ename %></td>
+                <td data-label="Role"><%= s.role %></td>
+                <td data-label="Salary"><%= s.salary %></td>
+                <td data-label="Commission"><%= s.commission %></td>
+                <td data-label="Total"><%= s.totalsalary %></td>
               </tr>
-            <% } else { %>
-              <% salary.forEach(s => { %>
-                <tr>
-                  <td data-label="Employee ID"><%= s.eid %></td>
-                  <td data-label="Employee Name"><%= s.ename %></td>
-                  <td data-label="Role"><%= s.role %></td>
-                  <td data-label="Salary">$<%= s.salary %></td>
-                  <td data-label="Commission">$<%= s.commission %></td>
-                  <td data-label="Total">$<%= s.totalsalary %></td>
-                  <td data-label="Note" class="note"><%= s.note || '' %></td>
-                </tr>
-              <% }) %>
-            <% } %>
+            <% }) %>
           </tbody>
         </table>
       </div>
@@ -315,11 +316,7 @@
   <%- include('../../partials/footer') %>
 
   <script>
-    function filterSalaries() {
-      const monthYear = document.getElementById('month-year').value;
-      console.log('[filterSalaries] Redirecting to:', `/admin/salaries?monthYear=${monthYear}`);
-      window.location.href = `/admin/salaries?monthYear=${monthYear}`;
-    }
+    // Add any necessary script logic here if needed
   </script>
 </body>
 </html>

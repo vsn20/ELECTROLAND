@@ -78,7 +78,7 @@ async function salesdetaildisplay(req, res) {
     const company = await Company.findOne({ c_id: user.c_id }).lean();
     if (!company) {
       console.log('[salesdetaildisplay] Company not found for c_id:', user.c_id);
-      return res.status(404).send("Sale not found");
+      return res.status(404).send("Company not found");
     }
 
     // Fetch the sale by sales_id and ensure it belongs to this company
@@ -91,19 +91,11 @@ async function salesdetaildisplay(req, res) {
     // Fetch product details
     let productName = "Unknown Product";
     let modelNumber = "N/A";
-    let warrantyPeriod = "N/A";
-    let installation = "N/A";
-    let installationTypeFromProduct = "N/A";
-    let installationCharge = "N/A";
     if (typeof sale.product_id === "string") {
       const product = await Product.findOne({ prod_id: sale.product_id }).lean();
       if (product) {
         productName = product.Prod_name;
         modelNumber = product.Model_no;
-        warrantyPeriod = product.warrantyperiod ?? "N/A";
-        installation = product.installation ?? "N/A";
-        installationTypeFromProduct = product.installationType ?? "N/A";
-        installationCharge = product.installationcharge ?? "N/A";
       }
     }
 
@@ -129,15 +121,6 @@ async function salesdetaildisplay(req, res) {
       purchased_price: sale.purchased_price ?? 0,
       sold_price: sale.sold_price ?? 0,
       quantity: sale.quantity ?? 0,
-      customer_name: sale.customer_name ?? "N/A",
-      phone_number: sale.phone_number ?? "N/A",
-      address: sale.address ?? "N/A",
-      rating: sale.rating ?? null,
-      review: sale.review ?? "No review provided",
-      installationType: sale.installationType ?? installationTypeFromProduct, // Use Sale's installationType, fallback to Product's
-      warrantyperiod: warrantyPeriod,
-      installation: installation,
-      installationcharge: installationCharge
     };
 
     console.log('[salesdetaildisplay] Sale details:', saleDetails);

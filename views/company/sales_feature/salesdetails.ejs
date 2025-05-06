@@ -63,8 +63,7 @@
       font-weight: 500;
     }
 
-    .form-group input,
-    .form-group textarea {
+    .form-group input {
       width: 100%;
       padding: 8px;
       border: 1px solid #e6e9f0;
@@ -75,13 +74,7 @@
       transition: border-color 0.3s;
     }
 
-    .form-group textarea {
-      height: 100px;
-      resize: none;
-    }
-
-    .form-group input:focus,
-    .form-group textarea:focus {
+    .form-group input:focus {
       border-color: #333333;
       outline: none;
     }
@@ -127,23 +120,6 @@
 
     .back-link:hover {
       text-decoration: underline;
-    }
-
-    /* Star rating styles */
-    .star-rating {
-      display: flex;
-      gap: 10px;
-      direction: ltr;
-      margin-bottom: 10px;
-    }
-
-    .star-rating span {
-      font-size: 1.8rem;
-      color: #ddd;
-    }
-
-    .star-rating .filled {
-      color: #FFD700;
     }
 
     /* Responsive adjustments */
@@ -236,60 +212,6 @@
         <div class="form-group">
           <label>Company Name</label>
           <input type="text" value="<%= sale.company_name %>" readonly>
-        </div>
-        <div class="form-group">
-          <label>Warranty Period</label>
-          <input type="text" value="<%= sale.warrantyperiod %>" readonly>
-        </div>
-      </div>
-
-      <h3>Installation Details</h3>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Installation</label>
-          <input type="text" value="<%= sale.installation %>" readonly>
-        </div>
-        <div class="form-group">
-          <label>Installation Type</label>
-          <input type="text" value="<%= sale.installationType %>" readonly>
-        </div>
-        <div class="form-group">
-          <label>Installation Charge</label>
-          <input type="text" value="<%= sale.installationcharge %>" readonly>
-        </div>
-      </div>
-
-      <h3>Customer Information</h3>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Customer Name</label>
-          <input type="text" value="<%= sale.customer_name %>" readonly>
-        </div>
-        <div class="form-group">
-          <label>Phone Number</label>
-          <input type="text" value="<%= sale.phone_number %>" readonly>
-        </div>
-        <div class="form-group">
-          <label>Address</label>
-          <input type="text" value="<%= sale.address %>" readonly>
-        </div>
-      </div>
-
-      <h3>Review</h3>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Rating</label>
-          <div class="star-rating">
-            <% for (let i = 5; i >= 1; i--) { %>
-              <span class="<%= sale.rating >= i ? 'filled' : '' %>">★</span>
-            <% } %>
-          </div>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Review</label>
-          <textarea readonly><%= sale.review %></textarea>
         </div>
       </div>
 
