@@ -1,78 +1,60 @@
-const topproductData = [
-    {
-        prod_photos: ["/washing1.png", "/washing2.png", "/washing3.png"],
-        prod_id: "P004",
-        Prod_name: "Washing Machine",
-        Com_id: "C004",
-        Model_no: "WM-800Eco",
-        com_name: "CleanTech",
-        prod_year: "2023",
-        stock: "In Stock",
-        Status: "Accepted",
-        prod_description: "Front-load washing machine with 8kg capacity and eco-friendly features.",
-        Retail_price: "$549",
-        miniselling: "1",
-        createdAt: "2023-07-10",
-        approvedAt: "2023-07-15",
-        warrantyperiod: "2 Years",
-        installation: "Required",
-        installationType: "Paid",
-        installationcharge: "$40"
-    },
-    {
-        prod_photos: ["/camera1_resized.png", "/camera2_resized.png", "/camera3_resized.png"],
-        prod_id: "P005",
-        Prod_name: "Digital Camera",
-        Com_id: "C005",
-        Model_no: "DC-720X",
-        com_name: "PhotoMaster",
-        prod_year: "2024",
-        stock: "In Stock",
-        Status: "Accepted",
-        prod_description: "24MP digital camera with 4K video recording and 10x optical zoom.",
-        Retail_price: "$599",
-        miniselling: "1",
-        createdAt: "2024-01-20",
-        approvedAt: "2024-01-25",
-        warrantyperiod: "2 Years",
-        installation: "Not Required",
-        installationType: "Free",
-        installationcharge: "N/A"
-    },
-    {
-        prod_photos: ["/gaming2.png", "/gaming3.png", "/gaming1.png"],
-        prod_id: "P006",
-        Prod_name: "Gaming Console",
-        Com_id: "C006",
-        Model_no: "GC-900Elite",
-        com_name: "GameZone",
-        prod_year: "2024",
-        stock: "In Stock",
-        Status: "Accepted",
-        prod_description: "Next-gen gaming console with 1TB storage and ray tracing support.",
-        Retail_price: "$499",
-        miniselling: "1",
-        createdAt: "2024-04-05",
-        approvedAt: "2024-04-10",
-        warrantyperiod: "1 Year",
-        installation: "Required",
-        installationType: "Paid",
-        installationcharge: "$30"
-    }
-];
+const Product = require("../models/products");
+const Sale = require("../models/sale");
+
 async function topproducts_display(req, res) {
-    try {
-        const acceptedProducts = topproductData.filter(p => p.Status === "Accepted");
-        res.render("topproducts", {
-            topproductData: acceptedProducts,
-            activePage: 'top-products',
-            activeRoute: ''
-        });
-    } catch (error) {
-        console.error("Error rendering products:", error);
-        res.status(500).send("Internal Server Error");
+  try {
+    // Step 1: Fetch all accepted products
+    const acceptedProducts = await Product.find({ Status: "Accepted" }).lean();
+    if (!acceptedProducts || acceptedProducts.length === 0) {
+      console.log('[topproducts_display] No accepted products found');
+      return res.render("topproducts", {
+        topproductData: [],
+        activePage: 'top-products',
+        activeRoute: ''
+      });
     }
+
+    // Step 2: Fetch sales for all products and calculate ratings and sales count
+    const topProducts = [];
+    for (const product of acceptedProducts) {
+      // Fetch sales for this product
+      const sales = await Sale.find({ product_id: product.prod_id }).lean();
+
+      // Calculate sales count
+      const salesCount = sales.length;
+
+      // Calculate average rating (only consider sales with a rating)
+      const ratings = sales
+        .filter(sale => sale.rating !== null && sale.rating !== undefined)
+        .map(sale => sale.rating);
+      const averageRating = ratings.length > 0
+        ? (ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length).toFixed(1)
+        : null;
+
+      // Step 3: Filter products with at least 4 sales and average rating >= 4
+      if (salesCount >= 4 && averageRating && averageRating >= 4) {
+        topProducts.push({
+          ...product,
+          averageRating: averageRating,
+          salesCount: salesCount
+        });
+      }
+    }
+
+    console.log('[topproducts_display] Filtered top products:', topProducts);
+
+    // Step 4: Render the view with the filtered products
+    res.render("topproducts", {
+      topproductData: topProducts,
+      activePage: 'top-products',
+      activeRoute: ''
+    });
+  } catch (error) {
+    console.error("[topproducts_display] Error rendering top products:", error);
+    res.status(500).send("Internal Server Error");
+  }
 }
+
 module.exports = {
-    topproducts_display
+  topproducts_display
 };

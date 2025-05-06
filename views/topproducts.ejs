@@ -85,6 +85,18 @@
       letter-spacing: 0.5px;
     }
 
+    .rating {
+      color: #f1c40f; /* Gold color for ratings */
+      font-size: 1rem;
+    }
+
+    .no-products {
+      color: #636e72;
+      font-size: 1rem;
+      text-align: center;
+      margin-top: 20px;
+    }
+
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
@@ -100,7 +112,7 @@
       }
 
       .product-item {
-        flex: 1 1 calc(33.33% - 13.33px); /* Adjust gap proportionately */
+        flex: 1 1 calc(33.33% - 13.33px);
       }
 
       .slideshow-container {
@@ -110,6 +122,10 @@
       .product-details span {
         font-size: 1rem;
       }
+
+      .rating {
+        font-size: 0.9rem;
+      }
     }
   </style>
 </head>
@@ -117,29 +133,34 @@
   <%- include('./partials/navbar') %>
 
   <div class="container">
-
     <!-- Content Area -->
     <div class="content-area" id="content">
       <h1>Top Products</h1>
 
       <!-- Product items -->
-      <div class="products-container">
-        <% topproductData.forEach(product => { %>
-          <div class="product-item">
-            <div class="slideshow-container">
-              <% product.prod_photos.forEach((photo, index) => { %>
-                <img src="<%= photo %>" alt="Product Photo" class="slides <%= index === 0 ? 'active' : '' %>">
-              <% }) %>
+      <% if (topproductData.length > 0) { %>
+        <div class="products-container">
+          <% topproductData.forEach(product => { %>
+            <div class="product-item">
+              <div class="slideshow-container">
+                <% product.prod_photos.forEach((photo, index) => { %>
+                  <img src="<%= photo %>" alt="Product Photo" class="slides <%= index === 0 ? 'active' : '' %>">
+                <% }) %>
+              </div>
+              <div class="product-details">
+                <span><strong>Product ID:</strong> <%= product.prod_id %></span>
+                <span><strong>Model Number:</strong> <%= product.Model_no %></span>
+                <span><strong>Company Name:</strong> <%= product.com_name %></span>
+                <span><strong>Stock:</strong> <%= product.stock %></span>
+                <span><strong>Average Rating:</strong> <span class="rating"><%= product.averageRating %> ★</span></span>
+                <span><strong>Total Sales:</strong> <%= product.salesCount %></span>
+              </div>
             </div>
-            <div class="product-details">
-              <span><strong>Product ID:</strong> <%= product.prod_id %></span>
-              <span><strong>Model Number:</strong> <%= product.Model_no %></span>
-              <span><strong>Company Name:</strong> <%= product.com_name %></span>
-              <span><strong>Stock:</strong> <%= product.stock %></span>
-            </div>
-          </div>
-        <% }) %>
-      </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <p class="no-products">No top products available with a rating of 4 or higher and at least 4 sales.</p>
+      <% } %>
     </div>
   </div>
 
@@ -154,8 +175,10 @@
         currentSlide = (currentSlide + 1) % slides.length;
         slides[currentSlide].classList.add('active');
       }
-      slides[0].classList.add('active');
-      setInterval(showNextSlide, 2000);
+      if (slides.length > 0) {
+        slides[0].classList.add('active');
+        setInterval(showNextSlide, 2000);
+      }
     });
   </script>
 </body>

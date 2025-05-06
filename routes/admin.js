@@ -72,8 +72,9 @@ const { sales_display, salesdetaildisplay } = require("../controllers/sales_disp
 router.get("/sales", sales_display);
 router.get("/sales/:sales_id", salesdetaildisplay);
 
-const { profits_display } = require("../controllers/profits_display");
+const { profits_display, profitByMonth } = require("../controllers/profits_display");
 router.get("/profits", profits_display);
+router.get("/profit-by-month", profitByMonth);
 
 const { salary_display } = require("../controllers/salaries_display");
 router.get("/salaries", salary_display);

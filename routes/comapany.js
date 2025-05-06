@@ -19,11 +19,8 @@ const {
 const { sales_display, salesdetaildisplay, updateInstallationStatus } = require("../controllers/company/sale");
 const { displayComplaints, updateComplaintStatus } = require("../controllers/company/complaint");
 const { company_messages_display, render_compose_message_form, compose_message, view_message, view_sent_messages } = require("../controllers/company/company_messages_display");
-
-router.get("/home", (req, res) => res.render("company/home", {
-  activePage: 'company',
-  activeRoute: ''
-}));
+const { getDashboardData } = require("../controllers/company/dashboard");
+router.get("/home", getDashboardData);
 router.get("/products", companyproducts_display);
 router.get("/products/details/:prod_id", getProductById);
 router.get("/products/add", renderAddProductForm);
