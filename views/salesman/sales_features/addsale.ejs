@@ -157,7 +157,6 @@
       text-align: center;
     }
 
-    /* Responsive adjustments */
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
@@ -262,6 +261,10 @@
             <label>Customer Phone Number</label>
             <input type="tel" name="phone_number" required placeholder="+1234567890" pattern="\+?[1-9]\d{1,14}">
           </div>
+          <div class="form-group">
+            <label>Customer Address</label>
+            <input type="text" name="address" placeholder="Enter customer address">
+          </div>
         </div>
 
         <h3>Product Information</h3>
@@ -277,9 +280,23 @@
           </div>
           <div class="form-group">
             <label>Product</label>
-            <select name="product_id" id="productSelect" class="product-list" required onchange="updatePurchasedPrice()">
+            <select name="product_id" id="productSelect" class="product-list" required onchange="updateProductDetails()">
               <option value="">Select Product</option>
             </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Installation</label>
+            <input type="text" name="installation" id="installation" readonly required>
+          </div>
+          <div class="form-group">
+            <label>Installation Type</label>
+            <input type="text" name="installationType" id="installationType" readonly>
+          </div>
+          <div class="form-group">
+            <label>Installation Charge</label>
+            <input type="text" name="installationcharge" id="installationCharge" readonly>
           </div>
         </div>
 
@@ -295,7 +312,7 @@
           </div>
           <div class="form-group">
             <label>Quantity</label>
-            <input type="number" name="quantity" required>
+            <input type="number" name="quantity" required min="1" value="1">
           </div>
         </div>
 
@@ -314,11 +331,17 @@
       const companySelect = document.getElementById('companySelect');
       const productSelect = document.getElementById('productSelect');
       const purchasedPriceInput = document.getElementById('purchasedPrice');
+      const installationInput = document.getElementById('installation');
+      const installationTypeInput = document.getElementById('installationType');
+      const installationChargeInput = document.getElementById('installationCharge');
       const companyId = companySelect.value;
 
-      // Clear previous products and purchased price
+      // Clear previous products and related fields
       productSelect.innerHTML = '<option value="">Select Product</option>';
       purchasedPriceInput.value = '';
+      installationInput.value = '';
+      installationTypeInput.value = '';
+      installationChargeInput.value = '';
       productsData = [];
 
       if (companyId) {
@@ -342,20 +365,32 @@
       }
     }
 
-    function updatePurchasedPrice() {
+    function updateProductDetails() {
       const productSelect = document.getElementById('productSelect');
       const purchasedPriceInput = document.getElementById('purchasedPrice');
+      const installationInput = document.getElementById('installation');
+      const installationTypeInput = document.getElementById('installationType');
+      const installationChargeInput = document.getElementById('installationCharge');
       const selectedProductId = productSelect.value;
 
       if (selectedProductId) {
         const selectedProduct = productsData.find(product => product.prod_id === selectedProductId);
         if (selectedProduct) {
           purchasedPriceInput.value = selectedProduct.Retail_price || '';
+          installationInput.value = selectedProduct.installation || 'Not Required';
+          installationTypeInput.value = selectedProduct.installationType || '';
+          installationChargeInput.value = selectedProduct.installationcharge || '';
         } else {
           purchasedPriceInput.value = '';
+          installationInput.value = '';
+          installationTypeInput.value = '';
+          installationChargeInput.value = '';
         }
       } else {
         purchasedPriceInput.value = '';
+        installationInput.value = '';
+        installationTypeInput.value = '';
+        installationChargeInput.value = '';
       }
     }
   </script>

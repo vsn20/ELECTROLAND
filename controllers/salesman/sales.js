@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Sale = require("../../models/sale");
 const Company = require("../../models/company");
 const Product = require("../../models/products");
@@ -169,10 +170,13 @@ async function renderAddSaleForm(req, res) {
 }
 
 async function addSale(req, res) {
+  const session = await mongoose.startSession();
+  session.startTransaction();
   try {
     const user = res.locals.user;
     const employee = await Employee.findOne({ e_id: user.emp_id });
     if (!employee) {
+      await session.abortTransaction();
       return res.redirect(`/salesman/add-sale?error=Salesman not found`);
     }
 
@@ -185,24 +189,28 @@ async function addSale(req, res) {
       purchased_price,
       sold_price,
       quantity,
-      phone_number
+      phone_number,
+      address
     } = req.body;
 
     // Validate unique_code
-    const existingSale = await Sale.findOne({ unique_code });
+    const existingSale = await Sale.findOne({ unique_code }).session(session);
     if (existingSale) {
+      await session.abortTransaction();
       return res.redirect(`/salesman/add-sale?error=Unique code ${unique_code} already exists. Please use a different code.`);
     }
 
     // Validate company
     const company = await Company.findOne({ c_id: company_id }).lean();
     if (!company) {
+      await session.abortTransaction();
       return res.redirect(`/salesman/add-sale?error=Company not found`);
     }
 
     // Validate product
     const product = await Product.findOne({ prod_id: product_id }).lean();
     if (!product) {
+      await session.abortTransaction();
       return res.redirect(`/salesman/add-sale?error=Product not found`);
     }
 
@@ -211,18 +219,25 @@ async function addSale(req, res) {
       branch_id: employee.bid,
       product_id,
       company_id
-    });
+    }).session(session);
     if (!inventory || inventory.quantity < parseInt(quantity)) {
+      await session.abortTransaction();
       return res.redirect(`/salesman/add-sale?error=Insufficient inventory for ${product.Prod_name} (Available: ${inventory ? inventory.quantity : 0})`);
     }
 
     // Generate sales_id
-    const count = await Sale.countDocuments() + 1;
+    const count = await Sale.countDocuments().session(session) + 1;
     const sales_id = `S${String(count).padStart(3, '0')}`;
 
     // Calculate amount and profit/loss
     const amount = parseFloat(sold_price) * parseInt(quantity);
     const profit_or_loss = (parseFloat(sold_price) - parseFloat(purchased_price)) * parseInt(quantity);
+
+    // Set installation-related fields from product
+    const installation = product.installation || 'Not Required';
+    const installationType = product.installationType || null;
+    const installationcharge = product.installationcharge || null;
+    const installation_status = installation === 'Required' ? 'Pending' : null;
 
     // Create sale
     const newSale = new Sale({
@@ -239,19 +254,28 @@ async function addSale(req, res) {
       quantity: parseInt(quantity),
       amount,
       profit_or_loss,
-      phone_number
+      phone_number,
+      address,
+      installation,
+      installationType,
+      installationcharge,
+      installation_status
     });
 
     // Update inventory
     inventory.quantity -= parseInt(quantity);
     inventory.updatedAt = new Date();
-    await inventory.save();
+    await inventory.save({ session });
 
-    await newSale.save();
+    await newSale.save({ session });
+    await session.commitTransaction();
     res.redirect("/salesman/sales?success=true");
   } catch (error) {
+    await session.abortTransaction();
     console.error("Error adding sale:", error);
     res.redirect(`/salesman/add-sale?error=Failed to add sale: ${error.message}`);
+  } finally {
+    session.endSession();
   }
 }
 
