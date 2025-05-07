@@ -15,11 +15,11 @@ async function getProductsByCompany(req, res) {
     console.log("Fetching products for companyId:", companyId);
     const products = await Product.find({ 
       Com_id: companyId,
-      Status: { $ne: "Rejected" },
+      Status: { $nin: ["Rejected", "Hold"] },
       stockavailability: { $regex: '^instock$', $options: 'i' } // Filter for 'instock' (case-insensitive)
     }).lean();
 
-    console.log("Filtered products (instock, non-rejected):", products.map(p => ({
+    console.log("Filtered products (instock, non-rejected, non-hold):", products.map(p => ({
       prod_id: p.prod_id,
       Prod_name: p.Prod_name,
       Com_id: p.Com_id,
@@ -28,7 +28,7 @@ async function getProductsByCompany(req, res) {
     })));
 
     if (products.length === 0) {
-      console.log(`No non-rejected, in-stock products found for companyId: ${companyId}`);
+      console.log(`No non-rejected, non-hold, in-stock products found for companyId: ${companyId}`);
     }
 
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
